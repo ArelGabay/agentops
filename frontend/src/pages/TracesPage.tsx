@@ -206,6 +206,9 @@ const traceRows = [
   },
 ]
 
+const traceTableColumns =
+  '44px minmax(150px,1.1fr) minmax(210px,1.4fr) 108px 140px 116px 92px 190px 126px 110px 88px'
+
 function EnvironmentBadge({ value }: { value: string }) {
   const isProduction = value === 'Production'
 
@@ -274,8 +277,11 @@ export function TracesPage() {
 
       <Card className="mt-4 overflow-hidden">
         <div className="overflow-x-auto">
-          <div className="min-w-[1260px]">
-            <div className="grid grid-cols-[44px_1.15fr_1.45fr_100px_126px_110px_90px_178px_116px_104px_80px] items-center gap-4 bg-white/[0.03] px-4 py-4 text-sm text-slate-400">
+          <div className="min-w-[1320px]">
+            <div
+              className="grid items-center gap-4 bg-white/[0.03] px-4 py-4 text-sm text-slate-400"
+              style={{ gridTemplateColumns: traceTableColumns }}
+            >
               <span className="h-4 w-4 rounded border border-slate-600" />
               <span>Trace ID</span>
               <span>Agent</span>
@@ -291,8 +297,9 @@ export function TracesPage() {
 
             {traceRows.map((trace) => (
               <div
-                className="grid grid-cols-[44px_1.15fr_1.45fr_100px_126px_110px_90px_178px_116px_104px_80px] items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
+                className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
                 key={trace.id}
+                style={{ gridTemplateColumns: traceTableColumns }}
               >
                 <span className="h-4 w-4 rounded border border-slate-600" />
                 <span className="truncate font-medium text-violet-300 underline decoration-violet-500/40 underline-offset-4">
@@ -307,19 +314,21 @@ export function TracesPage() {
                 <span>
                   <StatusBadge status={trace.status} />
                 </span>
-                <span className="flex items-center gap-3 text-slate-200">
+                <span className="flex items-center gap-3 whitespace-nowrap text-slate-200">
                   {trace.duration}
                   <ProgressBar
                     tone={trace.status === 'error' ? 'red' : trace.status === 'timeout' ? 'amber' : 'violet'}
                     value={trace.progress}
                   />
                 </span>
-                <span className="text-slate-300">{trace.tokens}</span>
-                <span className="text-slate-300">{trace.cost}</span>
-                <span className="text-slate-300">{trace.startTime}</span>
-                <EnvironmentBadge value={trace.environment} />
-                <span className="text-slate-300">{trace.user}</span>
-                <span className="flex items-center gap-2">
+                <span className="whitespace-nowrap text-slate-300">{trace.tokens}</span>
+                <span className="whitespace-nowrap text-slate-300">{trace.cost}</span>
+                <span className="whitespace-nowrap text-slate-300">{trace.startTime}</span>
+                <span className="whitespace-nowrap">
+                  <EnvironmentBadge value={trace.environment} />
+                </span>
+                <span className="whitespace-nowrap text-slate-300">{trace.user}</span>
+                <span className="flex items-center gap-2 whitespace-nowrap">
                   <IconButton label={`Preview ${trace.id}`}>
                     <Eye className="h-4 w-4" />
                   </IconButton>
