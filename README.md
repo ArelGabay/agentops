@@ -217,11 +217,11 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Main layout shell added
 - [x] Placeholder frontend routes added
 - [x] Reusable frontend UI components
-- [ ] Dashboard UI
-- [ ] Traces list UI
-- [ ] Trace details UI
-- [ ] Evaluations UI
-- [ ] Settings UI
+- [x] Dashboard UI
+- [x] Traces list UI
+- [x] Trace details UI
+- [x] Evaluations UI
+- [x] Settings UI
 - [ ] Backend MVC foundation
 - [ ] Database schema
 - [ ] Trace ingestion API
@@ -232,19 +232,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-The next frontend milestone is to build the reusable UI primitives from the mockups:
+The frontend UI milestone is complete. The next engineering milestone is the backend MVC foundation:
 
-- Metric card
-- Status badge
-- Button
-- Card
-- Search input
-- Filter dropdown
-- Data table
-- Pagination
-- Tabs
+- FastAPI application entrypoint
+- MVC folder structure
+- initial route/controller/service/repository boundaries
+- database configuration placeholder
+- health check endpoint
 
-After those primitives are reviewed, the dashboard page can be built incrementally using mock data before connecting to the backend.
+The backend should stay simple and follow the MVC rules in `AGENTS.md` before adding trace ingestion, span ingestion, or evaluation storage.
 
 ## Project Philosophy
 
