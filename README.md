@@ -221,7 +221,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Traces list UI
 - [x] Trace details UI
 - [x] Evaluations UI
-- [ ] Settings UI
+- [x] Settings UI
 - [ ] Backend MVC foundation
 - [ ] Database schema
 - [ ] Trace ingestion API
