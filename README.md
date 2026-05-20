@@ -219,7 +219,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Reusable frontend UI components
 - [x] Dashboard UI
 - [x] Traces list UI
-- [ ] Trace details UI
+- [x] Trace details UI
 - [ ] Evaluations UI
 - [ ] Settings UI
 - [ ] Backend MVC foundation
