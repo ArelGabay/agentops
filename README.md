@@ -18,6 +18,7 @@ Completed:
 - Shared `MainLayout` shell added
 - Sidebar navigation added
 - Placeholder pages added for Dashboard, Traces, Trace Details, Evaluations, and Settings
+- First reusable frontend UI primitives added
 - Mockups added as the visual source of truth
 
 Not built yet:
@@ -215,7 +216,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Frontend folder architecture defined
 - [x] Main layout shell added
 - [x] Placeholder frontend routes added
-- [ ] Reusable frontend UI components
+- [x] Reusable frontend UI components
 - [ ] Dashboard UI
 - [ ] Traces list UI
 - [ ] Trace details UI
