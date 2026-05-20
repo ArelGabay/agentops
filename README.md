@@ -217,7 +217,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Main layout shell added
 - [x] Placeholder frontend routes added
 - [x] Reusable frontend UI components
-- [ ] Dashboard UI
+- [x] Dashboard UI
 - [ ] Traces list UI
 - [ ] Trace details UI
 - [ ] Evaluations UI

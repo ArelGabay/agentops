@@ -1,17 +1,25 @@
 import {
   Activity,
+  Bot,
+  BrainCircuit,
+  Calendar,
+  CheckCircle2,
   Clock3,
   Database,
   DollarSign,
   Download,
-  ShieldCheck,
+  FileSearch,
+  PenTool,
 } from 'lucide-react'
 
 import { PageHeader } from '../components/layout/PageHeader'
 import { MetricCard } from '../components/metrics/MetricCard'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { ChartCard } from '../components/ui/ChartCard'
+import { StatList } from '../components/ui/StatList'
 import { StatusBadge } from '../components/ui/StatusBadge'
+import { TablePreview } from '../components/ui/TablePreview'
 
 const metricCards = [
   {
@@ -29,7 +37,7 @@ const metricCards = [
     trendLabel: '2.1% vs last 7 days',
     trend: 'up' as const,
     tone: 'emerald' as const,
-    icon: <ShieldCheck className="h-5 w-5" />,
+    icon: <CheckCircle2 className="h-5 w-5" />,
     sparkline: [42, 40, 38, 41, 39, 44, 48, 57, 51, 55, 62, 58],
   },
   {
@@ -61,6 +69,134 @@ const metricCards = [
   },
 ]
 
+const topAgents = [
+  {
+    label: 'Customer Support Agent',
+    value: '4,321',
+    meta: '15.3%',
+    trend: 'up' as const,
+    icon: <Bot className="h-4 w-4 text-violet-300" />,
+  },
+  {
+    label: 'Research Assistant',
+    value: '3,214',
+    meta: '8.7%',
+    trend: 'up' as const,
+    icon: <FileSearch className="h-4 w-4 text-blue-300" />,
+  },
+  {
+    label: 'Data Analyst Agent',
+    value: '2,107',
+    meta: '12.1%',
+    trend: 'up' as const,
+    icon: <Activity className="h-4 w-4 text-red-300" />,
+  },
+  {
+    label: 'Content Writer',
+    value: '1,876',
+    meta: '2.1%',
+    trend: 'down' as const,
+    icon: <PenTool className="h-4 w-4 text-cyan-300" />,
+  },
+  {
+    label: 'Code Assistant',
+    value: '1,329',
+    meta: '6.3%',
+    trend: 'up' as const,
+    icon: <BrainCircuit className="h-4 w-4 text-amber-300" />,
+  },
+]
+
+const recentTraceRows = [
+  ['trc_8f3a7b2c4d1e', 'Customer Support Agent', 'success', '1.23s', '1,234', '$0.042'],
+  ['trc_7a2b6c1d9e3f', 'Research Assistant', 'success', '2.14s', '2,341', '$0.081'],
+  ['trc_6b1c5d9e2f8a', 'Data Analyst Agent', 'error', '4.32s', '3,214', '$0.113'],
+  ['trc_9e2f8a1b5c7d', 'Content Writer', 'success', '1.08s', '987', '$0.034'],
+  ['trc_3c7d9e2f1a5b', 'Code Assistant', 'timeout', '10.00s', '2,111', '$0.074'],
+]
+
+function StaticLineChart({ tone = 'violet' }: { tone?: 'violet' | 'blue' | 'red' }) {
+  const strokeStyles = {
+    violet: 'stroke-violet-400',
+    blue: 'stroke-blue-400',
+    red: 'stroke-red-400',
+  }
+
+  const fillStyles = {
+    violet: 'fill-violet-500/15',
+    blue: 'fill-blue-500/15',
+    red: 'fill-red-500/15',
+  }
+
+  return (
+    <div className="h-56">
+      <svg className="h-full w-full" viewBox="0 0 640 220" role="img" aria-label="Static chart preview">
+        <path
+          className="stroke-slate-800"
+          d="M0 40H640 M0 85H640 M0 130H640 M0 175H640"
+          fill="none"
+          strokeDasharray="4 6"
+          strokeWidth="1"
+        />
+        <path
+          className={fillStyles[tone]}
+          d="M0 136 L90 98 L182 126 L274 132 L366 98 L458 156 L550 126 L640 92 L640 220 L0 220 Z"
+        />
+        <path
+          className={strokeStyles[tone]}
+          d="M0 136 L90 98 L182 126 L274 132 L366 98 L458 156 L550 126 L640 92"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="3"
+        />
+        {[0, 90, 182, 274, 366, 458, 550, 640].map((x, index) => (
+          <circle
+            className={strokeStyles[tone]}
+            cx={x}
+            cy={[136, 98, 126, 132, 98, 156, 126, 92][index]}
+            fill="currentColor"
+            key={x}
+            r="4"
+          />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+function StatusDonut() {
+  return (
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+      <div className="grid h-36 w-36 shrink-0 place-items-center rounded-full bg-[conic-gradient(#22c55e_0_86%,#ef4444_86%_95%,#f59e0b_95%_98%,#64748b_98%_100%)]">
+        <div className="grid h-24 w-24 place-items-center rounded-full bg-app-surface text-center">
+          <div>
+            <p className="text-xl font-semibold text-white">12,847</p>
+            <p className="text-xs text-slate-400">Total</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="min-w-0 flex-1 space-y-3 text-sm">
+        {[
+          ['Success', '12,658 (98.6%)', 'bg-emerald-400'],
+          ['Error', '149 (1.2%)', 'bg-red-400'],
+          ['Timeout', '26 (0.2%)', 'bg-amber-400'],
+          ['Canceled', '14 (0.1%)', 'bg-slate-400'],
+        ].map(([label, value, color]) => (
+          <div className="flex items-center justify-between gap-4" key={label}>
+            <span className="flex items-center gap-2 text-slate-300">
+              <span className={['h-2 w-2 rounded-full', color].join(' ')} />
+              {label}
+            </span>
+            <span className="text-slate-400">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function DashboardPage() {
   return (
     <>
@@ -70,8 +206,11 @@ export function DashboardPage() {
           description="Overview of your AI agents and system performance."
         />
 
-        <div className="flex gap-3">
-          <Button variant="secondary">May 12 - May 19</Button>
+        <div className="flex flex-wrap gap-3">
+          <Button className="min-w-0" variant="secondary">
+            <Calendar className="h-4 w-4" />
+            <span className="truncate">May 12 - May 19</span>
+          </Button>
           <Button variant="primary">
             <Download className="h-4 w-4" />
             Export
@@ -85,69 +224,63 @@ export function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-[1.5fr_1fr]">
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <ChartCard title="Traces Over Time" action={<Button variant="secondary">Traces</Button>}>
+          <StaticLineChart tone="violet" />
+        </ChartCard>
+
+        <ChartCard
+          title="Latency (p95) Over Time"
+          action={<Button variant="secondary">p95 Latency</Button>}
+        >
+          <StaticLineChart tone="blue" />
+        </ChartCard>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_0.85fr_1.2fr]">
         <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-semibold text-white">Recent Trace Preview</h2>
-              <p className="mt-1 text-sm text-slate-400">
-                Static visual sample for table spacing and badge styling.
-              </p>
-            </div>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-white">Traces by Status</h2>
             <Button variant="ghost">View all</Button>
           </div>
-
-          <div className="mt-5 overflow-x-auto rounded-lg border border-app-border">
-            <div className="min-w-[720px]">
-              <div className="grid grid-cols-[1.3fr_1fr_140px_96px] items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500">
-                <span>Trace ID</span>
-                <span>Agent</span>
-                <span>Status</span>
-                <span>Latency</span>
-              </div>
-              {[
-                ['trc_8f3a7b2c4d1e', 'Customer Support', 'success', '1.23s'],
-                ['trc_7a2b6c1d9e3f', 'Research Assistant', 'success', '2.14s'],
-                ['trc_6b1c5d9e2f8a', 'Data Analyst', 'error', '4.32s'],
-              ].map(([traceId, agent, status, latency]) => (
-                <div
-                  className="grid grid-cols-[1.3fr_1fr_140px_96px] items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
-                  key={traceId}
-                >
-                  <span className="font-medium text-violet-300">{traceId}</span>
-                  <span className="text-slate-200">{agent}</span>
-                  <span>
-                    <StatusBadge status={status === 'error' ? 'error' : 'success'} />
-                  </span>
-                  <span className="text-slate-300">{latency}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <StatusDonut />
         </Card>
 
         <Card className="p-5">
-          <h2 className="text-sm font-semibold text-white">Status Badge Preview</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Presentational states only. You will wire real trace status logic later.
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            <StatusBadge status="success" />
-            <StatusBadge status="error" />
-            <StatusBadge status="timeout" />
-            <StatusBadge status="in-progress" />
-            <StatusBadge status="canceled" />
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-white">Top Agents</h2>
+            <Button variant="ghost">View all</Button>
           </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="danger">Danger</Button>
-          </div>
+          <StatList items={topAgents} />
         </Card>
+
+        <ChartCard title="Error Rate Over Time" action={<Button variant="secondary">Error Rate</Button>}>
+          <StaticLineChart tone="red" />
+        </ChartCard>
       </div>
+
+      <Card className="mt-4 p-5">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-white">Recent Traces</h2>
+            <p className="mt-1 text-sm text-slate-400">Static preview data for dashboard layout.</p>
+          </div>
+          <Button variant="secondary">View all traces</Button>
+        </div>
+
+        <TablePreview
+          columns={['Trace ID', 'Agent', 'Status', 'Latency', 'Tokens', 'Cost']}
+          minWidth="920px"
+          rows={recentTraceRows.map(([traceId, agent, status, latency, tokens, cost]) => [
+            <span className="truncate font-medium text-violet-300">{traceId}</span>,
+            <span className="truncate text-slate-200">{agent}</span>,
+            <StatusBadge status={status as 'success' | 'error' | 'timeout'} />,
+            <span className="text-slate-300">{latency}</span>,
+            <span className="text-slate-300">{tokens}</span>,
+            <span className="text-slate-300">{cost}</span>,
+          ])}
+        />
+      </Card>
     </>
   )
 }
