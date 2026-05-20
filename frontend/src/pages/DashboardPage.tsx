@@ -132,32 +132,32 @@ function StaticLineChart({ tone = 'violet' }: { tone?: 'violet' | 'blue' | 'red'
     <div className="h-56">
       <svg className="h-full w-full" viewBox="0 0 640 220" role="img" aria-label="Static chart preview">
         <path
-          className="stroke-slate-800"
-          d="M0 40H640 M0 85H640 M0 130H640 M0 175H640"
+          className="stroke-slate-700/60"
+          d="M20 40H620 M20 85H620 M20 130H620 M20 175H620"
           fill="none"
           strokeDasharray="4 6"
           strokeWidth="1"
         />
         <path
           className={fillStyles[tone]}
-          d="M0 136 L90 98 L182 126 L274 132 L366 98 L458 156 L550 126 L640 92 L640 220 L0 220 Z"
+          d="M20 136 L108 98 L196 126 L284 132 L372 98 L460 156 L548 126 L620 92 L620 220 L20 220 Z"
         />
         <path
           className={strokeStyles[tone]}
-          d="M0 136 L90 98 L182 126 L274 132 L366 98 L458 156 L550 126 L640 92"
+          d="M20 136 L108 98 L196 126 L284 132 L372 98 L460 156 L548 126 L620 92"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="3"
         />
-        {[0, 90, 182, 274, 366, 458, 550, 640].map((x, index) => (
+        {[20, 108, 196, 284, 372, 460, 548, 620].map((x, index) => (
           <circle
-            className={strokeStyles[tone]}
+            className={['fill-white', strokeStyles[tone]].join(' ')}
             cx={x}
             cy={[136, 98, 126, 132, 98, 156, 126, 92][index]}
-            fill="currentColor"
             key={x}
             r="4"
+            strokeWidth="2"
           />
         ))}
       </svg>
@@ -167,9 +167,9 @@ function StaticLineChart({ tone = 'violet' }: { tone?: 'violet' | 'blue' | 'red'
 
 function StatusDonut() {
   return (
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-      <div className="grid h-36 w-36 shrink-0 place-items-center rounded-full bg-[conic-gradient(#22c55e_0_86%,#ef4444_86%_95%,#f59e0b_95%_98%,#64748b_98%_100%)]">
-        <div className="grid h-24 w-24 place-items-center rounded-full bg-app-surface text-center">
+    <div className="flex min-h-[220px] flex-col gap-6 sm:flex-row sm:items-center">
+      <div className="grid h-36 w-36 shrink-0 place-items-center rounded-full bg-[conic-gradient(#34d399_0_86%,#f87171_86%_95%,#fbbf24_95%_98%,#94a3b8_98%_100%)] shadow-2xl shadow-black/20">
+        <div className="grid h-28 w-28 place-items-center rounded-full bg-app-surface text-center">
           <div>
             <p className="text-xl font-semibold text-white">12,847</p>
             <p className="text-xs text-slate-400">Total</p>
@@ -185,11 +185,11 @@ function StatusDonut() {
           ['Canceled', '14 (0.1%)', 'bg-slate-400'],
         ].map(([label, value, color]) => (
           <div className="flex items-center justify-between gap-4" key={label}>
-            <span className="flex items-center gap-2 text-slate-300">
+            <span className="flex items-center gap-2 whitespace-nowrap text-slate-300">
               <span className={['h-2 w-2 rounded-full', color].join(' ')} />
               {label}
             </span>
-            <span className="text-slate-400">{value}</span>
+            <span className="whitespace-nowrap text-slate-400">{value}</span>
           </div>
         ))}
       </div>
@@ -275,9 +275,9 @@ export function DashboardPage() {
             <span className="truncate font-medium text-violet-300">{traceId}</span>,
             <span className="truncate text-slate-200">{agent}</span>,
             <StatusBadge status={status as 'success' | 'error' | 'timeout'} />,
-            <span className="text-slate-300">{latency}</span>,
-            <span className="text-slate-300">{tokens}</span>,
-            <span className="text-slate-300">{cost}</span>,
+            <span className="whitespace-nowrap text-slate-300">{latency}</span>,
+            <span className="whitespace-nowrap text-slate-300">{tokens}</span>,
+            <span className="whitespace-nowrap text-slate-300">{cost}</span>,
           ])}
         />
       </Card>
