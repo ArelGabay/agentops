@@ -7,6 +7,7 @@ import {
   Download,
   Eye,
   Filter,
+  ChevronRight,
   ShieldAlert,
   ShieldCheck,
   Sparkles,
@@ -24,7 +25,6 @@ import { RadarPreview } from '../components/ui/RadarPreview'
 import { ResultBadge } from '../components/ui/ResultBadge'
 import { ScoreStars } from '../components/ui/ScoreStars'
 import { SearchInput } from '../components/ui/SearchInput'
-import { TablePreview } from '../components/ui/TablePreview'
 
 const metricCards = [
   {
@@ -38,7 +38,7 @@ const metricCards = [
   },
   {
     title: 'Avg. Score',
-    value: '0.86 /1.0',
+    value: '86 /100',
     trendLabel: '6.3% vs last 7 days',
     trend: 'up' as const,
     tone: 'emerald' as const,
@@ -105,45 +105,55 @@ const failingDimensions: Array<{
 ]
 
 const datasets = [
-  ['Help Desk QA', '0.91', 91],
-  ['Web Search QA', '0.87', 87],
-  ['Data Analysis', '0.82', 82],
-  ['Code Generation', '0.88', 88],
-  ['Blog Generation', '0.79', 79],
+  ['Help Desk QA', '91', 91],
+  ['Web Search QA', '87', 87],
+  ['Data Analysis', '82', 82],
+  ['Code Generation', '88', 88],
+  ['Blog Generation', '79', 79],
 ]
 
 const evaluationRows = [
-  ['eval_01JZ8X7Y4G2K', 'trc_8f3a7b2c4d1e', 'Customer Support Agent', 'Help Desk QA', '0.92', 'pass', '2.1%', 'May 19, 2025 10:24 AM'],
-  ['eval_01JZ8X6W2H1K', 'trc_7a2b6c1d9e3f', 'Research Assistant', 'Web Search QA', '0.78', 'partial', '6.7%', 'May 19, 2025 10:21 AM'],
-  ['eval_01JZ8X5V1E9M', 'trc_6b1c5d9e2f8a', 'Data Analyst Agent', 'Data Analysis', '0.45', 'fail', '18.3%', 'May 19, 2025 10:18 AM'],
-  ['eval_01JZ8X4T7J6K', 'trc_9e2f8a1b5c7d', 'Content Writer', 'Blog Generation', '0.88', 'pass', '3.2%', 'May 19, 2025 10:15 AM'],
-  ['eval_01JZ8X3S6H5L', 'trc_3c7d9e2f1a5b', 'Code Assistant', 'Code Generation', '0.93', 'pass', '1.8%', 'May 19, 2025 10:11 AM'],
+  ['eval_01JZ8X7Y4G2K', 'trc_8f3a7b2c4d1e', 'Customer Support Agent', 'Help Desk QA', '92', 'pass', '2.1%', 'May 19, 2025 10:24 AM'],
+  ['eval_01JZ8X6W2H1K', 'trc_7a2b6c1d9e3f', 'Research Assistant', 'Web Search QA', '78', 'partial', '6.7%', 'May 19, 2025 10:21 AM'],
+  ['eval_01JZ8X5V1E9M', 'trc_6b1c5d9e2f8a', 'Data Analyst Agent', 'Data Analysis', '45', 'fail', '18.3%', 'May 19, 2025 10:18 AM'],
+  ['eval_01JZ8X4T7J6K', 'trc_9e2f8a1b5c7d', 'Content Writer', 'Blog Generation', '88', 'pass', '3.2%', 'May 19, 2025 10:15 AM'],
+  ['eval_01JZ8X3S6H5L', 'trc_3c7d9e2f1a5b', 'Code Assistant', 'Code Generation', '93', 'pass', '1.8%', 'May 19, 2025 10:11 AM'],
 ]
+
+const evaluationTableColumns =
+  'minmax(160px,1.05fr) minmax(150px,1fr) minmax(210px,1.25fr) minmax(160px,1fr) 140px 132px 140px 190px 96px'
 
 function StaticScoreLine() {
   return (
     <div className="h-56">
       <svg className="h-full w-full" viewBox="0 0 640 220" role="img" aria-label="Static score over time chart">
         <path
-          className="stroke-slate-800"
-          d="M0 40H640 M0 85H640 M0 130H640 M0 175H640"
+          className="stroke-slate-700/60"
+          d="M20 40H620 M20 85H620 M20 130H620 M20 175H620"
           fill="none"
           strokeDasharray="4 6"
         />
         <path
           className="fill-violet-500/15"
-          d="M0 132 L90 104 L180 120 L270 114 L360 86 L450 120 L540 104 L640 76 L640 220 L0 220 Z"
+          d="M20 132 L108 104 L196 120 L284 114 L372 86 L460 120 L548 104 L620 76 L620 220 L20 220 Z"
         />
         <path
           className="stroke-violet-400"
-          d="M0 132 L90 104 L180 120 L270 114 L360 86 L450 120 L540 104 L640 76"
+          d="M20 132 L108 104 L196 120 L284 114 L372 86 L460 120 L548 104 L620 76"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="3"
         />
-        {[0, 90, 180, 270, 360, 450, 540, 640].map((x, index) => (
-          <circle className="fill-violet-400" cx={x} cy={[132, 104, 120, 114, 86, 120, 104, 76][index]} key={x} r="4" />
+        {[20, 108, 196, 284, 372, 460, 548, 620].map((x, index) => (
+          <circle
+            className="fill-white stroke-violet-400"
+            cx={x}
+            cy={[132, 104, 120, 114, 86, 120, 104, 76][index]}
+            key={x}
+            r="4"
+            strokeWidth="2"
+          />
         ))}
       </svg>
     </div>
@@ -184,8 +194,8 @@ function EvaluationResultsDonut() {
 function scoreTone(score: string) {
   const value = Number(score)
 
-  if (value >= 0.85) return 'green'
-  if (value >= 0.7) return 'amber'
+  if (value >= 85) return 'green'
+  if (value >= 70) return 'amber'
   return 'red'
 }
 
@@ -293,46 +303,63 @@ export function EvaluationsPage() {
           </div>
         </div>
 
-        <TablePreview
-          columns={[
-            'Evaluation ID',
-            'Trace ID',
-            'Agent',
-            'Dataset / Task',
-            'Score',
-            'Result',
-            'Hallucination',
-            'Created At',
-            'Actions',
-          ]}
-          minWidth="1120px"
-          rows={evaluationRows.map(([evaluationId, traceId, agent, task, score, result, hallucination, createdAt]) => {
-            const tone = scoreTone(score)
+        <div className="overflow-x-auto rounded-lg border border-app-border">
+          <div className="min-w-[1540px]">
+            <div
+              className="grid w-full items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500"
+              style={{ gridTemplateColumns: evaluationTableColumns }}
+            >
+              <span>Evaluation ID</span>
+              <span>Trace ID</span>
+              <span>Agent</span>
+              <span>Dataset / Task</span>
+              <span>Score</span>
+              <span>Result</span>
+              <span>Hallucination</span>
+              <span>Created At</span>
+              <span>Actions</span>
+            </div>
 
-            return [
-              <span className="truncate font-medium text-violet-300">{evaluationId}</span>,
-              <span className="truncate font-medium text-violet-300">{traceId}</span>,
-              <span className="truncate text-slate-200">{agent}</span>,
-              <span className="truncate text-slate-300">{task}</span>,
-              <span className="flex items-center gap-2">
-                <span className={tone === 'red' ? 'text-red-300' : tone === 'amber' ? 'text-amber-300' : 'text-emerald-300'}>
-                  {score}
-                </span>
-                <ScoreStars count={tone === 'red' ? 2 : tone === 'amber' ? 3 : 5} tone={tone} />
-              </span>,
-              <ResultBadge result={result as 'pass' | 'partial' | 'fail'} />,
-              <span className={Number(hallucination.replace('%', '')) > 10 ? 'text-red-300' : 'text-emerald-300'}>
-                {hallucination}
-              </span>,
-              <span className="whitespace-nowrap text-slate-300">{createdAt}</span>,
-              <span className="flex items-center gap-2">
-                <IconButton label={`View ${evaluationId}`}>
-                  <Eye className="h-4 w-4" />
-                </IconButton>
-              </span>,
-            ]
-          })}
-        />
+            {evaluationRows.map(([evaluationId, traceId, agent, task, score, result, hallucination, createdAt]) => {
+              const tone = scoreTone(score)
+
+              return (
+                <div
+                  className="grid w-full items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
+                  key={evaluationId}
+                  style={{ gridTemplateColumns: evaluationTableColumns }}
+                >
+                  <span className="truncate font-medium text-violet-300">{evaluationId}</span>
+                  <span className="truncate font-medium text-violet-300">{traceId}</span>
+                  <span className="truncate text-slate-200">{agent}</span>
+                  <span className="truncate text-slate-300">{task}</span>
+                  <span className="flex items-center gap-2 whitespace-nowrap">
+                    <span
+                      className={tone === 'red' ? 'text-red-300' : tone === 'amber' ? 'text-amber-300' : 'text-emerald-300'}
+                    >
+                      {score}
+                    </span>
+                    <ScoreStars count={tone === 'red' ? 2 : tone === 'amber' ? 3 : 5} tone={tone} />
+                  </span>
+                  <span>
+                    <ResultBadge result={result as 'pass' | 'partial' | 'fail'} />
+                  </span>
+                  <span
+                    className={Number(hallucination.replace('%', '')) > 10 ? 'text-red-300' : 'text-emerald-300'}
+                  >
+                    {hallucination}
+                  </span>
+                  <span className="whitespace-nowrap text-slate-300">{createdAt}</span>
+                  <span>
+                    <IconButton label={`View ${evaluationId}`}>
+                      <Eye className="h-4 w-4" />
+                    </IconButton>
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
 
         <div className="mt-4 flex flex-col gap-4 text-sm text-slate-400 lg:flex-row lg:items-center lg:justify-between">
           <span>Showing 1 to 5 of 3,214 evaluations</span>
@@ -347,6 +374,9 @@ export function EvaluationsPage() {
             <span className="grid h-8 w-8 place-items-center rounded-lg text-slate-300">3</span>
             <span className="px-2 text-slate-500">...</span>
             <span className="grid h-8 w-10 place-items-center rounded-lg text-slate-300">643</span>
+            <IconButton label="Next page">
+              <ChevronRight className="h-4 w-4" />
+            </IconButton>
           </div>
           <div className="flex items-center gap-3">
             <span>Rows per page</span>
