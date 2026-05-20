@@ -12,6 +12,7 @@ import {
   Trash2,
   Upload,
 } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 import { PageHeader } from '../components/layout/PageHeader'
 import { Button } from '../components/ui/Button'
@@ -42,7 +43,7 @@ const integrations = [
   ['Sentry', 'disconnected'],
 ]
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-medium text-slate-200">{label}</span>
@@ -318,7 +319,7 @@ export function SettingsPage() {
                 <h2 className="text-sm font-semibold text-white">API Keys</h2>
                 <p className="mt-1 text-sm text-slate-400">Manage API keys for accessing AgentOps API.</p>
               </div>
-              <Button variant="primary">
+              <Button className="h-auto min-h-10 max-w-[124px] flex-wrap px-3 py-2 text-center leading-tight" variant="primary">
                 <Plus className="h-4 w-4" />
                 Create API Key
               </Button>
