@@ -42,7 +42,7 @@ export function TimelinePreview({ items }: TimelinePreviewProps) {
           <div className="relative space-y-3">
             {items.map((item) => {
               const barWidth = Math.min(item.width, 100 - item.left)
-              const labelLeft = Math.min(item.left + barWidth, 91)
+              const endsNearEdge = item.left + barWidth > 92
 
               return (
                 <div className="grid grid-cols-[152px_1fr] items-center gap-4" key={item.label}>
@@ -58,17 +58,16 @@ export function TimelinePreview({ items }: TimelinePreviewProps) {
                     </span>
                   </div>
 
-                  <div className="relative h-9">
+                  <div className="relative h-11">
                     <div
-                      className={['absolute top-2 h-5 rounded-md shadow-lg', toneStyles[item.tone]].join(' ')}
-                      style={{ left: `${item.left}%`, width: `${barWidth}%` }}
-                    />
-                    <span
-                      className="absolute top-2 ml-2 text-xs font-medium text-slate-200"
-                      style={{ left: `calc(${labelLeft}% + 2px)` }}
+                      className={[
+                        'absolute top-3 flex h-6 min-w-14 items-center justify-center rounded-md px-2 text-xs font-medium text-white shadow-lg',
+                        toneStyles[item.tone],
+                      ].join(' ')}
+                      style={endsNearEdge ? { right: 0, width: `${barWidth}%` } : { left: `${item.left}%`, width: `${barWidth}%` }}
                     >
                       {item.duration}
-                    </span>
+                    </div>
                   </div>
                 </div>
               )

@@ -18,7 +18,6 @@ import { Card } from '../components/ui/Card'
 import { IconButton } from '../components/ui/IconButton'
 import { KeyValueList } from '../components/ui/KeyValueList'
 import { StatusBadge } from '../components/ui/StatusBadge'
-import { TablePreview } from '../components/ui/TablePreview'
 import { Tabs } from '../components/ui/Tabs'
 import { TagList } from '../components/ui/TagList'
 import { TimelinePreview } from '../components/ui/TimelinePreview'
@@ -96,6 +95,8 @@ const spanRows = [
   ['6', 'LLM Call (gpt-4o final)', 'LLM', 'success', '10:24:15.522 AM', '3.76s', '1,529', '$0.049'],
   ['7', 'Response', '-', 'success', '10:24:19.282 AM', '610ms', '-', '-'],
 ]
+
+const spanTableColumns = '56px minmax(260px,1.5fr) 88px 116px 180px 104px 96px 96px'
 
 const summaryItems = [
   { label: 'Span Type', value: 'LLM' },
@@ -243,43 +244,67 @@ export function TraceDetailsPage() {
               <Button variant="secondary">View all spans</Button>
             </div>
 
-            <TablePreview
-              columns={['#', 'Name', 'Type', 'Status', 'Start Time', 'Duration', 'Tokens', 'Cost']}
-              minWidth="900px"
-              rows={spanRows.map(([index, name, type, status, startTime, duration, tokens, cost]) => [
-                <span className="text-slate-500">{index}</span>,
-                <span className="truncate text-slate-100">{name}</span>,
-                <span className="text-slate-300">{type}</span>,
-                <StatusBadge status={status as 'success'} />,
-                <span className="whitespace-nowrap text-slate-300">{startTime}</span>,
-                <span className="whitespace-nowrap text-slate-300">{duration}</span>,
-                <span className="whitespace-nowrap text-slate-300">{tokens}</span>,
-                <span className="whitespace-nowrap text-slate-300">{cost}</span>,
-              ])}
-            />
+            <div className="overflow-x-auto rounded-lg border border-app-border">
+              <div className="min-w-[1120px]">
+                <div
+                  className="grid items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500"
+                  style={{ gridTemplateColumns: spanTableColumns }}
+                >
+                  <span>#</span>
+                  <span>Name</span>
+                  <span>Type</span>
+                  <span>Status</span>
+                  <span>Start Time</span>
+                  <span>Duration</span>
+                  <span>Tokens</span>
+                  <span>Cost</span>
+                </div>
+
+                {spanRows.map(([index, name, type, status, startTime, duration, tokens, cost]) => (
+                  <div
+                    className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
+                    key={index}
+                    style={{ gridTemplateColumns: spanTableColumns }}
+                  >
+                    <span className="text-slate-500">{index}</span>
+                    <span className="truncate font-medium text-slate-100">{name}</span>
+                    <span className="whitespace-nowrap text-slate-300">{type}</span>
+                    <span>
+                      <StatusBadge status={status as 'success'} />
+                    </span>
+                    <span className="whitespace-nowrap text-slate-300">{startTime}</span>
+                    <span className="whitespace-nowrap text-slate-300">{duration}</span>
+                    <span className="whitespace-nowrap text-slate-300">{tokens}</span>
+                    <span className="whitespace-nowrap text-slate-300">{cost}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </Card>
         </div>
 
         <aside className="space-y-4">
           <Card className="overflow-hidden">
-            <div className="flex items-start justify-between gap-4 p-5">
-              <div>
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <Sparkles className="h-5 w-5 text-slate-300" />
-                  <h2 className="text-sm font-semibold text-white">LLM Call (gpt-4o)</h2>
+                  <Sparkles className="h-5 w-5 shrink-0 text-slate-300" />
+                  <h2 className="truncate text-sm font-semibold text-white">LLM Call (gpt-4o)</h2>
                 </div>
-                <div className="mt-4 flex gap-5 text-sm text-slate-400">
-                  <span className="text-violet-300">Overview</span>
-                  <span>Input</span>
-                  <span>Output</span>
-                  <span>Attributes</span>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <StatusBadge status="success" />
+                  <IconButton label="Close span details">
+                    <X className="h-4 w-4" />
+                  </IconButton>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <StatusBadge status="success" />
-                <IconButton label="Close span details">
-                  <X className="h-4 w-4" />
-                </IconButton>
+
+              <div className="mt-4 grid grid-cols-4 gap-4 text-sm text-slate-400">
+                <span className="text-violet-300">Overview</span>
+                <span>Input</span>
+                <span>Output</span>
+                <span>Attributes</span>
               </div>
             </div>
             <div className="h-0.5 w-24 bg-violet-500" />
