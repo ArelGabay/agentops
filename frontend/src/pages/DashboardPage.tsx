@@ -45,7 +45,7 @@ const metricCards = [
     value: '1.42s',
     trendLabel: '8.4% vs last 7 days',
     trend: 'down' as const,
-    tone: 'violet' as const,
+    tone: 'amber' as const,
     icon: <Clock3 className="h-5 w-5" />,
     sparkline: [56, 52, 44, 50, 46, 39, 35, 42, 33, 31, 29, 28],
   },

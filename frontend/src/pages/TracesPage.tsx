@@ -8,7 +8,6 @@ import {
   Clock3,
   Database,
   Download,
-  Eye,
   FileSearch,
   Filter,
   RefreshCw,
@@ -49,7 +48,7 @@ const metricCards = [
     value: '1.42s',
     trendLabel: '8.4% vs last 7 days',
     trend: 'down' as const,
-    tone: 'violet' as const,
+    tone: 'amber' as const,
     icon: <Clock3 className="h-5 w-5" />,
     sparkline: [56, 52, 44, 50, 46, 39, 35, 42, 33, 31, 29, 28],
   },
@@ -86,6 +85,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_1234',
     icon: <Bot className="h-4 w-4" />,
+    iconTone: 'bg-violet-500/15 text-violet-300',
   },
   {
     id: 'trc_7a2b6c1d9e3f',
@@ -99,6 +99,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_5678',
     icon: <FileSearch className="h-4 w-4" />,
+    iconTone: 'bg-blue-500/15 text-blue-300',
   },
   {
     id: 'trc_6b1c5d9e2f8a',
@@ -112,6 +113,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_4321',
     icon: <BarChart3 className="h-4 w-4" />,
+    iconTone: 'bg-red-500/15 text-red-300',
   },
   {
     id: 'trc_9e2f8a1b5c7d',
@@ -125,6 +127,7 @@ const traceRows = [
     environment: 'Staging',
     user: 'user_9876',
     icon: <Activity className="h-4 w-4" />,
+    iconTone: 'bg-cyan-500/15 text-cyan-300',
   },
   {
     id: 'trc_3c7d9e2f1a5b',
@@ -138,6 +141,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_2468',
     icon: <Database className="h-4 w-4" />,
+    iconTone: 'bg-amber-500/15 text-amber-300',
   },
   {
     id: 'trc_1a2b3c4d5e6f',
@@ -151,6 +155,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_1357',
     icon: <Bot className="h-4 w-4" />,
+    iconTone: 'bg-violet-500/15 text-violet-300',
   },
   {
     id: 'trc_5d6e7f8a9b0c',
@@ -164,6 +169,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_8642',
     icon: <FileSearch className="h-4 w-4" />,
+    iconTone: 'bg-blue-500/15 text-blue-300',
   },
   {
     id: 'trc_2b3c4d5e6f7a',
@@ -177,6 +183,7 @@ const traceRows = [
     environment: 'Staging',
     user: 'user_9753',
     icon: <BarChart3 className="h-4 w-4" />,
+    iconTone: 'bg-red-500/15 text-red-300',
   },
   {
     id: 'trc_8b9c0d1e2f3a',
@@ -190,6 +197,7 @@ const traceRows = [
     environment: 'Production',
     user: 'user_7531',
     icon: <Activity className="h-4 w-4" />,
+    iconTone: 'bg-cyan-500/15 text-cyan-300',
   },
   {
     id: 'trc_0c1d2e3f4a5b',
@@ -203,11 +211,12 @@ const traceRows = [
     environment: 'Production',
     user: 'user_1597',
     icon: <Database className="h-4 w-4" />,
+    iconTone: 'bg-amber-500/15 text-amber-300',
   },
 ]
 
 const traceTableColumns =
-  '44px minmax(150px,1.1fr) minmax(210px,1.4fr) 108px 140px 116px 92px 190px 126px 110px 88px'
+  '44px minmax(150px,1.15fr) minmax(210px,1.55fr) 112px 140px 116px 92px 190px 128px 110px'
 
 function EnvironmentBadge({ value }: { value: string }) {
   const isProduction = value === 'Production'
@@ -277,7 +286,7 @@ export function TracesPage() {
 
       <Card className="mt-4 overflow-hidden">
         <div className="overflow-x-auto">
-          <div className="min-w-[1320px]">
+          <div className="min-w-[1240px]">
             <div
               className="grid items-center gap-4 bg-white/[0.03] px-4 py-4 text-sm text-slate-400"
               style={{ gridTemplateColumns: traceTableColumns }}
@@ -292,7 +301,6 @@ export function TracesPage() {
               <span>Start Time</span>
               <span>Environment</span>
               <span>User</span>
-              <span>Actions</span>
             </div>
 
             {traceRows.map((trace) => (
@@ -306,7 +314,7 @@ export function TracesPage() {
                   {trace.id}
                 </span>
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-violet-500/15 text-violet-300">
+                  <span className={['grid h-7 w-7 shrink-0 place-items-center rounded-lg', trace.iconTone].join(' ')}>
                     {trace.icon}
                   </span>
                   <span className="truncate text-slate-100">{trace.agent}</span>
@@ -328,14 +336,6 @@ export function TracesPage() {
                   <EnvironmentBadge value={trace.environment} />
                 </span>
                 <span className="whitespace-nowrap text-slate-300">{trace.user}</span>
-                <span className="flex items-center gap-2 whitespace-nowrap">
-                  <IconButton label={`Preview ${trace.id}`}>
-                    <Eye className="h-4 w-4" />
-                  </IconButton>
-                  <IconButton label={`Open ${trace.id}`}>
-                    <ChevronRight className="h-4 w-4" />
-                  </IconButton>
-                </span>
               </div>
             ))}
           </div>
