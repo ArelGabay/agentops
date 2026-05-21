@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routes.health_routes import router as health_router
+from app.routes import health_router, trace_router
 
 app = FastAPI(
     title="AgentOps API",
@@ -9,3 +9,4 @@ app = FastAPI(
 )
 
 app.include_router(health_router)
+app.include_router(trace_router)
