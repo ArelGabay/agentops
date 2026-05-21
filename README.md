@@ -20,11 +20,11 @@ Completed:
 - Placeholder pages added for Dashboard, Traces, Trace Details, Evaluations, and Settings
 - First reusable frontend UI primitives added
 - Backend MVC foundation added with FastAPI health check
+- PostgreSQL database foundation added with Docker Compose, SQLAlchemy models, and Alembic migrations
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- Database schema
 - Trace ingestion endpoints
 - SDK
 - Real dashboard data
@@ -54,11 +54,12 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - FastAPI backend
 - MVC-style architecture
 - Health check endpoint
+- PostgreSQL database
+- SQLAlchemy models
+- Alembic migrations
 
 Planned:
 
-- PostgreSQL database
-- SQLAlchemy models
 - Trace ingestion API
 - Span ingestion API
 - Evaluation storage
@@ -105,15 +106,11 @@ Planned later:
 
 - Python
 - FastAPI
-
-Planned:
-
 - PostgreSQL
 - SQLAlchemy
+- Alembic
 
 ### Development
-
-Planned:
 
 - Docker Compose
 - GitHub Actions
@@ -122,7 +119,7 @@ Planned:
 
 ```txt
 agentops/
-  backend/       planned FastAPI backend
+  backend/       FastAPI backend
   docs/          planned architecture and database documentation
   frontend/      React TypeScript frontend
   mockups/       UI reference screenshots
@@ -144,7 +141,7 @@ backend/
     schemas/      validation and response shapes
     models/       future database entities
     config/       app configuration
-    database/     future database setup
+    database/     SQLAlchemy database setup
     middleware/   future middleware
     utils/        shared backend helpers
 ```
@@ -195,10 +192,13 @@ npm run lint
 From the repository root:
 
 ```bash
+docker compose up -d
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+cp .env.example .env
+alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
@@ -219,6 +219,20 @@ Expected response:
 ```json
 {"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
+
+Database:
+
+```txt
+DATABASE_URL=postgresql+psycopg://agentops:agentops@localhost:5432/agentops
+```
+
+Current database tables:
+
+- `agents`
+- `traces`
+- `spans`
+- `evaluations`
+- `tool_calls`
 
 ## Architecture Principles
 
@@ -274,7 +288,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Evaluations UI
 - [x] Settings UI
 - [x] Backend MVC foundation
-- [ ] Database schema
+- [x] Database schema
 - [ ] Trace ingestion API
 - [ ] Span ingestion API
 - [ ] Evaluation storage
@@ -283,14 +297,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-The backend MVC foundation is complete. The next engineering milestone is the database schema:
+The database foundation is complete. The next engineering milestone is the trace ingestion API:
 
-- PostgreSQL setup
-- SQLAlchemy database configuration
-- initial models for traces, spans, evaluations, agents, and tool calls
-- simple migration strategy
+- request/response schemas for trace creation
+- repository methods for storing traces
+- service logic for trace ingestion
+- controller and route for `POST /traces`
 
-The database milestone should stay focused on clean schema design before adding ingestion endpoints or SDK behavior.
+The trace ingestion milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
 
 ## Project Philosophy
 
