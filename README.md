@@ -19,11 +19,11 @@ Completed:
 - Sidebar navigation added
 - Placeholder pages added for Dashboard, Traces, Trace Details, Evaluations, and Settings
 - First reusable frontend UI primitives added
+- Backend MVC foundation added with FastAPI health check
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- Backend API
 - Database schema
 - Trace ingestion endpoints
 - SDK
@@ -51,12 +51,14 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 
 ### Backend
 
+- FastAPI backend
+- MVC-style architecture
+- Health check endpoint
+
 Planned:
 
-- FastAPI backend
 - PostgreSQL database
 - SQLAlchemy models
-- MVC-style architecture
 - Trace ingestion API
 - Span ingestion API
 - Evaluation storage
@@ -101,10 +103,11 @@ Planned later:
 
 ### Backend
 
-Planned:
-
 - Python
 - FastAPI
+
+Planned:
+
 - PostgreSQL
 - SQLAlchemy
 
@@ -126,6 +129,24 @@ agentops/
   AGENTS.md      project instructions and architecture rules
   README.md      project documentation
   LICENSE
+```
+
+Backend structure:
+
+```txt
+backend/
+  app/
+    main.py       FastAPI application entrypoint
+    routes/       endpoint registration
+    controllers/  request/response flow
+    services/     application logic
+    repositories/ future persistence access
+    schemas/      validation and response shapes
+    models/       future database entities
+    config/       app configuration
+    database/     future database setup
+    middleware/   future middleware
+    utils/        shared backend helpers
 ```
 
 Frontend structure:
@@ -167,6 +188,36 @@ Useful frontend commands:
 npm run dev
 npm run build
 npm run lint
+```
+
+## Backend Setup
+
+From the repository root:
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The local backend API runs at:
+
+```txt
+http://127.0.0.1:8000
+```
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
 
 ## Architecture Principles
@@ -222,7 +273,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Trace details UI
 - [x] Evaluations UI
 - [x] Settings UI
-- [ ] Backend MVC foundation
+- [x] Backend MVC foundation
 - [ ] Database schema
 - [ ] Trace ingestion API
 - [ ] Span ingestion API
@@ -232,15 +283,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-The frontend UI milestone is complete. The next engineering milestone is the backend MVC foundation:
+The backend MVC foundation is complete. The next engineering milestone is the database schema:
 
-- FastAPI application entrypoint
-- MVC folder structure
-- initial route/controller/service/repository boundaries
-- database configuration placeholder
-- health check endpoint
+- PostgreSQL setup
+- SQLAlchemy database configuration
+- initial models for traces, spans, evaluations, agents, and tool calls
+- simple migration strategy
 
-The backend should stay simple and follow the MVC rules in `AGENTS.md` before adding trace ingestion, span ingestion, or evaluation storage.
+The database milestone should stay focused on clean schema design before adding ingestion endpoints or SDK behavior.
 
 ## Project Philosophy
 
