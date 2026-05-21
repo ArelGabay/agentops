@@ -311,7 +311,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Settings UI
 - [x] Backend MVC foundation
 - [x] Database schema
-- [ ] Trace ingestion API
+- [x] Trace ingestion API
 - [ ] Span ingestion API
 - [ ] Evaluation storage
 - [ ] Lightweight Python SDK
@@ -319,14 +319,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-The database foundation is complete. The next engineering milestone is the trace ingestion API:
+Trace ingestion is complete. The next engineering milestone is the span ingestion API:
 
-- request/response schemas for trace creation
-- repository methods for storing traces
-- service logic for trace ingestion
-- controller and route for `POST /traces`
+- request/response schemas for span creation
+- repository methods for storing spans
+- service logic for span ingestion
+- controller and route for `POST /spans`
 
-The trace ingestion milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
+The span ingestion milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
 
 ## Project Philosophy
 
