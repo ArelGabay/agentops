@@ -11,6 +11,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 cp .env.example .env
+alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
@@ -31,6 +32,30 @@ Expected response:
 ```json
 {"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
+
+## Trace Ingestion
+
+Create a trace with `POST /traces`.
+
+The request must reference an existing `agent_id` from the `agents` table.
+
+```bash
+curl -X POST http://127.0.0.1:8000/traces \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "agent-demo-1",
+    "status": "success",
+    "input_text": "Where is my order?",
+    "output_text": "Your order has been delivered.",
+    "latency_ms": 1420,
+    "total_tokens": 2341,
+    "total_cost": 0.081,
+    "started_at": "2026-05-21T12:00:00Z",
+    "ended_at": "2026-05-21T12:00:01Z"
+  }'
+```
+
+The response returns the created trace, including its generated `id` and `created_at` timestamp.
 
 ## Database Setup
 
@@ -77,7 +102,7 @@ The backend follows the MVC rules from `AGENTS.md`:
 - `routes/` registers endpoints and calls controllers.
 - `controllers/` handle request/response flow.
 - `services/` contain application logic.
-- `repositories/` will isolate database access later.
+- `repositories/` isolate database access.
 - `schemas/` define validation and response shapes.
 - `models/` define SQLAlchemy database tables.
 - `database/` contains SQLAlchemy engine, session, and base setup.

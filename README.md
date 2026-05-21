@@ -21,11 +21,13 @@ Completed:
 - First reusable frontend UI primitives added
 - Backend MVC foundation added with FastAPI health check
 - PostgreSQL database foundation added with Docker Compose, SQLAlchemy models, and Alembic migrations
+- Trace ingestion API added with MVC flow and PostgreSQL persistence
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- Trace ingestion endpoints
+- Span ingestion endpoints
+- Evaluation ingestion endpoints
 - SDK
 - Real dashboard data
 - Authentication
@@ -57,10 +59,10 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - PostgreSQL database
 - SQLAlchemy models
 - Alembic migrations
+- Trace ingestion API
 
 Planned:
 
-- Trace ingestion API
 - Span ingestion API
 - Evaluation storage
 
@@ -219,6 +221,26 @@ Expected response:
 ```json
 {"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
+
+Create a trace:
+
+```bash
+curl -X POST http://127.0.0.1:8000/traces \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "agent-demo-1",
+    "status": "success",
+    "input_text": "Where is my order?",
+    "output_text": "Your order has been delivered.",
+    "latency_ms": 1420,
+    "total_tokens": 2341,
+    "total_cost": 0.081,
+    "started_at": "2026-05-21T12:00:00Z",
+    "ended_at": "2026-05-21T12:00:01Z"
+  }'
+```
+
+For local testing, the `agent_id` must already exist in the `agents` table.
 
 Database:
 
