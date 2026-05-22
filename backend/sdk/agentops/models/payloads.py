@@ -23,3 +23,12 @@ class SpanPayload(TypedDict):
     output_text: NotRequired[str]
     latency_ms: NotRequired[int]
     ended_at: NotRequired[str]
+
+
+class EvaluationPayload(TypedDict):
+    trace_id: str
+    evaluator_name: str
+    score: float
+    result: str
+    hallucination_score: NotRequired[float]
+    feedback: NotRequired[str]
