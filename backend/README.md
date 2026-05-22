@@ -102,6 +102,33 @@ curl -X POST http://127.0.0.1:8000/evaluations \
 
 The response returns the created evaluation, including its generated `id` and `created_at` timestamp.
 
+## SDK Demo
+
+The local Python SDK foundation lives under `sdk/agentops`.
+
+It currently supports:
+
+- `AgentOpsClient` for `POST /traces` and `POST /spans`
+- `SpanTracker` and `TraceTracker` timing helpers
+- a local demo script that creates one trace and one span
+
+Before running the demo, make sure PostgreSQL and the FastAPI backend are running, and that `agent-demo-1` exists in the `agents` table.
+
+From the `backend/` directory:
+
+```bash
+PYTHONPATH=sdk python sdk/demo.py
+```
+
+Expected output:
+
+```txt
+Created trace: <trace-id>
+Created span: <span-id>
+```
+
+The SDK is local-only for now and is not packaged for `pip install` yet.
+
 ## Database Setup
 
 From the repository root:
