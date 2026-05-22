@@ -13,6 +13,9 @@ class AgentOpsClient:
     def create_span(self, **payload: Any) -> dict[str, Any]:
         return self._post("/spans", payload)
 
+    def create_evaluation(self, **payload: Any) -> dict[str, Any]:
+        return self._post("/evaluations", payload)
+
     def _post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
         response = requests.post(f"{self.base_url}{path}", json=payload, timeout=10)
         response.raise_for_status()

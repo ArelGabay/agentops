@@ -1,3 +1,3 @@
-from agentops.models.payloads import SpanPayload, TracePayload
+from agentops.models.payloads import EvaluationPayload, SpanPayload, TracePayload
 
-__all__ = ["SpanPayload", "TracePayload"]
+__all__ = ["EvaluationPayload", "SpanPayload", "TracePayload"]

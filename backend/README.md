@@ -108,9 +108,9 @@ The local Python SDK foundation lives under `sdk/agentops`.
 
 It currently supports:
 
-- `AgentOpsClient` for `POST /traces` and `POST /spans`
+- `AgentOpsClient` for `POST /traces`, `POST /spans`, and `POST /evaluations`
 - `SpanTracker` and `TraceTracker` timing helpers
-- a local demo script that creates one trace and one span
+- a local demo script that creates one trace, two spans, and one evaluation
 
 Before running the demo, make sure PostgreSQL and the FastAPI backend are running, and that `agent-demo-1` exists in the `agents` table.
 
@@ -125,6 +125,8 @@ Expected output:
 ```txt
 Created trace: <trace-id>
 Created span: <span-id>
+Created span: <span-id>
+Created evaluation: <evaluation-id>
 ```
 
 The SDK is local-only for now and is not packaged for `pip install` yet.

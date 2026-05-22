@@ -25,6 +25,7 @@ Completed:
 - Span ingestion API added with MVC flow and PostgreSQL persistence
 - Evaluation ingestion API added with score validation and PostgreSQL persistence
 - Lightweight local Python SDK foundation added with trace/span submission demo
+- Demo AI agent workflow added for trace, span, and evaluation telemetry
 - Mockups added as the visual source of truth
 
 Not built yet:
@@ -311,11 +312,15 @@ source .venv/bin/activate
 PYTHONPATH=sdk python sdk/demo.py
 ```
 
+The demo simulates a customer-support agent workflow with an order lookup step, answer generation step, and rule-based evaluation.
+
 Expected output:
 
 ```txt
 Created trace: <trace-id>
 Created span: <span-id>
+Created span: <span-id>
+Created evaluation: <evaluation-id>
 ```
 
 ## Architecture Principles
@@ -377,18 +382,18 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Span ingestion API
 - [x] Evaluation storage
 - [x] Lightweight Python SDK
-- [ ] Demo AI agent integration
+- [x] Demo AI agent integration
 
 ## Next Milestone
 
-The local SDK foundation is complete. The next engineering milestone is demo AI agent integration:
+The demo AI agent integration is complete. The next engineering milestone is backend read APIs for frontend data:
 
-- create a small demo AI-agent-like workflow
-- use the SDK to submit traces and spans from that workflow
-- optionally submit a simple hard-coded or rule-based evaluation score
-- document how the demo proves the observability loop
+- `GET /traces` for the traces list page
+- `GET /traces/{trace_id}` for trace details
+- `GET /evaluations` for the evaluations page
+- simple dashboard summary endpoints later if needed
 
-The demo should stay lightweight in V1: no real LangChain integration, no external LLM requirement, and no production packaging yet.
+Read APIs should keep the same MVC boundaries as ingestion: routes register endpoints, controllers shape responses, services coordinate use cases, and repositories isolate database queries.
 
 ## Project Philosophy
 
