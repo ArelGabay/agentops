@@ -23,11 +23,11 @@ Completed:
 - PostgreSQL database foundation added with Docker Compose, SQLAlchemy models, and Alembic migrations
 - Trace ingestion API added with MVC flow and PostgreSQL persistence
 - Span ingestion API added with MVC flow and PostgreSQL persistence
+- Evaluation ingestion API added with score validation and PostgreSQL persistence
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- Evaluation ingestion endpoints
 - SDK
 - Real dashboard data
 - Authentication
@@ -61,10 +61,11 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - Alembic migrations
 - Trace ingestion API
 - Span ingestion API
+- Evaluation ingestion API
 
 Planned:
 
-- Evaluation storage
+- Lightweight Python SDK
 
 ### Frontend
 
@@ -262,6 +263,23 @@ curl -X POST http://127.0.0.1:8000/spans \
 
 For local testing, the `trace_id` must already exist in the `traces` table.
 
+Create an evaluation:
+
+```bash
+curl -X POST http://127.0.0.1:8000/evaluations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trace_id": "existing-trace-id",
+    "evaluator_name": "Answer Quality",
+    "score": 92.5,
+    "result": "pass",
+    "hallucination_score": 4.0,
+    "feedback": "Answer was accurate and grounded."
+  }'
+```
+
+For local testing, the `trace_id` must already exist in the `traces` table. Evaluation `score` and `hallucination_score` use a `0-100` scale.
+
 Database:
 
 ```txt
@@ -333,20 +351,21 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Database schema
 - [x] Trace ingestion API
 - [x] Span ingestion API
-- [ ] Evaluation storage
+- [x] Evaluation storage
 - [ ] Lightweight Python SDK
 - [ ] Demo AI agent integration
 
 ## Next Milestone
 
-Span ingestion is complete. The next engineering milestone is evaluation ingestion/storage:
+Evaluation ingestion is complete. The next engineering milestone is the lightweight Python SDK:
 
-- request/response schemas for evaluation creation
-- repository methods for storing evaluations
-- service logic for evaluation ingestion
-- controller and route for the evaluation endpoint
+- Python package structure for the SDK
+- minimal client for submitting telemetry to the backend
+- trace start/end tracking
+- basic span tracking
+- simple demo script that sends data to the local API
 
-The evaluation milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
+The SDK should stay lightweight in V1: no batching, retries, OpenTelemetry, async queue, or multi-framework support yet.
 
 ## Project Philosophy
 
