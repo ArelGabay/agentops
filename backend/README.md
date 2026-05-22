@@ -57,6 +57,30 @@ curl -X POST http://127.0.0.1:8000/traces \
 
 The response returns the created trace, including its generated `id` and `created_at` timestamp.
 
+## Span Ingestion
+
+Create a span with `POST /spans`.
+
+The request must reference an existing `trace_id` from the `traces` table.
+
+```bash
+curl -X POST http://127.0.0.1:8000/spans \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trace_id": "existing-trace-id",
+    "name": "LLM Call",
+    "span_type": "llm",
+    "status": "success",
+    "input_text": "Where is my order?",
+    "output_text": "Your order has been delivered.",
+    "latency_ms": 980,
+    "started_at": "2026-05-21T12:00:00Z",
+    "ended_at": "2026-05-21T12:00:01Z"
+  }'
+```
+
+The response returns the created span, including its generated `id` and `created_at` timestamp.
+
 ## Database Setup
 
 From the repository root:
