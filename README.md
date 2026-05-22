@@ -22,11 +22,11 @@ Completed:
 - Backend MVC foundation added with FastAPI health check
 - PostgreSQL database foundation added with Docker Compose, SQLAlchemy models, and Alembic migrations
 - Trace ingestion API added with MVC flow and PostgreSQL persistence
+- Span ingestion API added with MVC flow and PostgreSQL persistence
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- Span ingestion endpoints
 - Evaluation ingestion endpoints
 - SDK
 - Real dashboard data
@@ -60,10 +60,10 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - SQLAlchemy models
 - Alembic migrations
 - Trace ingestion API
+- Span ingestion API
 
 Planned:
 
-- Span ingestion API
 - Evaluation storage
 
 ### Frontend
@@ -242,6 +242,26 @@ curl -X POST http://127.0.0.1:8000/traces \
 
 For local testing, the `agent_id` must already exist in the `agents` table.
 
+Create a span:
+
+```bash
+curl -X POST http://127.0.0.1:8000/spans \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trace_id": "existing-trace-id",
+    "name": "LLM Call",
+    "span_type": "llm",
+    "status": "success",
+    "input_text": "Where is my order?",
+    "output_text": "Your order has been delivered.",
+    "latency_ms": 980,
+    "started_at": "2026-05-21T12:00:00Z",
+    "ended_at": "2026-05-21T12:00:01Z"
+  }'
+```
+
+For local testing, the `trace_id` must already exist in the `traces` table.
+
 Database:
 
 ```txt
@@ -312,21 +332,21 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Backend MVC foundation
 - [x] Database schema
 - [x] Trace ingestion API
-- [ ] Span ingestion API
+- [x] Span ingestion API
 - [ ] Evaluation storage
 - [ ] Lightweight Python SDK
 - [ ] Demo AI agent integration
 
 ## Next Milestone
 
-Trace ingestion is complete. The next engineering milestone is the span ingestion API:
+Span ingestion is complete. The next engineering milestone is evaluation ingestion/storage:
 
-- request/response schemas for span creation
-- repository methods for storing spans
-- service logic for span ingestion
-- controller and route for `POST /spans`
+- request/response schemas for evaluation creation
+- repository methods for storing evaluations
+- service logic for evaluation ingestion
+- controller and route for the evaluation endpoint
 
-The span ingestion milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
+The evaluation milestone should follow MVC boundaries: routes register endpoints, controllers manage request flow, services contain application logic, and repositories isolate database writes.
 
 ## Project Philosophy
 
