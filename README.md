@@ -366,16 +366,9 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 - [x] Repository initialized
 - [x] Mockups added
-- [x] Frontend app initialized
-- [x] Frontend folder architecture defined
-- [x] Main layout shell added
-- [x] Placeholder frontend routes added
+- [x] Frontend foundation
+- [x] Static frontend page UIs
 - [x] Reusable frontend UI components
-- [x] Dashboard UI
-- [x] Traces list UI
-- [x] Trace details UI
-- [x] Evaluations UI
-- [x] Settings UI
 - [x] Backend MVC foundation
 - [x] Database schema
 - [x] Trace ingestion API
@@ -383,6 +376,13 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Evaluation storage
 - [x] Lightweight Python SDK
 - [x] Demo AI agent integration
+- [ ] Backend read APIs
+- [ ] Frontend API services
+- [ ] React Query data wiring
+- [ ] Dashboard real metrics
+- [ ] Trace details real data
+- [ ] Evaluations real data
+- [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
 
