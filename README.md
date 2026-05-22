@@ -24,11 +24,13 @@ Completed:
 - Trace ingestion API added with MVC flow and PostgreSQL persistence
 - Span ingestion API added with MVC flow and PostgreSQL persistence
 - Evaluation ingestion API added with score validation and PostgreSQL persistence
+- Lightweight local Python SDK foundation added with trace/span submission demo
 - Mockups added as the visual source of truth
 
 Not built yet:
 
-- SDK
+- Packaged SDK distribution
+- LangChain integration
 - Real dashboard data
 - Authentication
 - Production deployment
@@ -63,10 +65,6 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - Span ingestion API
 - Evaluation ingestion API
 
-Planned:
-
-- Lightweight Python SDK
-
 ### Frontend
 
 In progress:
@@ -79,15 +77,20 @@ In progress:
 
 ### SDK
 
-Planned:
+Foundation complete:
 
 - Lightweight Python SDK
-- LangChain integration
 - Trace start/end tracking
 - Basic span tracking
 - Latency measurement
-- Error capture
 - Telemetry submission to the backend API
+- Local demo script
+
+Planned:
+
+- LangChain integration
+- Error capture improvements
+- Packaged installation flow
 
 ## Tech Stack
 
@@ -294,6 +297,27 @@ Current database tables:
 - `evaluations`
 - `tool_calls`
 
+## SDK Demo
+
+The local SDK foundation lives under `backend/sdk/agentops`.
+
+It is not packaged for `pip install` yet. Run it locally with `PYTHONPATH=sdk` from the `backend/` directory.
+
+Before running the demo, make sure PostgreSQL and the backend API are running, and that `agent-demo-1` exists in the `agents` table.
+
+```bash
+cd backend
+source .venv/bin/activate
+PYTHONPATH=sdk python sdk/demo.py
+```
+
+Expected output:
+
+```txt
+Created trace: <trace-id>
+Created span: <span-id>
+```
+
 ## Architecture Principles
 
 AgentOps is designed to use MVC architecture on the backend.
@@ -352,20 +376,19 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Trace ingestion API
 - [x] Span ingestion API
 - [x] Evaluation storage
-- [ ] Lightweight Python SDK
+- [x] Lightweight Python SDK
 - [ ] Demo AI agent integration
 
 ## Next Milestone
 
-Evaluation ingestion is complete. The next engineering milestone is the lightweight Python SDK:
+The local SDK foundation is complete. The next engineering milestone is demo AI agent integration:
 
-- Python package structure for the SDK
-- minimal client for submitting telemetry to the backend
-- trace start/end tracking
-- basic span tracking
-- simple demo script that sends data to the local API
+- create a small demo AI-agent-like workflow
+- use the SDK to submit traces and spans from that workflow
+- optionally submit a simple hard-coded or rule-based evaluation score
+- document how the demo proves the observability loop
 
-The SDK should stay lightweight in V1: no batching, retries, OpenTelemetry, async queue, or multi-framework support yet.
+The demo should stay lightweight in V1: no real LangChain integration, no external LLM requirement, and no production packaging yet.
 
 ## Project Philosophy
 
