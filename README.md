@@ -376,7 +376,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Evaluation storage
 - [x] Lightweight Python SDK
 - [x] Demo AI agent integration
-- [ ] Backend read APIs
+- [x] Backend read APIs
 - [ ] Frontend API services
 - [ ] React Query data wiring
 - [ ] Dashboard real metrics
@@ -386,14 +386,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-The demo AI agent integration is complete. The next engineering milestone is backend read APIs for frontend data:
+Backend read APIs are complete. The next engineering milestone is frontend API services:
 
-- `GET /traces` for the traces list page
-- `GET /traces/{trace_id}` for trace details
-- `GET /evaluations` for the evaluations page
-- simple dashboard summary endpoints later if needed
+- create TypeScript API types for traces, spans, and evaluations
+- add frontend service functions for read endpoints
+- keep React Query hooks for the following milestone
+- do not replace static page data yet
 
-Read APIs should keep the same MVC boundaries as ingestion: routes register endpoints, controllers shape responses, services coordinate use cases, and repositories isolate database queries.
+Frontend API services should stay small and typed: one service module for HTTP calls, shared response types, and no React component changes yet.
 
 ## Project Philosophy
 

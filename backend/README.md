@@ -102,6 +102,28 @@ curl -X POST http://127.0.0.1:8000/evaluations \
 
 The response returns the created evaluation, including its generated `id` and `created_at` timestamp.
 
+## Read APIs
+
+Recent traces:
+
+```bash
+curl "http://127.0.0.1:8000/traces?limit=25"
+```
+
+Trace detail with spans and evaluations:
+
+```bash
+curl http://127.0.0.1:8000/traces/<trace-id>
+```
+
+Recent evaluations:
+
+```bash
+curl "http://127.0.0.1:8000/evaluations?limit=25"
+```
+
+List endpoints support `limit` from `1` to `100`. Missing trace details return `404`.
+
 ## SDK Demo
 
 The local Python SDK foundation lives under `sdk/agentops`.
