@@ -81,6 +81,27 @@ curl -X POST http://127.0.0.1:8000/spans \
 
 The response returns the created span, including its generated `id` and `created_at` timestamp.
 
+## Evaluation Ingestion
+
+Create an evaluation with `POST /evaluations`.
+
+The request must reference an existing `trace_id` from the `traces` table. Evaluation `score` and `hallucination_score` use a `0-100` scale; values outside that range are rejected by schema validation.
+
+```bash
+curl -X POST http://127.0.0.1:8000/evaluations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trace_id": "existing-trace-id",
+    "evaluator_name": "Answer Quality",
+    "score": 92.5,
+    "result": "pass",
+    "hallucination_score": 4.0,
+    "feedback": "Answer was accurate and grounded."
+  }'
+```
+
+The response returns the created evaluation, including its generated `id` and `created_at` timestamp.
+
 ## Database Setup
 
 From the repository root:
