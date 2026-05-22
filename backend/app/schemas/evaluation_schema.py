@@ -25,3 +25,17 @@ class EvaluationResponse(BaseModel):
     feedback: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class EvaluationReadResponse(BaseModel):
+    id: str
+    trace_id: str
+    evaluator_name: str
+    score: Decimal
+    result: str
+    created_at: datetime
+
+    hallucination_score: Decimal | None = None
+    feedback: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)

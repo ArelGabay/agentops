@@ -3,6 +3,9 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.evaluation_schema import EvaluationReadResponse
+from app.schemas.span_schema import SpanReadResponse
+
 
 class TraceCreate(BaseModel):
     agent_id: str
@@ -32,3 +35,25 @@ class TraceResponse(BaseModel):
     ended_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TraceListResponse(BaseModel):
+    id: str
+    agent_id: str
+    status: str
+    started_at: datetime
+    created_at: datetime
+
+    input_text: str | None = None
+    output_text: str | None = None
+    latency_ms: int | None = None
+    total_tokens: int | None = None
+    total_cost: Decimal | None = None
+    ended_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TraceDetailResponse(TraceListResponse):
+    spans: list[SpanReadResponse]
+    evaluations: list[EvaluationReadResponse]

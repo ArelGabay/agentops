@@ -12,3 +12,21 @@ def create_evaluation(db: Session, evaluation_data: EvaluationCreate) -> Evaluat
     db.refresh(evaluation)
 
     return evaluation
+
+
+def list_evaluations(db: Session, limit: int = 25) -> list[Evaluation]:
+    return (
+        db.query(Evaluation)
+        .order_by(Evaluation.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def list_evaluations_by_trace_id(db: Session, trace_id: str) -> list[Evaluation]:
+    return (
+        db.query(Evaluation)
+        .filter(Evaluation.trace_id == trace_id)
+        .order_by(Evaluation.created_at.desc())
+        .all()
+    )

@@ -1,11 +1,21 @@
 from app.controllers.health_controller import health_check
-from app.controllers.evaluation_controller import create_evaluation_controller
+from app.controllers.evaluation_controller import (
+    create_evaluation_controller,
+    list_evaluations_controller,
+)
 from app.controllers.span_controller import create_span_controller
-from app.controllers.trace_controller import create_trace_controller
+from app.controllers.trace_controller import (
+    create_trace_controller,
+    list_traces_controller,
+    get_trace_detail_controller,
+)
 
 __all__ = [
     "health_check",
     "create_evaluation_controller",
+    "list_evaluations_controller",
     "create_span_controller",
     "create_trace_controller",
+    "get_trace_detail_controller",
+    "list_traces_controller",
 ]
