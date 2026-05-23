@@ -43,3 +43,27 @@ Pages should compose components. Components should stay presentation-focused. AP
 - Sidebar navigation
 - Route placeholders for Dashboard, Traces, Trace Details, Evaluations, and Settings
 - Tailwind dark-mode-first styling foundation
+- Typed API response models for traces, spans, and evaluations
+- Frontend API service functions for backend read endpoints
+
+## API Services
+
+The frontend API layer lives in `src/services/` and uses native `fetch`.
+
+Available service functions:
+
+- `getTraces(limit)`
+- `getTraceDetail(traceId)`
+- `getEvaluations(limit)`
+
+The API base URL defaults to:
+
+```txt
+http://127.0.0.1:8000
+```
+
+It can be overridden with:
+
+```txt
+VITE_API_BASE_URL
+```
