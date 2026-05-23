@@ -377,7 +377,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Lightweight Python SDK
 - [x] Demo AI agent integration
 - [x] Backend read APIs
-- [ ] Frontend API services
+- [x] Frontend API services
 - [ ] React Query data wiring
 - [ ] Dashboard real metrics
 - [ ] Trace details real data
@@ -386,14 +386,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-Backend read APIs are complete. The next engineering milestone is frontend API services:
+Frontend API services are complete. The next engineering milestone is React Query data wiring:
 
-- create TypeScript API types for traces, spans, and evaluations
-- add frontend service functions for read endpoints
-- keep React Query hooks for the following milestone
-- do not replace static page data yet
+- install and configure React Query
+- add data hooks for traces, trace details, and evaluations
+- keep page UI mostly unchanged while wiring hooks
+- add loading and error states where data is first consumed
 
-Frontend API services should stay small and typed: one service module for HTTP calls, shared response types, and no React component changes yet.
+React Query wiring should use the typed service layer and avoid duplicating fetch logic inside components.
 
 ## Project Philosophy
 
