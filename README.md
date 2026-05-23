@@ -26,6 +26,7 @@ Completed:
 - Evaluation ingestion API added with score validation and PostgreSQL persistence
 - Lightweight local Python SDK foundation added with trace/span submission demo
 - Demo AI agent workflow added for trace, span, and evaluation telemetry
+- Frontend typed API services and React Query data hooks added
 - Mockups added as the visual source of truth
 
 Not built yet:
@@ -102,11 +103,11 @@ Planned:
 - Vite
 - Tailwind CSS
 - React Router
+- React Query
 - lucide-react
 
 Planned later:
 
-- React Query
 - Recharts
 
 ### Backend
@@ -378,7 +379,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Demo AI agent integration
 - [x] Backend read APIs
 - [x] Frontend API services
-- [ ] React Query data wiring
+- [x] React Query data wiring
 - [ ] Dashboard real metrics
 - [ ] Trace details real data
 - [ ] Evaluations real data
@@ -386,14 +387,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-Frontend API services are complete. The next engineering milestone is React Query data wiring:
+React Query data wiring is complete. The next engineering milestone is Dashboard real metrics:
 
-- install and configure React Query
-- add data hooks for traces, trace details, and evaluations
-- keep page UI mostly unchanged while wiring hooks
-- add loading and error states where data is first consumed
+- replace dashboard mock values with data derived from backend read APIs
+- keep API fetching inside service functions and React Query hooks
+- add loading and error states only where the dashboard first consumes live data
+- preserve the current dashboard visual design while swapping data sources
 
-React Query wiring should use the typed service layer and avoid duplicating fetch logic inside components.
+Dashboard data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
 
 ## Project Philosophy
 
