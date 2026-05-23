@@ -9,6 +9,7 @@ React + TypeScript frontend for AgentOps, the AI agent observability dashboard.
 - TypeScript
 - Tailwind CSS
 - React Router
+- React Query
 - lucide-react
 
 ## Scripts
@@ -45,6 +46,7 @@ Pages should compose components. Components should stay presentation-focused. AP
 - Tailwind dark-mode-first styling foundation
 - Typed API response models for traces, spans, and evaluations
 - Frontend API service functions for backend read endpoints
+- React Query provider and reusable data hooks for traces, trace details, and evaluations
 
 ## API Services
 
@@ -67,3 +69,15 @@ It can be overridden with:
 ```txt
 VITE_API_BASE_URL
 ```
+
+## Data Hooks
+
+React Query is configured in `src/app/providers.tsx`.
+
+Reusable data hooks live in `src/hooks/`:
+
+- `useTraces(limit)`
+- `useTraceDetail(traceId)`
+- `useEvaluations(limit)`
+
+Pages should use these hooks when they are wired to real backend data. Fetch logic should stay in `src/services/`.
