@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Activity,
   BarChart3,
@@ -12,237 +14,288 @@ import {
   Filter,
   RefreshCw,
   Save,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { PageHeader } from '../components/layout/PageHeader'
-import { MetricCard } from '../components/metrics/MetricCard'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { FilterSelect } from '../components/ui/FilterSelect'
-import { IconButton } from '../components/ui/IconButton'
-import { ProgressBar } from '../components/ui/ProgressBar'
-import { SearchInput } from '../components/ui/SearchInput'
-import { StatusBadge } from '../components/ui/StatusBadge'
+import { PageHeader } from "../components/layout/PageHeader";
+import { MetricCard } from "../components/metrics/MetricCard";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { FilterSelect } from "../components/ui/FilterSelect";
+import { ProgressBar } from "../components/ui/ProgressBar";
+import { SearchInput } from "../components/ui/SearchInput";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { useTraces } from "../hooks";
 
-const metricCards = [
+const metricCardTemplates = [
   {
-    title: 'Total Traces',
-    value: '12,847',
-    trendLabel: '12.5% vs last 7 days',
-    trend: 'up' as const,
-    tone: 'violet' as const,
+    title: "Total Traces",
+    trend: "up" as const,
+    tone: "violet" as const,
     icon: <Activity className="h-5 w-5" />,
     sparkline: [32, 45, 31, 49, 38, 34, 42, 41, 44, 48, 61, 50],
   },
   {
-    title: 'Success Rate',
-    value: '98.6%',
-    trendLabel: '2.1% vs last 7 days',
-    trend: 'up' as const,
-    tone: 'emerald' as const,
+    title: "Success Rate",
+    trend: "up" as const,
+    tone: "emerald" as const,
     icon: <BarChart3 className="h-5 w-5" />,
     sparkline: [42, 40, 38, 41, 39, 44, 48, 57, 51, 55, 62, 58],
   },
   {
-    title: 'Avg. Latency',
-    value: '1.42s',
-    trendLabel: '8.4% vs last 7 days',
-    trend: 'down' as const,
-    tone: 'amber' as const,
+    title: "Avg. Latency",
+    trend: "down" as const,
+    tone: "amber" as const,
     icon: <Clock3 className="h-5 w-5" />,
     sparkline: [56, 52, 44, 50, 46, 39, 35, 42, 33, 31, 29, 28],
   },
   {
-    title: 'Total Tokens',
-    value: '3.2M',
-    trendLabel: '18.7% vs last 7 days',
-    trend: 'up' as const,
-    tone: 'blue' as const,
+    title: "Total Tokens",
+    trend: "up" as const,
+    tone: "blue" as const,
     icon: <Database className="h-5 w-5" />,
     sparkline: [35, 42, 33, 49, 37, 41, 39, 45, 44, 50, 63, 68],
   },
   {
-    title: 'Error Rate',
-    value: '1.38%',
-    trendLabel: '6.3% vs last 7 days',
-    trend: 'down' as const,
-    tone: 'red' as const,
+    title: "Error Rate",
+    trend: "down" as const,
+    tone: "red" as const,
     icon: <FileSearch className="h-5 w-5" />,
     sparkline: [48, 44, 35, 49, 41, 31, 43, 36, 42, 33, 40, 41],
   },
-]
-
-const traceRows = [
-  {
-    id: 'trc_8f3a7b2c4d1e',
-    agent: 'Customer Support Agent',
-    status: 'success' as const,
-    duration: '12.34s',
-    progress: 58,
-    tokens: '2,341',
-    cost: '$0.081',
-    startTime: 'May 19, 2025 10:24 AM',
-    environment: 'Production',
-    user: 'user_1234',
-    icon: <Bot className="h-4 w-4" />,
-    iconTone: 'bg-violet-500/15 text-violet-300',
-  },
-  {
-    id: 'trc_7a2b6c1d9e3f',
-    agent: 'Research Assistant',
-    status: 'success' as const,
-    duration: '8.21s',
-    progress: 45,
-    tokens: '1,872',
-    cost: '$0.054',
-    startTime: 'May 19, 2025 10:21 AM',
-    environment: 'Production',
-    user: 'user_5678',
-    icon: <FileSearch className="h-4 w-4" />,
-    iconTone: 'bg-blue-500/15 text-blue-300',
-  },
-  {
-    id: 'trc_6b1c5d9e2f8a',
-    agent: 'Data Analyst Agent',
-    status: 'error' as const,
-    duration: '22.14s',
-    progress: 76,
-    tokens: '3,214',
-    cost: '$0.113',
-    startTime: 'May 19, 2025 10:18 AM',
-    environment: 'Production',
-    user: 'user_4321',
-    icon: <BarChart3 className="h-4 w-4" />,
-    iconTone: 'bg-red-500/15 text-red-300',
-  },
-  {
-    id: 'trc_9e2f8a1b5c7d',
-    agent: 'Content Writer',
-    status: 'success' as const,
-    duration: '6.45s',
-    progress: 38,
-    tokens: '987',
-    cost: '$0.034',
-    startTime: 'May 19, 2025 10:15 AM',
-    environment: 'Staging',
-    user: 'user_9876',
-    icon: <Activity className="h-4 w-4" />,
-    iconTone: 'bg-cyan-500/15 text-cyan-300',
-  },
-  {
-    id: 'trc_3c7d9e2f1a5b',
-    agent: 'Code Assistant',
-    status: 'timeout' as const,
-    duration: '30.02s',
-    progress: 92,
-    tokens: '2,111',
-    cost: '$0.074',
-    startTime: 'May 19, 2025 10:11 AM',
-    environment: 'Production',
-    user: 'user_2468',
-    icon: <Database className="h-4 w-4" />,
-    iconTone: 'bg-amber-500/15 text-amber-300',
-  },
-  {
-    id: 'trc_1a2b3c4d5e6f',
-    agent: 'Customer Support Agent',
-    status: 'success' as const,
-    duration: '9.18s',
-    progress: 49,
-    tokens: '1,543',
-    cost: '$0.045',
-    startTime: 'May 19, 2025 10:08 AM',
-    environment: 'Production',
-    user: 'user_1357',
-    icon: <Bot className="h-4 w-4" />,
-    iconTone: 'bg-violet-500/15 text-violet-300',
-  },
-  {
-    id: 'trc_5d6e7f8a9b0c',
-    agent: 'Research Assistant',
-    status: 'success' as const,
-    duration: '11.07s',
-    progress: 55,
-    tokens: '2,876',
-    cost: '$0.096',
-    startTime: 'May 19, 2025 10:05 AM',
-    environment: 'Production',
-    user: 'user_8642',
-    icon: <FileSearch className="h-4 w-4" />,
-    iconTone: 'bg-blue-500/15 text-blue-300',
-  },
-  {
-    id: 'trc_2b3c4d5e6f7a',
-    agent: 'Data Analyst Agent',
-    status: 'success' as const,
-    duration: '7.63s',
-    progress: 42,
-    tokens: '1,234',
-    cost: '$0.039',
-    startTime: 'May 19, 2025 10:02 AM',
-    environment: 'Staging',
-    user: 'user_9753',
-    icon: <BarChart3 className="h-4 w-4" />,
-    iconTone: 'bg-red-500/15 text-red-300',
-  },
-  {
-    id: 'trc_8b9c0d1e2f3a',
-    agent: 'Content Writer',
-    status: 'error' as const,
-    duration: '15.45s',
-    progress: 62,
-    tokens: '2,002',
-    cost: '$0.067',
-    startTime: 'May 19, 2025 9:59 AM',
-    environment: 'Production',
-    user: 'user_7531',
-    icon: <Activity className="h-4 w-4" />,
-    iconTone: 'bg-cyan-500/15 text-cyan-300',
-  },
-  {
-    id: 'trc_0c1d2e3f4a5b',
-    agent: 'Code Assistant',
-    status: 'success' as const,
-    duration: '5.32s',
-    progress: 34,
-    tokens: '876',
-    cost: '$0.028',
-    startTime: 'May 19, 2025 9:55 AM',
-    environment: 'Production',
-    user: 'user_1597',
-    icon: <Database className="h-4 w-4" />,
-    iconTone: 'bg-amber-500/15 text-amber-300',
-  },
-]
+];
 
 const traceTableColumns =
-  '44px minmax(150px,1.15fr) minmax(210px,1.55fr) 112px 140px 116px 92px 190px 128px 110px'
+  "44px minmax(150px,1.15fr) minmax(210px,1.55fr) 112px 140px 116px 92px 190px 128px 110px";
 
 function EnvironmentBadge({ value }: { value: string }) {
-  const isProduction = value === 'Production'
+  const isProduction = value === "Production";
 
   return (
     <span
       className={[
-        'inline-flex rounded-md px-2 py-1 text-xs font-medium',
-        isProduction ? 'bg-emerald-500/10 text-emerald-300' : 'bg-violet-500/10 text-violet-300',
-      ].join(' ')}
+        "inline-flex rounded-md px-2 py-1 text-xs font-medium",
+        isProduction
+          ? "bg-emerald-500/10 text-emerald-300"
+          : "bg-violet-500/10 text-violet-300",
+      ].join(" ")}
     >
       {value}
     </span>
-  )
+  );
+}
+
+function formatNumber(value: number) {
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
+function formatPercent(value: number) {
+  return `${value.toFixed(1)}%`;
+}
+
+function formatLatency(milliseconds: number | null) {
+  if (milliseconds === null) {
+    return "N/A";
+  }
+
+  if (milliseconds >= 1000) {
+    return `${(milliseconds / 1000).toFixed(2)}s`;
+  }
+
+  return `${Math.round(milliseconds)}ms`;
 }
 
 export function TracesPage() {
+  const tracesQuery = useTraces(100);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [agentFilter, setAgentFilter] = useState("All");
+  const [latencyFilter, setLatencyFilter] = useState("All");
+  const rowsPerPage = 10;
+
+  const traces = tracesQuery.data ?? [];
+  const isLoading = tracesQuery.isLoading;
+  const isError = tracesQuery.isError;
+
+  const totalTraces = traces.length;
+  const successfulTraces = traces.filter(
+    (trace) => trace.status === "success",
+  ).length;
+  const errorTraces = traces.filter((trace) => trace.status === "error").length;
+  const tracesWithLatency = traces.filter((trace) => trace.latency_ms !== null);
+
+  const successRate =
+    totalTraces > 0 ? (successfulTraces / totalTraces) * 100 : 0;
+
+  const errorRate = totalTraces > 0 ? (errorTraces / totalTraces) * 100 : 0;
+
+  const averageLatency =
+    tracesWithLatency.length > 0
+      ? tracesWithLatency.reduce(
+          (sum, trace) => sum + (trace.latency_ms ?? 0),
+          0,
+        ) / tracesWithLatency.length
+      : 0;
+
+  const totalTokens = traces.reduce(
+    (sum, trace) => sum + (trace.total_tokens ?? 0),
+    0,
+  );
+
+  const tracesMetricCards = metricCardTemplates.map((metric) => {
+    if (metric.title === "Total Traces") {
+      return {
+        ...metric,
+        value: isLoading ? "..." : formatNumber(totalTraces),
+        trendLabel: "From latest 100 traces",
+        trend: "neutral" as const,
+      };
+    }
+
+    if (metric.title === "Success Rate") {
+      return {
+        ...metric,
+        value: isLoading ? "..." : formatPercent(successRate),
+        trendLabel: "Successful traces",
+        trend: "neutral" as const,
+      };
+    }
+
+    if (metric.title === "Avg. Latency") {
+      return {
+        ...metric,
+        value: isLoading ? "..." : formatLatency(averageLatency),
+        trendLabel: "Average response time",
+        trend: "neutral" as const,
+      };
+    }
+
+    if (metric.title === "Total Tokens") {
+      return {
+        ...metric,
+        value: isLoading ? "..." : formatNumber(totalTokens),
+        trendLabel: "Tokens in latest traces",
+        trend: "neutral" as const,
+      };
+    }
+
+    if (metric.title === "Error Rate") {
+      return {
+        ...metric,
+        value: isLoading ? "..." : formatPercent(errorRate),
+        trendLabel: "Failed traces",
+        trend: "neutral" as const,
+      };
+    }
+
+    return {
+      ...metric,
+      value: isLoading ? "..." : "0",
+      trendLabel: "No trace data available",
+      trend: "neutral" as const,
+    };
+  });
+
+  const traceTableRows = traces.map((trace) => ({
+    id: trace.id,
+    agent: trace.agent_id,
+    status: trace.status as
+      | "success"
+      | "error"
+      | "timeout"
+      | "in-progress"
+      | "canceled",
+    latencyMs: trace.latency_ms,
+    duration: formatLatency(trace.latency_ms),
+    progress:
+      trace.latency_ms === null
+        ? 0
+        : Math.min((trace.latency_ms / 10000) * 100, 100),
+    tokens:
+      trace.total_tokens === null ? "N/A" : formatNumber(trace.total_tokens),
+    cost:
+      trace.total_cost === null
+        ? "N/A"
+        : `$${Number(trace.total_cost).toFixed(2)}`,
+    startTime: new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(trace.started_at)),
+    environment: "N/A",
+    user: "N/A",
+    icon: <Bot className="h-4 w-4" />,
+    iconTone: "bg-violet-500/15 text-violet-300",
+  }));
+
+  const agentOptions = [
+    { label: "All", value: "All" },
+    ...Array.from(new Set(traceTableRows.map((trace) => trace.agent))).map(
+      (agent) => ({
+        label: agent,
+        value: agent,
+      }),
+    ),
+  ];
+
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+
+  const filteredTraceRows = traceTableRows.filter((trace) => {
+    const matchesSearch =
+      normalizedSearchQuery.length === 0 ||
+      [trace.id, trace.agent, trace.status]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearchQuery);
+
+    const matchesStatus =
+      statusFilter === "All" || trace.status === statusFilter;
+
+    const matchesAgent = agentFilter === "All" || trace.agent === agentFilter;
+
+    const matchesLatency =
+      latencyFilter === "All" ||
+      (latencyFilter === "<1s" &&
+        trace.latencyMs !== null &&
+        trace.latencyMs < 1000) ||
+      (latencyFilter === "1s-5s" &&
+        trace.latencyMs !== null &&
+        trace.latencyMs >= 1000 &&
+        trace.latencyMs <= 5000) ||
+      (latencyFilter === ">5s" &&
+        trace.latencyMs !== null &&
+        trace.latencyMs > 5000) ||
+      (latencyFilter === "N/A" && trace.latencyMs === null);
+
+    return matchesSearch && matchesStatus && matchesAgent && matchesLatency;
+  });
+
+  const totalPages = Math.max(
+    Math.ceil(filteredTraceRows.length / rowsPerPage),
+    1,
+  );
+  const paginatedTraceRows = filteredTraceRows.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage,
+  );
+  const hasTraces = filteredTraceRows.length > 0;
+  const firstVisibleRow = hasTraces ? (currentPage - 1) * rowsPerPage + 1 : 0;
+  const lastVisibleRow = Math.min(
+    currentPage * rowsPerPage,
+    filteredTraceRows.length,
+  );
+
   return (
     <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader title="Traces" description="Search, filter, and analyze your agent traces." />
+        <PageHeader
+          title="Traces"
+          description="Search, filter, and analyze your agent traces."
+        />
 
         <div className="flex flex-wrap gap-3">
           <Button className="min-w-0" variant="secondary">
             <Calendar className="h-4 w-4" />
-            <span className="truncate">May 12 - May 19, 2025</span>
+            <span className="truncate">Latest 100 traces</span>
           </Button>
           <Button variant="secondary">
             <RefreshCw className="h-4 w-4" />
@@ -256,27 +309,82 @@ export function TracesPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {metricCards.map((metric) => (
+        {tracesMetricCards.map((metric) => (
           <MetricCard key={metric.title} {...metric} />
         ))}
       </div>
 
+      {isError && (
+        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+          Traces data is unavailable. Check that the backend is running.
+        </Card>
+      )}
+
       <Card className="mt-4 p-4">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="min-w-0 flex-1">
-            <SearchInput placeholder="Search by trace ID, agent, user, or tags..." shortcut="⌘K" />
+            <SearchInput
+              onChange={(value) => {
+                setSearchQuery(value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search by trace ID, agent, or status..."
+              shortcut="⌘K"
+              value={searchQuery}
+            />
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <FilterSelect label="Status" value="All" />
-            <FilterSelect label="Agent" value="All" />
-            <FilterSelect label="Environment" value="All" />
-            <FilterSelect label="Latency" value="All" />
-            <Button variant="secondary">
+            <FilterSelect
+              label="Status"
+              onChange={(value) => {
+                setStatusFilter(value);
+                setCurrentPage(1);
+              }}
+              options={[
+                { label: "All", value: "All" },
+                { label: "Success", value: "success" },
+                { label: "Error", value: "error" },
+                { label: "Timeout", value: "timeout" },
+                { label: "Canceled", value: "canceled" },
+                { label: "In Progress", value: "in-progress" },
+              ]}
+              value={statusFilter}
+            />
+            <FilterSelect
+              label="Agent"
+              onChange={(value) => {
+                setAgentFilter(value);
+                setCurrentPage(1);
+              }}
+              options={agentOptions}
+              value={agentFilter}
+            />
+            <FilterSelect
+              label="Environment"
+              options={[{ label: "N/A", value: "N/A" }]}
+              value="N/A"
+            />
+            <FilterSelect
+              label="Latency"
+              onChange={(value) => {
+                setLatencyFilter(value);
+                setCurrentPage(1);
+              }}
+              options={[
+                { label: "All", value: "All" },
+                { label: "<1s", value: "<1s" },
+                { label: "1s-5s", value: "1s-5s" },
+                { label: ">5s", value: ">5s" },
+                { label: "N/A", value: "N/A" },
+              ]}
+              value={latencyFilter}
+            />
+            <Button className="opacity-60" variant="secondary">
               <Filter className="h-4 w-4" />
               More filters
             </Button>
-            <Button variant="secondary">
+            <Button className="opacity-60" variant="secondary">
               <Save className="h-4 w-4" />
               Save view
             </Button>
@@ -303,18 +411,26 @@ export function TracesPage() {
               <span>User</span>
             </div>
 
-            {traceRows.map((trace) => (
+            {paginatedTraceRows.map((trace) => (
               <div
                 className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
                 key={trace.id}
                 style={{ gridTemplateColumns: traceTableColumns }}
               >
                 <span className="h-4 w-4 rounded border border-slate-600" />
-                <span className="truncate font-medium text-violet-300 underline decoration-violet-500/40 underline-offset-4">
+                <Link
+                  className="truncate font-medium text-violet-300 underline decoration-violet-500/40 underline-offset-4"
+                  to={`/traces/${trace.id}`}
+                >
                   {trace.id}
-                </span>
+                </Link>
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className={['grid h-7 w-7 shrink-0 place-items-center rounded-lg', trace.iconTone].join(' ')}>
+                  <span
+                    className={[
+                      "grid h-7 w-7 shrink-0 place-items-center rounded-lg",
+                      trace.iconTone,
+                    ].join(" ")}
+                  >
                     {trace.icon}
                   </span>
                   <span className="truncate text-slate-100">{trace.agent}</span>
@@ -325,39 +441,83 @@ export function TracesPage() {
                 <span className="flex items-center gap-3 whitespace-nowrap text-slate-200">
                   {trace.duration}
                   <ProgressBar
-                    tone={trace.status === 'error' ? 'red' : trace.status === 'timeout' ? 'amber' : 'violet'}
+                    tone={
+                      trace.status === "error"
+                        ? "red"
+                        : trace.status === "timeout"
+                          ? "amber"
+                          : "violet"
+                    }
                     value={trace.progress}
                   />
                 </span>
-                <span className="whitespace-nowrap text-slate-300">{trace.tokens}</span>
-                <span className="whitespace-nowrap text-slate-300">{trace.cost}</span>
-                <span className="whitespace-nowrap text-slate-300">{trace.startTime}</span>
+                <span className="whitespace-nowrap text-slate-300">
+                  {trace.tokens}
+                </span>
+                <span className="whitespace-nowrap text-slate-300">
+                  {trace.cost}
+                </span>
+                <span className="whitespace-nowrap text-slate-300">
+                  {trace.startTime}
+                </span>
                 <span className="whitespace-nowrap">
                   <EnvironmentBadge value={trace.environment} />
                 </span>
-                <span className="whitespace-nowrap text-slate-300">{trace.user}</span>
+                <span className="whitespace-nowrap text-slate-300">
+                  {trace.user}
+                </span>
               </div>
             ))}
+            {isLoading && (
+              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
+                Loading traces...
+              </div>
+            )}
+
+            {!isLoading && !isError && traces.length === 0 && (
+              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
+                No traces found yet.
+              </div>
+            )}
+
+            {!isLoading && !isError && traces.length > 0 && !hasTraces && (
+              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
+                No traces match the current filters.
+              </div>
+            )}
           </div>
         </div>
 
         <div className="flex flex-col gap-4 border-t border-app-border px-4 py-4 text-sm text-slate-400 lg:flex-row lg:items-center lg:justify-between">
-          <span>Showing 1 to 10 of 12,847 traces</span>
+          <span>
+            Showing {firstVisibleRow} to {lastVisibleRow} of{" "}
+            {filteredTraceRows.length} traces
+          </span>
 
           <div className="flex flex-wrap items-center gap-3">
-            <IconButton label="Previous page">
+            <button
+              aria-label="Previous page"
+              className="grid h-8 w-8 place-items-center rounded-lg border border-app-border text-slate-400 transition hover:border-slate-600 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+              type="button"
+            >
               <ChevronLeft className="h-4 w-4" />
-            </IconButton>
+            </button>
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-violet-600 text-sm font-medium text-white">
-              1
+              {currentPage}
             </span>
-            <span className="grid h-8 w-8 place-items-center rounded-lg text-slate-300">2</span>
-            <span className="grid h-8 w-8 place-items-center rounded-lg text-slate-300">3</span>
-            <span className="px-2 text-slate-500">...</span>
-            <span className="grid h-8 w-12 place-items-center rounded-lg text-slate-300">1285</span>
-            <IconButton label="Next page">
+            <button
+              aria-label="Next page"
+              className="grid h-8 w-8 place-items-center rounded-lg border border-app-border text-slate-400 transition hover:border-slate-600 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((page) => Math.min(page + 1, totalPages))
+              }
+              type="button"
+            >
               <ChevronRight className="h-4 w-4" />
-            </IconButton>
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -367,5 +527,5 @@ export function TracesPage() {
         </div>
       </Card>
     </>
-  )
+  );
 }
