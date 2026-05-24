@@ -1,155 +1,138 @@
+import { useParams } from "react-router-dom";
 import {
   Bot,
   ChevronLeft,
   ChevronRight,
-  CircleUserRound,
-  Database,
   MessageSquare,
   Search,
   Sparkles,
-  TableProperties,
-  Wrench,
   X,
   ZoomIn,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { IconButton } from '../components/ui/IconButton'
-import { KeyValueList } from '../components/ui/KeyValueList'
-import { StatusBadge } from '../components/ui/StatusBadge'
-import { Tabs } from '../components/ui/Tabs'
-import { TagList } from '../components/ui/TagList'
-import { TimelinePreview } from '../components/ui/TimelinePreview'
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { IconButton } from "../components/ui/IconButton";
+import { KeyValueList } from "../components/ui/KeyValueList";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { Tabs } from "../components/ui/Tabs";
+import { TimelinePreview } from "../components/ui/TimelinePreview";
+import { useTraceDetail } from "../hooks";
+import { ApiError } from "../services/apiClient";
 
-const timelineItems = [
-  {
-    label: 'User Request',
-    duration: '320ms',
-    left: 3,
-    width: 6,
-    tone: 'violet' as const,
-    icon: <CircleUserRound className="h-4 w-4" />,
-  },
-  {
-    label: 'LLM Call',
-    sublabel: 'gpt-4o',
-    duration: '3.21s',
-    left: 8,
-    width: 36,
-    tone: 'blue' as const,
-    icon: <Sparkles className="h-4 w-4" />,
-  },
-  {
-    label: 'Retriever',
-    sublabel: 'vector_search',
-    duration: '1.42s',
-    left: 32,
-    width: 18,
-    tone: 'emerald' as const,
-    icon: <Database className="h-4 w-4" />,
-  },
-  {
-    label: 'Tool Call',
-    sublabel: 'get_order_status',
-    duration: '2.11s',
-    left: 52,
-    width: 22,
-    tone: 'amber' as const,
-    icon: <Wrench className="h-4 w-4" />,
-  },
-  {
-    label: 'Database Query',
-    sublabel: 'orders_db',
-    duration: '890ms',
-    left: 72,
-    width: 12,
-    tone: 'violet' as const,
-    icon: <TableProperties className="h-4 w-4" />,
-  },
-  {
-    label: 'LLM Call',
-    sublabel: 'gpt-4o (final)',
-    duration: '3.76s',
-    left: 78,
-    width: 26,
-    tone: 'blue' as const,
-    icon: <Sparkles className="h-4 w-4" />,
-  },
-  {
-    label: 'Response',
-    duration: '610ms',
-    left: 94,
-    width: 6,
-    tone: 'cyan' as const,
-    icon: <MessageSquare className="h-4 w-4" />,
-  },
-]
+const spanTableColumns =
+  "56px minmax(260px,1.5fr) 88px 116px 180px 104px 96px 96px";
 
-const spanRows = [
-  ['1', 'User Request', '-', 'success', '10:24:12.123 AM', '320ms', '-', '-'],
-  ['2', 'LLM Call (gpt-4o)', 'LLM', 'success', '10:24:12.443 AM', '3.21s', '812', '$0.028'],
-  ['3', 'Retriever (vector_search)', 'Tool', 'success', '10:24:13.001 AM', '1.42s', '-', '$0.000'],
-  ['4', 'Tool Call (get_order_status)', 'Tool', 'success', '10:24:14.421 AM', '2.11s', '-', '$0.002'],
-  ['5', 'Database Query (orders_db)', 'DB', 'success', '10:24:14.632 AM', '890ms', '-', '$0.000'],
-  ['6', 'LLM Call (gpt-4o final)', 'LLM', 'success', '10:24:15.522 AM', '3.76s', '1,529', '$0.049'],
-  ['7', 'Response', '-', 'success', '10:24:19.282 AM', '610ms', '-', '-'],
-]
+function formatDateTime(value: string | null) {
+  if (value === null) {
+    return "N/A";
+  }
 
-const spanTableColumns = '56px minmax(260px,1.5fr) 88px 116px 180px 104px 96px 96px'
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+  }).format(new Date(value));
+}
 
-const summaryItems = [
-  { label: 'Span Type', value: 'LLM' },
-  { label: 'Model', value: 'gpt-4o' },
-  { label: 'Start Time', value: 'May 19, 2025 10:24:12.443 AM' },
-  { label: 'Duration', value: '3.21s' },
-  { label: 'Status', value: <StatusBadge status="success" /> },
-  { label: 'Tokens', value: '812 prompt / 160 completion' },
-  { label: 'Total Tokens', value: '972' },
-  { label: 'Cost', value: '$0.028' },
-]
+function formatLatency(milliseconds: number | null) {
+  if (milliseconds === null) {
+    return "N/A";
+  }
 
-const parameterItems = [
-  { label: 'Temperature', value: '0.2' },
-  { label: 'Max Tokens', value: '1024' },
-  { label: 'Top P', value: '1' },
-  { label: 'Frequency Penalty', value: '0' },
-  { label: 'Presence Penalty', value: '0' },
-]
+  if (milliseconds >= 1000) {
+    return `${(milliseconds / 1000).toFixed(2)}s`;
+  }
 
-function LatencyBreakdown() {
-  return (
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-center xl:flex-col xl:items-start 2xl:flex-row 2xl:items-center">
-      <div className="grid h-32 w-32 shrink-0 place-items-center rounded-full bg-[conic-gradient(#8b5cf6_0_4%,#3b82f6_4%_10%,#22c55e_10%_87%,#f59e0b_87%_100%)]">
-        <div className="grid h-20 w-20 place-items-center rounded-full bg-app-surface text-center">
-          <div>
-            <p className="text-xl font-semibold text-white">3.21s</p>
-            <p className="text-xs text-slate-400">Total</p>
-          </div>
-        </div>
-      </div>
+  return `${Math.round(milliseconds)}ms`;
+}
 
-      <div className="flex-1 space-y-3 text-sm">
-        {[
-          ['Queue Time', '120ms (3.7%)', 'bg-violet-400'],
-          ['Prompt Processing', '180ms (5.6%)', 'bg-blue-400'],
-          ['Model Inference', '2.47s (76.9%)', 'bg-emerald-400'],
-          ['Response Transfer', '440ms (13.7%)', 'bg-amber-400'],
-        ].map(([label, value, color]) => (
-          <div className="flex items-center justify-between gap-4" key={label}>
-            <span className="flex items-center gap-2 text-slate-300">
-              <span className={['h-2 w-2 rounded-full', color].join(' ')} />
-              {label}
-            </span>
-            <span className="text-slate-400">{value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+function formatNumber(value: number | null) {
+  if (value === null) {
+    return "N/A";
+  }
+
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
+function formatCurrency(value: string | null) {
+  if (value === null) {
+    return "N/A";
+  }
+
+  return `$${Number(value).toFixed(2)}`;
 }
 
 export function TraceDetailsPage() {
+  const { traceId = "" } = useParams();
+  const traceQuery = useTraceDetail(traceId);
+
+  const trace = traceQuery.data;
+  const isLoading = traceQuery.isLoading;
+  const error = traceQuery.error;
+  const isNotFound = error instanceof ApiError && error.status === 404;
+  const isError = traceQuery.isError;
+
+  if (isLoading) {
+    return (
+      <Card className="p-5 text-sm text-slate-300">
+        Loading trace details...
+      </Card>
+    );
+  }
+
+  if (isError || !trace) {
+    return (
+      <Card className="p-5 text-sm text-red-300">
+        {isNotFound ? "Trace not found." : "Trace details unavailable."}
+      </Card>
+    );
+  }
+
+  const spanRows = trace.spans.map((span, index) => [
+    String(index + 1),
+    span.name,
+    span.span_type,
+    span.status,
+    formatDateTime(span.started_at),
+    formatLatency(span.latency_ms),
+    "N/A",
+    "N/A",
+  ]);
+
+  const timelineItems = trace.spans.map((span, index) => ({
+    label: span.name,
+    sublabel: span.span_type,
+    duration: formatLatency(span.latency_ms),
+    left: Math.min(index * 12, 88),
+    width: 10,
+    tone: "blue" as const,
+    icon: <Sparkles className="h-4 w-4" />,
+  }));
+
+  const selectedSpan = trace.spans[0];
+
+  const summaryItems = selectedSpan
+    ? [
+        { label: "Span Type", value: selectedSpan.span_type },
+        { label: "Name", value: selectedSpan.name },
+        { label: "Start Time", value: formatDateTime(selectedSpan.started_at) },
+        { label: "Duration", value: formatLatency(selectedSpan.latency_ms) },
+        {
+          label: "Status",
+          value: (
+            <StatusBadge
+              status={
+                selectedSpan.status as
+                  | "success"
+                  | "error"
+                  | "timeout"
+                  | "canceled"
+              }
+            />
+          ),
+        },
+      ]
+    : [];
   return (
     <>
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -161,25 +144,44 @@ export function TraceDetailsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-white">trace_8f3a7b2c4d1e</h1>
-            <StatusBadge status="success" />
+            <h1 className="text-2xl font-semibold tracking-tight text-white">
+              {trace.id}
+            </h1>
+            <StatusBadge
+              status={
+                trace.status as "success" | "error" | "timeout" | "canceled"
+              }
+            />
           </div>
 
           <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
             <span className="text-slate-400">
-              Agent <span className="ml-2 text-slate-100">Customer Support Agent</span>
+              Agent{" "}
+              <span className="ml-2 text-slate-100">{trace.agent_id}</span>
             </span>
             <span className="text-slate-400">
-              Start Time <span className="ml-2 text-slate-100">May 19, 2025 10:24:12 AM</span>
+              Start Time{" "}
+              <span className="ml-2 text-slate-100">
+                {formatDateTime(trace.started_at)}
+              </span>
             </span>
             <span className="text-slate-400">
-              Duration <span className="ml-2 text-slate-100">12.34s</span>
+              Duration{" "}
+              <span className="ml-2 text-slate-100">
+                {formatLatency(trace.latency_ms)}
+              </span>
             </span>
             <span className="text-slate-400">
-              Total Tokens <span className="ml-2 text-slate-100">2,341</span>
+              Total Tokens{" "}
+              <span className="ml-2 text-slate-100">
+                {formatNumber(trace.total_tokens)}
+              </span>
             </span>
             <span className="text-slate-400">
-              Total Cost <span className="ml-2 text-slate-100">$0.081</span>
+              Total Cost{" "}
+              <span className="ml-2 text-slate-100">
+                {formatCurrency(trace.total_cost)}
+              </span>
             </span>
           </div>
         </div>
@@ -212,17 +214,19 @@ export function TraceDetailsPage() {
           <Card className="overflow-hidden">
             <Tabs
               items={[
-                { label: 'Timeline', active: true },
-                { label: 'Spans' },
-                { label: 'Logs' },
-                { label: 'Evaluations' },
-                { label: 'Metadata' },
+                { label: "Timeline", active: true },
+                { label: "Spans" },
+                { label: "Logs" },
+                { label: "Evaluations" },
+                { label: "Metadata" },
               ]}
             />
 
             <div className="p-5">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-sm font-semibold text-white">Execution Timeline</h2>
+                <h2 className="text-sm font-semibold text-white">
+                  Execution Timeline
+                </h2>
                 <div className="flex items-center gap-2">
                   <Button variant="secondary">Fit to view</Button>
                   <IconButton label="Zoom in">
@@ -234,13 +238,21 @@ export function TraceDetailsPage() {
                 </div>
               </div>
 
-              <TimelinePreview items={timelineItems} />
+              {timelineItems.length > 0 ? (
+                <TimelinePreview items={timelineItems} />
+              ) : (
+                <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+                  No Spans found for this trace.
+                </div>
+              )}
             </div>
           </Card>
 
           <Card className="p-5">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-white">Spans (7)</h2>
+              <h2 className="text-sm font-semibold text-white">
+                Spans ({trace.spans.length})
+              </h2>
               <Button variant="secondary">View all spans</Button>
             </div>
 
@@ -260,26 +272,124 @@ export function TraceDetailsPage() {
                   <span>Cost</span>
                 </div>
 
-                {spanRows.map(([index, name, type, status, startTime, duration, tokens, cost]) => (
+                {spanRows.map(
+                  ([
+                    index,
+                    name,
+                    type,
+                    status,
+                    startTime,
+                    duration,
+                    tokens,
+                    cost,
+                  ]) => (
+                    <div
+                      className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
+                      key={index}
+                      style={{ gridTemplateColumns: spanTableColumns }}
+                    >
+                      <span className="text-slate-500">{index}</span>
+                      <span className="truncate font-medium text-slate-100">
+                        {name}
+                      </span>
+                      <span className="whitespace-nowrap text-slate-300">
+                        {type}
+                      </span>
+                      <span>
+                        <StatusBadge
+                          status={
+                            status as
+                              | "success"
+                              | "error"
+                              | "timeout"
+                              | "canceled"
+                          }
+                        />
+                      </span>
+                      <span className="whitespace-nowrap text-slate-300">
+                        {startTime}
+                      </span>
+                      <span className="whitespace-nowrap text-slate-300">
+                        {duration}
+                      </span>
+                      <span className="whitespace-nowrap text-slate-300">
+                        {tokens}
+                      </span>
+                      <span className="whitespace-nowrap text-slate-300">
+                        {cost}
+                      </span>
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-white">
+                Evaluations ({trace.evaluations.length})
+              </h2>
+            </div>
+
+            {trace.evaluations.length > 0 ? (
+              <div className="space-y-3">
+                {trace.evaluations.map((evaluation) => (
                   <div
-                    className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
-                    key={index}
-                    style={{ gridTemplateColumns: spanTableColumns }}
+                    className="rounded-lg border border-app-border bg-white/[0.03] p-4"
+                    key={evaluation.id}
                   >
-                    <span className="text-slate-500">{index}</span>
-                    <span className="truncate font-medium text-slate-100">{name}</span>
-                    <span className="whitespace-nowrap text-slate-300">{type}</span>
-                    <span>
-                      <StatusBadge status={status as 'success'} />
-                    </span>
-                    <span className="whitespace-nowrap text-slate-300">{startTime}</span>
-                    <span className="whitespace-nowrap text-slate-300">{duration}</span>
-                    <span className="whitespace-nowrap text-slate-300">{tokens}</span>
-                    <span className="whitespace-nowrap text-slate-300">{cost}</span>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-medium text-slate-100">
+                          {evaluation.evaluator_name}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {formatDateTime(evaluation.created_at)}
+                        </p>
+                      </div>
+                      <StatusBadge
+                        label={evaluation.result}
+                        status={
+                          evaluation.result === "pass" ? "success" : "error"
+                        }
+                      />
+                    </div>
+
+                    <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                      <span className="text-slate-400">
+                        Score{" "}
+                        <span className="ml-2 text-slate-100">
+                          {evaluation.score}/100
+                        </span>
+                      </span>
+                      <span className="text-slate-400">
+                        Hallucination{" "}
+                        <span className="ml-2 text-slate-100">
+                          {evaluation.hallucination_score ?? "N/A"}
+                        </span>
+                      </span>
+                      <span className="text-slate-400">
+                        Result{" "}
+                        <span className="ml-2 text-slate-100">
+                          {evaluation.result}
+                        </span>
+                      </span>
+                    </div>
+
+                    {evaluation.feedback && (
+                      <p className="mt-3 text-sm text-slate-300">
+                        {evaluation.feedback}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
-            </div>
+            ) : (
+              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+                No evaluations found for this trace.
+              </div>
+            )}
           </Card>
         </div>
 
@@ -289,11 +399,23 @@ export function TraceDetailsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Sparkles className="h-5 w-5 shrink-0 text-slate-300" />
-                  <h2 className="truncate text-sm font-semibold text-white">LLM Call (gpt-4o)</h2>
+                  <h2 className="truncate text-sm font-semibold text-white">
+                    {selectedSpan ? selectedSpan.name : "No span selected"}
+                  </h2>
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
-                  <StatusBadge status="success" />
+                  {selectedSpan && (
+                    <StatusBadge
+                      status={
+                        selectedSpan.status as
+                          | "success"
+                          | "error"
+                          | "timeout"
+                          | "canceled"
+                      }
+                    />
+                  )}
                   <IconButton label="Close span details">
                     <X className="h-4 w-4" />
                   </IconButton>
@@ -312,25 +434,41 @@ export function TraceDetailsPage() {
 
           <Card className="p-5">
             <h2 className="mb-4 text-sm font-semibold text-white">Summary</h2>
-            <KeyValueList items={summaryItems} />
+            {summaryItems.length > 0 ? (
+              <KeyValueList items={summaryItems} />
+            ) : (
+              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+                No span summary available.
+              </div>
+            )}
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Latency Breakdown</h2>
-            <LatencyBreakdown />
+            <h2 className="mb-4 text-sm font-semibold text-white">
+              Latency Breakdown
+            </h2>
+            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              Latency breakdown is not available yet.
+            </div>
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Model Parameters</h2>
-            <KeyValueList items={parameterItems} />
+            <h2 className="mb-4 text-sm font-semibold text-white">
+              Model Parameters
+            </h2>
+            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              Model parameters are not available yet.
+            </div>
           </Card>
 
           <Card className="p-5">
             <h2 className="mb-4 text-sm font-semibold text-white">Tags</h2>
-            <TagList tags={['model:gpt-4o', 'provider:openai', 'region:us-east-1']} />
+            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              Tags are not available yet.
+            </div>
           </Card>
         </aside>
       </div>
     </>
-  )
+  );
 }
