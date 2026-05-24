@@ -380,21 +380,21 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Backend read APIs
 - [x] Frontend API services
 - [x] React Query data wiring
-- [ ] Dashboard real metrics
+- [x] Dashboard real metrics
 - [ ] Trace details real data
 - [ ] Evaluations real data
 - [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
 
-React Query data wiring is complete. The next engineering milestone is Dashboard real metrics:
+Dashboard real metrics are complete. The next engineering milestone is Trace details real data:
 
-- replace dashboard mock values with data derived from backend read APIs
-- keep API fetching inside service functions and React Query hooks
-- add loading and error states only where the dashboard first consumes live data
-- preserve the current dashboard visual design while swapping data sources
+- load trace details from `GET /traces/{trace_id}`
+- replace static trace details page data with React Query data
+- keep the existing trace details visual design and layout
+- add loading, error, and not-found states for the details route
 
-Dashboard data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
+Trace details data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
 
 ## Project Philosophy
 

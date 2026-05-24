@@ -47,6 +47,7 @@ Pages should compose components. Components should stay presentation-focused. AP
 - Typed API response models for traces, spans, and evaluations
 - Frontend API service functions for backend read endpoints
 - React Query provider and reusable data hooks for traces, trace details, and evaluations
+- Dashboard metrics and recent traces wired to backend API data through React Query
 
 ## API Services
 
