@@ -383,6 +383,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Dashboard real metrics
 - [ ] Trace details real data
 - [ ] Evaluations real data
+- [ ] Dashboard aggregation and time-series metrics
 - [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
@@ -395,6 +396,11 @@ Dashboard real metrics are complete. The next engineering milestone is Trace det
 - add loading, error, and not-found states for the details route
 
 Trace details data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
+
+After trace details, the planned frontend data milestones are:
+
+- Evaluations real data
+- Dashboard aggregation and time-series metrics
 
 ## Project Philosophy
 

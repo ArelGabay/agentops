@@ -1,15 +1,12 @@
 import {
   Activity,
   Bot,
-  BrainCircuit,
   Calendar,
   CheckCircle2,
   Clock3,
   Database,
   DollarSign,
   Download,
-  FileSearch,
-  PenTool,
 } from "lucide-react";
 
 import { useEvaluations, useTraces } from "../hooks";
@@ -22,11 +19,9 @@ import { StatList } from "../components/ui/StatList";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { TablePreview } from "../components/ui/TablePreview";
 
-const metricCards = [
+const metricCardTemplates = [
   {
     title: "Total Traces",
-    value: "12,847",
-    trendLabel: "12.5% vs last 7 days",
     trend: "up" as const,
     tone: "violet" as const,
     icon: <Activity className="h-5 w-5" />,
@@ -34,8 +29,6 @@ const metricCards = [
   },
   {
     title: "Success Rate",
-    value: "98.6%",
-    trendLabel: "2.1% vs last 7 days",
     trend: "up" as const,
     tone: "emerald" as const,
     icon: <CheckCircle2 className="h-5 w-5" />,
@@ -43,8 +36,6 @@ const metricCards = [
   },
   {
     title: "Avg. Latency",
-    value: "1.42s",
-    trendLabel: "8.4% vs last 7 days",
     trend: "down" as const,
     tone: "amber" as const,
     icon: <Clock3 className="h-5 w-5" />,
@@ -52,8 +43,6 @@ const metricCards = [
   },
   {
     title: "Total Tokens",
-    value: "3.2M",
-    trendLabel: "18.7% vs last 7 days",
     trend: "up" as const,
     tone: "blue" as const,
     icon: <Database className="h-5 w-5" />,
@@ -61,8 +50,6 @@ const metricCards = [
   },
   {
     title: "Total Cost",
-    value: "$168.42",
-    trendLabel: "15.3% vs last 7 days",
     trend: "up" as const,
     tone: "amber" as const,
     icon: <DollarSign className="h-5 w-5" />,
@@ -70,99 +57,10 @@ const metricCards = [
   },
 ];
 
-const topAgents = [
-  {
-    label: "Customer Support Agent",
-    value: "4,321",
-    meta: "15.3%",
-    trend: "up" as const,
-    icon: <Bot className="h-4 w-4 text-violet-300" />,
-  },
-  {
-    label: "Research Assistant",
-    value: "3,214",
-    meta: "8.7%",
-    trend: "up" as const,
-    icon: <FileSearch className="h-4 w-4 text-blue-300" />,
-  },
-  {
-    label: "Data Analyst Agent",
-    value: "2,107",
-    meta: "12.1%",
-    trend: "up" as const,
-    icon: <Activity className="h-4 w-4 text-red-300" />,
-  },
-  {
-    label: "Content Writer",
-    value: "1,876",
-    meta: "2.1%",
-    trend: "down" as const,
-    icon: <PenTool className="h-4 w-4 text-cyan-300" />,
-  },
-  {
-    label: "Code Assistant",
-    value: "1,329",
-    meta: "6.3%",
-    trend: "up" as const,
-    icon: <BrainCircuit className="h-4 w-4 text-amber-300" />,
-  },
-];
-
-function StaticLineChart({
-  tone = "violet",
-}: {
-  tone?: "violet" | "blue" | "red";
-}) {
-  const strokeStyles = {
-    violet: "stroke-violet-400",
-    blue: "stroke-blue-400",
-    red: "stroke-red-400",
-  };
-
-  const fillStyles = {
-    violet: "fill-violet-500/15",
-    blue: "fill-blue-500/15",
-    red: "fill-red-500/15",
-  };
-
+function ChartEmptyState() {
   return (
-    <div className="h-56">
-      <svg
-        className="h-full w-full"
-        viewBox="0 0 640 220"
-        role="img"
-        aria-label="Static chart preview"
-      >
-        <path
-          className="stroke-slate-700/60"
-          d="M20 40H620 M20 85H620 M20 130H620 M20 175H620"
-          fill="none"
-          strokeDasharray="4 6"
-          strokeWidth="1"
-        />
-        <path
-          className={fillStyles[tone]}
-          d="M20 136 L108 98 L196 126 L284 132 L372 98 L460 156 L548 126 L620 92 L620 220 L20 220 Z"
-        />
-        <path
-          className={strokeStyles[tone]}
-          d="M20 136 L108 98 L196 126 L284 132 L372 98 L460 156 L548 126 L620 92"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="3"
-        />
-        {[20, 108, 196, 284, 372, 460, 548, 620].map((x, index) => (
-          <circle
-            className={["fill-white", strokeStyles[tone]].join(" ")}
-            cx={x}
-            cy={[136, 98, 126, 132, 98, 156, 126, 92][index]}
-            key={x}
-            r="4"
-            strokeWidth="2"
-          />
-        ))}
-      </svg>
+    <div className="grid h-56 place-items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-center text-sm text-slate-400">
+      Time-series chart data is not available yet.
     </div>
   );
 }
@@ -265,7 +163,7 @@ export function DashboardPage() {
     0,
   );
 
-  const dashboardMetricCards = metricCards.map((metric) => {
+  const dashboardMetricCards = metricCardTemplates.map((metric) => {
     if (metric.title === "Total Traces") {
       return {
         ...metric,
@@ -306,7 +204,11 @@ export function DashboardPage() {
       };
     }
 
-    return metric;
+    return {
+      ...metric,
+      value: isLoading ? "..." : "0",
+      trendLabel: "No data available",
+    };
   });
 
   const dashboardTraceRows = traces
@@ -417,14 +319,14 @@ export function DashboardPage() {
           title="Traces Over Time"
           action={<Button variant="secondary">Traces</Button>}
         >
-          <StaticLineChart tone="violet" />
+          <ChartEmptyState />
         </ChartCard>
 
         <ChartCard
           title="Latency (p95) Over Time"
           action={<Button variant="secondary">p95 Latency</Button>}
         >
-          <StaticLineChart tone="blue" />
+          <ChartEmptyState />
         </ChartCard>
       </div>
 
@@ -447,18 +349,20 @@ export function DashboardPage() {
             <h2 className="text-sm font-semibold text-white">Top Agents</h2>
             <Button variant="ghost">View all</Button>
           </div>
-          <StatList
-            items={
-              dashboardTopAgents.length > 0 ? dashboardTopAgents : topAgents
-            }
-          />
+          {dashboardTopAgents.length > 0 ? (
+            <StatList items={dashboardTopAgents} />
+          ) : (
+            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              No agent activity yet.
+            </div>
+          )}
         </Card>
 
         <ChartCard
           title="Error Rate Over Time"
           action={<Button variant="secondary">Error Rate</Button>}
         >
-          <StaticLineChart tone="red" />
+          <ChartEmptyState />
         </ChartCard>
       </div>
 
