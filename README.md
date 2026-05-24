@@ -365,7 +365,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Repository initialized
 - [x] Mockups added
 - [x] Frontend foundation
 - [x] Static frontend page UIs
@@ -382,23 +381,25 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] React Query data wiring
 - [x] Dashboard real metrics
 - [x] Trace details real data
+- [ ] Traces list real data
 - [ ] Evaluations real data
 - [ ] Dashboard aggregation and time-series metrics
 - [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
 
-Trace details real data is complete. The next engineering milestone is Evaluations real data:
+Trace details real data is complete. The next engineering milestone is Traces list real data:
 
-- load evaluations from `GET /evaluations`
-- replace static evaluations page metrics and rows with React Query data
-- keep the existing evaluations visual design and layout
-- add loading, error, and empty states for the evaluations route
+- load traces from `GET /traces`
+- replace static traces list metrics and rows with React Query data
+- keep the existing traces page visual design and layout
+- add loading, error, and empty states for the traces route
 
-Evaluations data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
+Traces list data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
 
-After evaluations, the planned dashboard milestone is:
+After traces list, the planned frontend data milestones are:
 
+- Evaluations real data
 - Dashboard aggregation and time-series metrics
 
 ## Project Philosophy
