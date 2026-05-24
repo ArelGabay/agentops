@@ -8,5 +8,6 @@ export function useTraceDetail(traceId: string) {
     queryKey: queryKeys.traceDetail(traceId),
     queryFn: () => getTraceDetail(traceId),
     enabled: traceId.length > 0,
+    retry: false,
   });
 }
