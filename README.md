@@ -382,24 +382,24 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Dashboard real metrics
 - [x] Trace details real data
 - [x] Traces list real data
-- [ ] Evaluations real data
+- [x] Evaluations real data
 - [ ] Dashboard aggregation and time-series metrics
 - [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
 
-Traces list real data is complete. The next engineering milestone is Evaluations real data:
+Evaluations real data is complete. The next engineering milestone is Dashboard aggregation and time-series metrics:
 
-- load evaluations from `GET /evaluations`
-- replace static evaluations page metrics and rows with React Query data
-- keep the existing evaluations visual design and layout
-- add loading, error, and empty states for the evaluations route
+- add backend-supported dashboard aggregation for summary metrics
+- add time-series data for dashboard charts
+- replace remaining dashboard chart empty states with real API-backed data
+- keep dashboard calculations and chart data honest when no data exists
 
-Evaluations data wiring should use the typed service and hook layers instead of adding fetch logic inside page components.
+Dashboard aggregation should use the backend MVC layers for query logic and keep frontend API access in the typed service and hook layers.
 
-After evaluations, the planned frontend data milestone is:
+After dashboard aggregation, the planned milestone is:
 
-- Dashboard aggregation and time-series metrics
+- SDK packaging and LangChain integration
 
 ## Project Philosophy
 
