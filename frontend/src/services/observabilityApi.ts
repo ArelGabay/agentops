@@ -1,4 +1,9 @@
-import type { EvaluationRead, TraceDetail, TraceListItem } from "../types";
+import type {
+  DashboardSummary,
+  EvaluationRead,
+  TraceDetail,
+  TraceListItem,
+} from "../types";
 
 import { apiGet } from "./apiClient";
 
@@ -12,4 +17,8 @@ export function getTraceDetail(traceId: string) {
 
 export function getEvaluations(limit = 25) {
   return apiGet<EvaluationRead[]>(`/evaluations?limit=${limit}`);
+}
+
+export function getDashboardSummary() {
+  return apiGet<DashboardSummary>("/dashboard/summary");
 }

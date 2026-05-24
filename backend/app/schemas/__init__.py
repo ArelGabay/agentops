@@ -11,6 +11,13 @@ from app.schemas.trace_schema import (
     TraceListResponse,
     TraceResponse,
 )
+from app.schemas.dashboard_schema import (
+    DashboardMetricsResponse,
+    DashboardStatusCountsResponse,
+    DashboardSummaryResponse,
+    DashboardTimeSeriesPointResponse,
+    DashboardTopAgentResponse,
+)
 
 __all__ = [
     "EvaluationCreate",
@@ -24,4 +31,9 @@ __all__ = [
     "TraceDetailResponse",
     "TraceListResponse",
     "TraceResponse",
+    "DashboardMetricsResponse",
+    "DashboardStatusCountsResponse",
+    "DashboardSummaryResponse",
+    "DashboardTimeSeriesPointResponse",
+    "DashboardTopAgentResponse",
 ]

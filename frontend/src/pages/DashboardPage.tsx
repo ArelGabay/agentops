@@ -9,7 +9,7 @@ import {
   Download,
 } from "lucide-react";
 
-import { useEvaluations, useTraces } from "../hooks";
+import { useDashboardSummary } from "../hooks";
 import { PageHeader } from "../components/layout/PageHeader";
 import { MetricCard } from "../components/metrics/MetricCard";
 import { Button } from "../components/ui/Button";
@@ -57,10 +57,94 @@ const metricCardTemplates = [
   },
 ];
 
-function ChartEmptyState() {
+type SimpleLineChartPoint = {
+  label: string;
+  value: number | null;
+};
+
+function SimpleLineChart({
+  ariaLabel,
+  points,
+  tone = "violet",
+}: {
+  ariaLabel: string;
+  points: SimpleLineChartPoint[];
+  tone?: "violet" | "blue" | "red";
+}) {
+  const strokeStyles = {
+    violet: "stroke-violet-400",
+    blue: "stroke-blue-400",
+    red: "stroke-red-400",
+  };
+
+  const fillStyles = {
+    violet: "fill-violet-500/15",
+    blue: "fill-blue-500/15",
+    red: "fill-red-500/15",
+  };
+
+  const values = points
+    .map((point) => point.value)
+    .filter((value): value is number => value !== null);
+
+  if (values.length === 0 || values.every((value) => value === 0)) {
+    return (
+      <div className="grid h-56 place-items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-center text-sm text-slate-400">
+        Time-series chart data is not available yet.
+      </div>
+    );
+  }
+
+  const maxValue = Math.max(...values);
+  const chartPoints = points.map((point, index) => {
+    const x = 20 + index * (600 / Math.max(points.length - 1, 1));
+    const normalizedValue = point.value ?? 0;
+    const y = 180 - (normalizedValue / maxValue) * 120;
+
+    return { x, y };
+  });
+
+  const linePath = chartPoints
+    .map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`)
+    .join(" ");
+
+  const areaPath = `${linePath} L620 220 L20 220 Z`;
+
   return (
-    <div className="grid h-56 place-items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-center text-sm text-slate-400">
-      Time-series chart data is not available yet.
+    <div className="h-56">
+      <svg
+        aria-label={ariaLabel}
+        className="h-full w-full"
+        role="img"
+        viewBox="0 0 640 220"
+      >
+        <path
+          className="stroke-slate-700/60"
+          d="M20 40H620 M20 85H620 M20 130H620 M20 175H620"
+          fill="none"
+          strokeDasharray="4 6"
+          strokeWidth="1"
+        />
+        <path className={fillStyles[tone]} d={areaPath} />
+        <path
+          className={strokeStyles[tone]}
+          d={linePath}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="3"
+        />
+        {chartPoints.map((point, index) => (
+          <circle
+            className={["fill-white", strokeStyles[tone]].join(" ")}
+            cx={point.x}
+            cy={point.y}
+            key={`${points[index]?.label}-${index}`}
+            r="4"
+            strokeWidth="2"
+          />
+        ))}
+      </svg>
     </div>
   );
 }
@@ -112,7 +196,11 @@ function formatPercent(value: number) {
   return `${value.toFixed(1)}%`;
 }
 
-function formatLatency(milliseconds: number) {
+function formatLatency(milliseconds: number | null) {
+  if (milliseconds === null) {
+    return "N/A";
+  }
+
   if (milliseconds >= 1000) {
     return `${(milliseconds / 1000).toFixed(2)}s`;
   }
@@ -125,43 +213,18 @@ function formatCurrency(value: number) {
 }
 
 export function DashboardPage() {
-  const tracesQuery = useTraces(100);
-  const evaluationsQuery = useEvaluations(100);
+  const summaryQuery = useDashboardSummary();
 
-  const traces = tracesQuery.data ?? [];
-  const evaluations = evaluationsQuery.data ?? [];
+  const summary = summaryQuery.data;
+  const isLoading = summaryQuery.isLoading;
+  const isError = summaryQuery.isError;
+  const hasData = (summary?.metrics.total_traces ?? 0) > 0;
 
-  const isLoading = tracesQuery.isLoading || evaluationsQuery.isLoading;
-  const isError = tracesQuery.isError || evaluationsQuery.isError;
-
-  const hasData = traces.length > 0 || evaluations.length > 0;
-
-  const totalTraces = traces.length;
-  const successfulTraces = traces.filter(
-    (trace) => trace.status === "success",
-  ).length;
-  const tracesWithLatency = traces.filter((trace) => trace.latency_ms !== null);
-
-  const successRate =
-    totalTraces > 0 ? (successfulTraces / totalTraces) * 100 : 0;
-
-  const averageLatency =
-    tracesWithLatency.length > 0
-      ? tracesWithLatency.reduce(
-          (sum, trace) => sum + (trace.latency_ms ?? 0),
-          0,
-        ) / tracesWithLatency.length
-      : 0;
-
-  const totalTokens = traces.reduce(
-    (sum, trace) => sum + (trace.total_tokens ?? 0),
-    0,
-  );
-
-  const totalCost = traces.reduce(
-    (sum, trace) => sum + Number(trace.total_cost ?? 0),
-    0,
-  );
+  const totalTraces = summary?.metrics.total_traces ?? 0;
+  const successRate = summary?.metrics.success_rate ?? 0;
+  const averageLatency = summary?.metrics.average_latency_ms ?? null;
+  const totalTokens = summary?.metrics.total_tokens ?? 0;
+  const totalCost = Number(summary?.metrics.total_cost ?? 0);
 
   const dashboardMetricCards = metricCardTemplates.map((metric) => {
     if (metric.title === "Total Traces") {
@@ -211,9 +274,8 @@ export function DashboardPage() {
     };
   });
 
-  const dashboardTraceRows = traces
-    .slice(0, 5)
-    .map((trace) => [
+  const dashboardTraceRows =
+    summary?.recent_traces.map((trace) => [
       trace.id,
       trace.agent_id,
       trace.status,
@@ -222,13 +284,15 @@ export function DashboardPage() {
       trace.total_cost === null
         ? "N/A"
         : formatCurrency(Number(trace.total_cost)),
-    ]);
+    ]) ?? [];
 
   const statusCounts = {
-    success: traces.filter((trace) => trace.status === "success").length,
-    error: traces.filter((trace) => trace.status === "error").length,
-    timeout: traces.filter((trace) => trace.status === "timeout").length,
-    canceled: traces.filter((trace) => trace.status === "canceled").length,
+    success: summary?.status_counts.success ?? 0,
+    error: summary?.status_counts.error ?? 0,
+    timeout: summary?.status_counts.timeout ?? 0,
+    canceled: summary?.status_counts.canceled ?? 0,
+
+    inProgress: summary?.status_counts.in_progress ?? 0,
   };
 
   const formatStatusValue = (count: number) => {
@@ -257,25 +321,41 @@ export function DashboardPage() {
       value: formatStatusValue(statusCounts.canceled),
       color: "bg-slate-400",
     },
+    {
+      label: "In Progress",
+      value: formatStatusValue(statusCounts.inProgress),
+      color: "bg-blue-400",
+    },
   ];
 
-  const agentCounts = traces.reduce<Record<string, number>>((counts, trace) => {
-    counts[trace.agent_id] = (counts[trace.agent_id] ?? 0) + 1;
-    return counts;
-  }, {});
-
-  const dashboardTopAgents = Object.entries(agentCounts)
-    .sort(([, firstCount], [, secondCount]) => secondCount - firstCount)
-    .slice(0, 5)
-    .map(([agentId, count]) => ({
-      label: agentId,
-      value: formatNumber(count),
+  const dashboardTopAgents =
+    summary?.top_agents.map((agent) => ({
+      label: agent.agent_id,
+      value: formatNumber(agent.trace_count),
       meta:
-        totalTraces > 0 ? formatPercent((count / totalTraces) * 100) : "0.0%",
+        totalTraces > 0
+          ? formatPercent((agent.trace_count / totalTraces) * 100)
+          : "0.0%",
       trend: "neutral" as const,
       icon: <Bot className="h-4 w-4 text-violet-300" />,
-    }));
+    })) ?? [];
+  const timeSeries = summary?.time_series ?? [];
 
+  const traceChartPoints = timeSeries.map((point) => ({
+    label: point.date,
+    value: point.trace_count,
+  }));
+
+  const latencyChartPoints = timeSeries.map((point) => ({
+    label: point.date,
+    value: point.average_latency_ms,
+  }));
+
+  const errorRateChartPoints = timeSeries.map((point) => ({
+    label: point.date,
+    value:
+      point.trace_count > 0 ? (point.error_count / point.trace_count) * 100 : 0,
+  }));
   return (
     <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -287,7 +367,7 @@ export function DashboardPage() {
         <div className="flex flex-wrap gap-3">
           <Button className="min-w-0" variant="secondary">
             <Calendar className="h-4 w-4" />
-            <span className="truncate">May 12 - May 19</span>
+            <span className="truncate">Last 7 days</span>
           </Button>
           <Button variant="primary">
             <Download className="h-4 w-4" />
@@ -304,7 +384,7 @@ export function DashboardPage() {
 
       {isError && (
         <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
-          Dashboard data is unavailable. Showing the last static layout.
+          Dashboard data is unavailable. Check that the backend is running.
         </Card>
       )}
 
@@ -319,14 +399,22 @@ export function DashboardPage() {
           title="Traces Over Time"
           action={<Button variant="secondary">Traces</Button>}
         >
-          <ChartEmptyState />
+          <SimpleLineChart
+            ariaLabel="Traces over time"
+            points={traceChartPoints}
+            tone="violet"
+          />
         </ChartCard>
 
         <ChartCard
-          title="Latency (p95) Over Time"
-          action={<Button variant="secondary">p95 Latency</Button>}
+          title="Avg. Latency Over Time"
+          action={<Button variant="secondary">Avg. Latency</Button>}
         >
-          <ChartEmptyState />
+          <SimpleLineChart
+            ariaLabel="Average latency over time"
+            points={latencyChartPoints}
+            tone="blue"
+          />
         </ChartCard>
       </div>
 
@@ -362,7 +450,11 @@ export function DashboardPage() {
           title="Error Rate Over Time"
           action={<Button variant="secondary">Error Rate</Button>}
         >
-          <ChartEmptyState />
+          <SimpleLineChart
+            ariaLabel="Error rate over time"
+            points={errorRateChartPoints}
+            tone="red"
+          />
         </ChartCard>
       </div>
 
@@ -397,7 +489,14 @@ export function DashboardPage() {
                 </span>,
                 <span className="truncate text-slate-200">{agent}</span>,
                 <StatusBadge
-                  status={status as "success" | "error" | "timeout"}
+                  status={
+                    status as
+                      | "success"
+                      | "error"
+                      | "timeout"
+                      | "in-progress"
+                      | "canceled"
+                  }
                 />,
                 <span className="whitespace-nowrap text-slate-300">
                   {latency}

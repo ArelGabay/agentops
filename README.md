@@ -383,23 +383,23 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Trace details real data
 - [x] Traces list real data
 - [x] Evaluations real data
-- [ ] Dashboard aggregation and time-series metrics
+- [x] Dashboard aggregation and time-series metrics
 - [ ] SDK packaging and LangChain integration
 
 ## Next Milestone
 
-Evaluations real data is complete. The next engineering milestone is Dashboard aggregation and time-series metrics:
+Dashboard aggregation and time-series metrics are complete. The next engineering milestone is SDK packaging and LangChain integration:
 
-- add backend-supported dashboard aggregation for summary metrics
-- add time-series data for dashboard charts
-- replace remaining dashboard chart empty states with real API-backed data
-- keep dashboard calculations and chart data honest when no data exists
+- package the lightweight Python SDK for local development
+- keep the SDK focused on trace/span capture and backend reporting
+- add a simple LangChain integration path
+- document SDK usage with a small demo workflow
 
-Dashboard aggregation should use the backend MVC layers for query logic and keep frontend API access in the typed service and hook layers.
+SDK work should stay lightweight, readable, and clearly separated from backend application logic.
 
-After dashboard aggregation, the planned milestone is:
+After SDK packaging, the planned milestone is:
 
-- SDK packaging and LangChain integration
+- polish pass for documentation, screenshots, and portfolio presentation
 
 ## Project Philosophy
 

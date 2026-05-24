@@ -9,6 +9,7 @@ from app.controllers.trace_controller import (
     list_traces_controller,
     get_trace_detail_controller,
 )
+from app.controllers.dashboard_controller import get_dashboard_summary_controller
 
 __all__ = [
     "health_check",
@@ -18,4 +19,5 @@ __all__ = [
     "create_trace_controller",
     "get_trace_detail_controller",
     "list_traces_controller",
+    "get_dashboard_summary_controller",
 ]

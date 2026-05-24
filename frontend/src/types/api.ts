@@ -41,3 +41,39 @@ export type TraceDetail = TraceListItem & {
   spans: SpanRead[];
   evaluations: EvaluationRead[];
 };
+
+export type DashboardSummary = {
+  metrics: DashboardMetrics;
+  status_counts: DashboardStatusCounts;
+  top_agents: DashboardTopAgent[];
+  recent_traces: TraceListItem[];
+  time_series: DashboardTimeSeriesPoint[];
+};
+
+export type DashboardMetrics = {
+  total_traces: number;
+  success_rate: number;
+  average_latency_ms: number | null;
+  total_tokens: number;
+  total_cost: string;
+};
+
+export type DashboardStatusCounts = {
+  success: number;
+  error: number;
+  timeout: number;
+  canceled: number;
+  in_progress: number;
+};
+
+export type DashboardTopAgent = {
+  agent_id: string;
+  trace_count: number;
+};
+
+export type DashboardTimeSeriesPoint = {
+  date: string;
+  trace_count: number;
+  error_count: number;
+  average_latency_ms: number | null;
+};

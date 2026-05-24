@@ -1,1 +1,6 @@
-export { getEvaluations, getTraceDetail, getTraces } from "./observabilityApi";
+export {
+  getDashboardSummary,
+  getEvaluations,
+  getTraceDetail,
+  getTraces,
+} from "./observabilityApi";
