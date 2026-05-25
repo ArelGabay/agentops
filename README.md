@@ -303,14 +303,20 @@ Current database tables:
 
 The local SDK foundation lives under `backend/sdk/agentops`.
 
-It is not packaged for `pip install` yet. Run it locally with `PYTHONPATH=sdk` from the `backend/` directory.
+Install it locally in editable mode from the `backend/` directory:
+
+```bash
+cd backend
+source .venv/bin/activate
+pip install -e ./sdk
+```
 
 Before running the demo, make sure PostgreSQL and the backend API are running, and that `agent-demo-1` exists in the `agents` table.
 
 ```bash
 cd backend
 source .venv/bin/activate
-PYTHONPATH=sdk python sdk/demo.py
+python sdk/demo.py
 ```
 
 The demo simulates a customer-support agent workflow with an order lookup step, answer generation step, and rule-based evaluation.
@@ -323,6 +329,8 @@ Created span: <span-id>
 Created span: <span-id>
 Created evaluation: <evaluation-id>
 ```
+
+The SDK also includes an optional LangChain callback integration under `agentops.integrations.langchain`. LangChain is not installed by default; install it separately in the application that uses it. The V1 callback is intentionally lightweight and reports LangChain run events to the backend without adding batching, retries, OpenTelemetry, or automatic global instrumentation.
 
 ## Architecture Principles
 
@@ -365,41 +373,37 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Mockups added
-- [x] Frontend foundation
-- [x] Static frontend page UIs
-- [x] Reusable frontend UI components
 - [x] Backend MVC foundation
 - [x] Database schema
 - [x] Trace ingestion API
 - [x] Span ingestion API
 - [x] Evaluation storage
-- [x] Lightweight Python SDK
-- [x] Demo AI agent integration
-- [x] Backend read APIs
 - [x] Frontend API services
-- [x] React Query data wiring
-- [x] Dashboard real metrics
 - [x] Trace details real data
 - [x] Traces list real data
 - [x] Evaluations real data
-- [x] Dashboard aggregation and time-series metrics
-- [ ] SDK packaging and LangChain integration
+- [x] SDK packaging and LangChain integration
+- [ ] Documentation, screenshots, and portfolio polish
+- [ ] Settings page real configuration states
+- [ ] Trace detail span selection and richer span drawer
+- [ ] SDK single-trace LangChain run grouping
+- [ ] Better backend error handling for missing foreign keys
+- [ ] Demo seed command for agents, traces, spans, and evaluations
+- [ ] Frontend loading and empty-state polish pass
+- [ ] API tests for ingestion and dashboard summary
+- [ ] GitHub Actions build and lint workflow
+- [ ] V1 release checklist and demo script
 
 ## Next Milestone
 
-Dashboard aggregation and time-series metrics are complete. The next engineering milestone is SDK packaging and LangChain integration:
+SDK packaging and LangChain integration are complete. The next engineering milestone is a polish pass for documentation, screenshots, and portfolio presentation:
 
-- package the lightweight Python SDK for local development
-- keep the SDK focused on trace/span capture and backend reporting
-- add a simple LangChain integration path
-- document SDK usage with a small demo workflow
+- refresh README screenshots and project narrative
+- tighten setup instructions and demo walkthroughs
+- review portfolio-facing polish across frontend pages
+- make sure the final V1 story is clear to recruiters
 
-SDK work should stay lightweight, readable, and clearly separated from backend application logic.
-
-After SDK packaging, the planned milestone is:
-
-- polish pass for documentation, screenshots, and portfolio presentation
+The polish pass should improve presentation without expanding V1 scope.
 
 ## Project Philosophy
 

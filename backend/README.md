@@ -132,14 +132,20 @@ It currently supports:
 
 - `AgentOpsClient` for `POST /traces`, `POST /spans`, and `POST /evaluations`
 - `SpanTracker` and `TraceTracker` timing helpers
+- an optional LangChain callback integration
 - a local demo script that creates one trace, two spans, and one evaluation
+
+Install the SDK in editable mode from the `backend/` directory:
+
+```bash
+source .venv/bin/activate
+pip install -e ./sdk
+```
 
 Before running the demo, make sure PostgreSQL and the FastAPI backend are running, and that `agent-demo-1` exists in the `agents` table.
 
-From the `backend/` directory:
-
 ```bash
-PYTHONPATH=sdk python sdk/demo.py
+python sdk/demo.py
 ```
 
 Expected output:
@@ -151,7 +157,7 @@ Created span: <span-id>
 Created evaluation: <evaluation-id>
 ```
 
-The SDK is local-only for now and is not packaged for `pip install` yet.
+LangChain support is optional and must be installed separately in the application that uses it. The integration lives at `agentops.integrations.langchain` and keeps the SDK focused on observing and reporting telemetry.
 
 ## Database Setup
 
