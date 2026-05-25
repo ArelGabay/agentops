@@ -7,6 +7,7 @@ from app.routes import (
     evaluation_router,
     span_router,
     trace_router,
+    settings_router,
 )
 
 app = FastAPI(
@@ -28,3 +29,4 @@ app.include_router(dashboard_router)
 app.include_router(trace_router)
 app.include_router(span_router)
 app.include_router(evaluation_router)
+app.include_router(settings_router)

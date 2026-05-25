@@ -19,6 +19,13 @@ from app.schemas.dashboard_schema import (
     DashboardTopAgentResponse,
 )
 
+from app.schemas.settings_schema import (
+    SettingsAppResponse,
+    SettingsCapabilityResponse,
+    SettingsUnavailableFeatureResponse,
+    SettingsSummaryResponse,
+)
+
 __all__ = [
     "EvaluationCreate",
     "EvaluationResponse",
@@ -36,4 +43,8 @@ __all__ = [
     "DashboardSummaryResponse",
     "DashboardTimeSeriesPointResponse",
     "DashboardTopAgentResponse",
+    "SettingsAppResponse",
+    "SettingsCapabilityResponse",
+    "SettingsUnavailableFeatureResponse",
+    "SettingsSummaryResponse",
 ]

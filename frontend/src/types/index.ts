@@ -5,6 +5,7 @@ export type {
   DashboardTimeSeriesPoint,
   DashboardTopAgent,
   EvaluationRead,
+  SettingsSummary,
   SpanRead,
   TraceDetail,
   TraceListItem,

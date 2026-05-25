@@ -229,6 +229,7 @@ Useful read endpoints:
 
 ```txt
 GET /dashboard/summary
+GET /settings/summary
 GET /traces?limit=100
 GET /traces/{trace_id}
 GET /evaluations?limit=100
@@ -379,7 +380,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Database schema
 - [x] Trace ingestion API
 - [x] Span ingestion API
 - [x] Evaluation storage
@@ -389,7 +389,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Evaluations real data
 - [x] SDK packaging and LangChain integration
 - [x] Documentation, screenshots, and portfolio polish
-- [ ] Settings page real configuration states
+- [x] Settings page real configuration states
 - [ ] Trace detail span selection and richer span drawer
 - [ ] SDK single-trace LangChain run grouping
 - [ ] Better backend error handling for missing foreign keys
@@ -399,17 +399,16 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] GitHub Actions build and lint workflow
 - [ ] V1 release checklist and demo script
 - [ ] Production deployment notes and environment guide
+- [ ] Settings persistence and editable workspace preferences
 
 ## Next Milestone
 
-SDK packaging and LangChain integration are complete. The next engineering milestone is a polish pass for documentation, screenshots, and portfolio presentation:
+Settings page real configuration states are complete. The next engineering milestone is trace detail span selection and richer span drawer:
 
-- refresh README screenshots and project narrative
-- tighten setup instructions and demo walkthroughs
-- review portfolio-facing polish across frontend pages
-- make sure the final V1 story is clear to recruiters
-
-The polish pass should improve presentation without expanding V1 scope.
+- allow selecting a span from the spans table
+- show selected span details in the side drawer
+- keep unsupported span fields honest
+- preserve current trace details API boundaries
 
 ## Project Philosophy
 

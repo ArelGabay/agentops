@@ -1,55 +1,30 @@
 import {
   BookOpen,
   Building2,
-  Check,
   ChevronRight,
-  Copy,
   Moon,
-  Monitor,
   Plus,
-  Slack,
-  Sun,
   Trash2,
   Upload,
-} from 'lucide-react'
-import type { ReactNode } from 'react'
+} from "lucide-react";
+import type { ReactNode } from "react";
 
-import { PageHeader } from '../components/layout/PageHeader'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { CheckboxRow } from '../components/ui/CheckboxRow'
-import { FilterSelect } from '../components/ui/FilterSelect'
-import { IconButton } from '../components/ui/IconButton'
-import { StatusBadge } from '../components/ui/StatusBadge'
-import { Tabs } from '../components/ui/Tabs'
-import { Toggle } from '../components/ui/Toggle'
-
-const accentColors = [
-  'bg-violet-500',
-  'bg-blue-500',
-  'bg-cyan-500',
-  'bg-emerald-500',
-  'bg-amber-400',
-  'bg-red-400',
-  'bg-fuchsia-500',
-]
-
-const integrations = [
-  ['OpenAI', 'connected'],
-  ['Anthropic', 'connected'],
-  ['LangChain', 'connected'],
-  ['OpenTelemetry', 'connected'],
-  ['Slack', 'connected'],
-  ['Sentry', 'disconnected'],
-]
+import { PageHeader } from "../components/layout/PageHeader";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { Tabs } from "../components/ui/Tabs";
+import { useSettingsSummary } from "../hooks";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-medium text-slate-200">{label}</span>
+      <span className="mb-2 block text-sm font-medium text-slate-200">
+        {label}
+      </span>
       {children}
     </label>
-  )
+  );
 }
 
 function StaticInput({ value }: { value: string }) {
@@ -57,53 +32,80 @@ function StaticInput({ value }: { value: string }) {
     <div className="flex h-11 items-center rounded-lg border border-app-border bg-white/[0.02] px-3 text-sm text-slate-100">
       {value}
     </div>
-  )
+  );
 }
 
-function IntegrationRow({ name, status }: { name: string; status: string }) {
-  const connected = status === 'connected'
-
+function IntegrationRow({
+  name,
+  status,
+  description,
+}: {
+  name: string;
+  status: "available" | "unavailable" | "optional";
+  description: string;
+}) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-app-border py-3 last:border-0">
       <div className="flex min-w-0 items-center gap-3">
         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-xs font-semibold text-slate-200">
           {name.slice(0, 2)}
         </span>
-        <span className="truncate text-sm font-medium text-slate-100">{name}</span>
+        <div className="min-w-0">
+          <span className="block truncate text-sm font-medium text-slate-100">
+            {name}
+          </span>
+          <p className="mt-0.5 truncate text-xs text-slate-500">
+            {description}
+          </p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
-        <StatusBadge status={connected ? 'success' : 'error'} label={connected ? 'Connected' : 'Disconnected'} />
-        <IconButton label={`Open ${name} integration`}>
-          <ChevronRight className="h-4 w-4" />
-        </IconButton>
+        <StatusBadge
+          status={capabilityStatusToBadgeStatus(status)}
+          label={formatCapabilityStatus(status)}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-function ApiKeyCard({ name, value, createdAt }: { name: string; value: string; createdAt: string }) {
-  return (
-    <div className="rounded-lg border border-app-border bg-white/[0.02] p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-slate-100">{name}</p>
-          <p className="mt-1 font-mono text-sm text-slate-300">{value}</p>
-          <p className="mt-1 text-xs text-slate-500">{createdAt}</p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button className="h-8 px-3 text-xs" variant="danger">
-            Revoke
-          </Button>
-          <IconButton label={`Copy ${name}`}>
-            <Copy className="h-4 w-4" />
-          </IconButton>
-        </div>
-      </div>
-    </div>
-  )
+function capabilityStatusToBadgeStatus(
+  status: "available" | "unavailable" | "optional",
+) {
+  if (status === "available") {
+    return "success" as const;
+  }
+
+  if (status === "optional") {
+    return "in-progress" as const;
+  }
+
+  return "canceled" as const;
+}
+
+function formatCapabilityStatus(status: string) {
+  if (status === "available") {
+    return "Available";
+  }
+
+  if (status === "optional") {
+    return "Optional";
+  }
+
+  return "Unavailable";
 }
 
 export function SettingsPage() {
+  const settingsQuery = useSettingsSummary();
+
+  const settings = settingsQuery.data;
+  const isLoading = settingsQuery.isLoading;
+  const isError = settingsQuery.isError;
+
+  const getUnavailableReason = (name: string, fallback: string) =>
+    settings?.unavailable_features.find((feature) => feature.name === name)
+      ?.reason ?? fallback;
+
   return (
     <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -113,30 +115,38 @@ export function SettingsPage() {
         />
 
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary">
+          <Button disabled variant="secondary">
             <BookOpen className="h-4 w-4" />
             Documentation
           </Button>
-          <div className="flex h-10 overflow-hidden rounded-lg border border-app-border bg-white/[0.03]">
-            <button className="px-4 text-sm text-slate-300" type="button">
-              Light
-            </button>
-            <button className="bg-violet-600/25 px-4 text-sm font-medium text-white" type="button">
-              Dark
-            </button>
+          <div className="flex h-10 items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-sm text-slate-300">
+            <Moon className="mr-2 h-4 w-4 text-violet-300" />
+            Dark mode active
           </div>
         </div>
       </div>
 
+      {isLoading && (
+        <Card className="mt-4 border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-200">
+          Loading settings...
+        </Card>
+      )}
+
+      {isError && (
+        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+          Settings are unavailable.
+        </Card>
+      )}
+
       <Tabs
         items={[
-          { label: 'General', active: true },
-          { label: 'Evaluations' },
-          { label: 'Alerts' },
-          { label: 'Integrations' },
-          { label: 'API Keys' },
-          { label: 'Team' },
-          { label: 'Billing' },
+          { label: "General", active: true },
+          { label: "Evaluations" },
+          { label: "Alerts" },
+          { label: "Integrations" },
+          { label: "API Keys" },
+          { label: "Team" },
+          { label: "Billing" },
         ]}
       />
 
@@ -145,22 +155,28 @@ export function SettingsPage() {
           <Card className="p-5">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-sm font-semibold text-white">Workspace Settings</h2>
-                <p className="mt-1 text-sm text-slate-400">Update your workspace details and preferences.</p>
+                <h2 className="text-sm font-semibold text-white">
+                  Workspace Settings
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Update your workspace details and preferences.
+                </p>
               </div>
-              <Button variant="primary">Save Changes</Button>
+              <Button disabled variant="primary">
+                Settings Read-only
+              </Button>
             </div>
 
             <div className="grid gap-5 lg:grid-cols-[1fr_180px]">
               <div className="space-y-4">
                 <Field label="Workspace Name">
-                  <StaticInput value="Default Workspace" />
+                  <StaticInput value={settings?.app.name ?? "N/A"} />
                 </Field>
                 <Field label="Environment">
-                  <FilterSelect label="Environment" value="Production" />
+                  <StaticInput value={settings?.app.environment ?? "N/A"} />
                 </Field>
                 <Field label="Timezone">
-                  <FilterSelect label="Timezone" value="(UTC-07:00) Pacific Time (US & Canada)" />
+                  <StaticInput value="Not configured" />
                 </Field>
               </div>
 
@@ -168,46 +184,55 @@ export function SettingsPage() {
                 <div className="grid h-20 w-20 place-items-center rounded-lg bg-violet-500/15 text-violet-300">
                   <Building2 className="h-10 w-10" />
                 </div>
-                <Button variant="secondary">
+                <Button disabled variant="secondary">
                   <Upload className="h-4 w-4" />
                   Upload Logo
                 </Button>
-                <p className="text-xs text-slate-500">PNG, JPG or SVG. Max size 2MB</p>
+                <p className="text-xs text-slate-500">
+                  Logo upload is not available yet.
+                </p>
               </div>
             </div>
           </Card>
 
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-white">Appearance</h2>
-            <p className="mt-1 text-sm text-slate-400">Customize the look and feel of AgentOps.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Customize the look and feel of AgentOps.
+            </p>
 
-            <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1fr]">
+            <div className="mt-5 grid gap-5 lg:grid-cols-2">
               <div>
                 <p className="mb-3 text-sm font-medium text-slate-200">Theme</p>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="primary">
-                    <Moon className="h-4 w-4" />
-                    Dark
-                  </Button>
-                  <Button variant="secondary">
-                    <Sun className="h-4 w-4" />
-                    Light
-                  </Button>
-                  <Button variant="secondary">
-                    <Monitor className="h-4 w-4" />
-                    System
-                  </Button>
+                <div className="rounded-lg border border-app-border bg-white/[0.03] p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="flex items-center gap-2 text-sm font-medium text-slate-100">
+                      <Moon className="h-4 w-4 text-violet-300" />
+                      Dark mode
+                    </span>
+                    <StatusBadge status="success" label="Active" />
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Light and system themes are not implemented yet.
+                  </p>
                 </div>
               </div>
 
               <div>
-                <p className="mb-3 text-sm font-medium text-slate-200">Accent Color</p>
-                <div className="flex flex-wrap gap-3">
-                  {accentColors.map((color, index) => (
-                    <span className={['grid h-7 w-7 place-items-center rounded-full', color].join(' ')} key={color}>
-                      {index === 0 && <Check className="h-4 w-4 text-white" />}
+                <p className="mb-3 text-sm font-medium text-slate-200">
+                  Accent Color
+                </p>
+                <div className="rounded-lg border border-app-border bg-white/[0.03] p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="flex items-center gap-2 text-sm font-medium text-slate-100">
+                      <span className="h-4 w-4 rounded-full bg-violet-500" />
+                      Violet
                     </span>
-                  ))}
+                    <StatusBadge status="success" label="Active" />
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Accent color customization is not persisted yet.
+                  </p>
                 </div>
               </div>
             </div>
@@ -215,83 +240,49 @@ export function SettingsPage() {
 
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-white">Notifications</h2>
-            <p className="mt-1 text-sm text-slate-400">Configure how and when you want to be notified.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Configure how and when you want to be notified.
+            </p>
 
-            <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              <div className="space-y-5">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-slate-100">Email Notifications</p>
-                    <p className="text-xs text-slate-500">Receive email alerts for important events.</p>
-                  </div>
-                  <Toggle checked />
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-slate-100">Slack Notifications</p>
-                    <p className="text-xs text-slate-500">Receive alerts and updates in Slack.</p>
-                  </div>
-                  <Button className="h-9 px-3" variant="secondary">
-                    <Slack className="h-4 w-4" />
-                    Connect Slack
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-slate-100">Daily Summary</p>
-                    <p className="text-xs text-slate-500">Receive a daily summary of key metrics.</p>
-                  </div>
-                  <Toggle checked />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-slate-200">Notify me about</p>
-                <CheckboxRow title="Trace failures" />
-                <CheckboxRow title="Evaluation score drops" />
-                <CheckboxRow title="High latency alerts" />
-                <CheckboxRow title="Cost budget alerts" />
-                <CheckboxRow checked={false} title="New integrations & updates" />
-              </div>
+            <div className="mt-6 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              {getUnavailableReason(
+                "Notification delivery",
+                "Notification delivery is not available yet.",
+              )}
             </div>
           </Card>
         </div>
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h2 className="text-sm font-semibold text-white">Evaluation Settings</h2>
-            <p className="mt-1 text-sm text-slate-400">Configure how evaluations are run and scored.</p>
+            <h2 className="text-sm font-semibold text-white">
+              Evaluation Settings
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Configure how evaluations are run and scored.
+            </p>
 
-            <div className="mt-5 space-y-4">
-              <Field label="Default Evaluation Model">
-                <FilterSelect label="Model" value="gpt-4o" />
-              </Field>
-              <Field label="Evaluation Frequency">
-                <FilterSelect label="Frequency" value="Every Trace" />
-              </Field>
-
-              <div>
-                <p className="mb-3 text-sm font-medium text-slate-200">Score Thresholds</p>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <StaticInput value="0.70" />
-                  <StaticInput value="0.40" />
-                  <StaticInput value="0.40" />
-                </div>
-              </div>
+            <div className="mt-5 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              {getUnavailableReason(
+                "Evaluation configuration",
+                "Evaluation configuration is not available yet. Evaluations can be ingested and viewed, but model, frequency, and threshold settings are not persisted.",
+              )}
             </div>
           </Card>
 
           <Card className="p-5">
-            <h2 className="text-sm font-semibold text-white">Evaluation Dimensions</h2>
-            <p className="mt-1 text-sm text-slate-400">Select the dimensions to include in evaluations.</p>
+            <h2 className="text-sm font-semibold text-white">
+              Evaluation Dimensions
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Select the dimensions to include in evaluations.
+            </p>
 
-            <div className="mt-5 space-y-5">
-              <CheckboxRow description="Measure factual accuracy" title="Correctness" />
-              <CheckboxRow description="Measure relevance to query" title="Relevance" />
-              <CheckboxRow description="Measure completeness" title="Completeness" />
-              <CheckboxRow description="Detect hallucinations" title="Hallucination" />
-              <CheckboxRow description="Check content safety" title="Safety" />
-              <CheckboxRow description="Measure response coherence" title="Coherence" />
+            <div className="mt-5 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              {getUnavailableReason(
+                "Evaluation dimensions",
+                "Evaluation dimensions are not configurable yet.",
+              )}
             </div>
           </Card>
         </div>
@@ -299,15 +290,27 @@ export function SettingsPage() {
         <div className="space-y-4">
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-white">Integrations</h2>
-            <p className="mt-1 text-sm text-slate-400">Manage your connected services.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Manage your connected services.
+            </p>
 
             <div className="mt-4">
-              {integrations.map(([name, status]) => (
-                <IntegrationRow key={name} name={name} status={status} />
+              {settings?.capabilities.map((capability) => (
+                <IntegrationRow
+                  key={capability.name}
+                  name={capability.name}
+                  status={capability.status}
+                  description={capability.description}
+                />
               ))}
+              {!settings && !isLoading && (
+                <p className="py-4 text-sm text-slate-400">
+                  No configuration data available.
+                </p>
+              )}
             </div>
 
-            <Button className="mt-4 w-full" variant="secondary">
+            <Button className="mt-4 w-full" disabled variant="secondary">
               Browse all integrations
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -317,20 +320,28 @@ export function SettingsPage() {
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-white">API Keys</h2>
-                <p className="mt-1 text-sm text-slate-400">Manage API keys for accessing AgentOps API.</p>
+                <p className="mt-1 text-sm text-slate-400">
+                  Manage API keys for accessing AgentOps API.
+                </p>
               </div>
-              <Button className="h-auto min-h-10 max-w-[124px] flex-wrap px-3 py-2 text-center leading-tight" variant="primary">
+              <Button
+                className="h-auto min-h-10 max-w-[124px] flex-wrap px-3 py-2 text-center leading-tight"
+                disabled
+                variant="primary"
+              >
                 <Plus className="h-4 w-4" />
                 Create API Key
               </Button>
             </div>
 
-            <div className="space-y-3">
-              <ApiKeyCard createdAt="Created May 10, 2025" name="Production Key" value="••••••••••••a1b2" />
-              <ApiKeyCard createdAt="Created Apr 22, 2025" name="Development Key" value="••••••••••••c3d4" />
+            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+              {getUnavailableReason(
+                "API key management",
+                "API key management is not available until authentication and API key storage exist.",
+              )}
             </div>
 
-            <Button className="mt-4 w-full" variant="secondary">
+            <Button className="mt-4 w-full" disabled variant="secondary">
               View all API keys
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -338,16 +349,20 @@ export function SettingsPage() {
 
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-white">Danger Zone</h2>
-            <p className="mt-1 text-sm text-slate-400">Irreversible and destructive actions.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Irreversible and destructive actions.
+            </p>
 
-            <Button className="mt-5 w-full" variant="danger">
+            <Button className="mt-5 w-full" disabled variant="danger">
               <Trash2 className="h-4 w-4" />
               Delete Workspace
             </Button>
-            <p className="mt-3 text-center text-xs text-slate-500">This action cannot be undone.</p>
+            <p className="mt-3 text-center text-xs text-slate-500">
+              This action cannot be undone.
+            </p>
           </Card>
         </div>
       </div>
     </>
-  )
+  );
 }

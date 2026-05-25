@@ -77,3 +77,26 @@ export type DashboardTimeSeriesPoint = {
   error_count: number;
   average_latency_ms: number | null;
 };
+
+export type SettingsSummary = {
+  app: SettingsApp;
+  capabilities: SettingsCapability[];
+  unavailable_features: SettingsUnavailableFeature[];
+};
+
+export type SettingsApp = {
+  name: string;
+  environment: string;
+  version: string;
+};
+
+export type SettingsCapability = {
+  name: string;
+  status: "available" | "unavailable" | "optional";
+  description: string;
+};
+
+export type SettingsUnavailableFeature = {
+  name: string;
+  reason: string;
+};

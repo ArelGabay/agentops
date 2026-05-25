@@ -1,6 +1,7 @@
 import type {
   DashboardSummary,
   EvaluationRead,
+  SettingsSummary,
   TraceDetail,
   TraceListItem,
 } from "../types";
@@ -21,4 +22,8 @@ export function getEvaluations(limit = 25) {
 
 export function getDashboardSummary() {
   return apiGet<DashboardSummary>("/dashboard/summary");
+}
+
+export function getSettingsSummary() {
+  return apiGet<SettingsSummary>("/settings/summary");
 }
