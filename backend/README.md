@@ -33,6 +33,16 @@ Expected response:
 {"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
 
+## Dashboard Summary
+
+Get dashboard metrics, status counts, top agents, recent traces, and daily time-series data with `GET /dashboard/summary`.
+
+```bash
+curl http://127.0.0.1:8000/dashboard/summary
+```
+
+The dashboard summary currently aggregates the last 7 days of trace data.
+
 ## Trace Ingestion
 
 Create a trace with `POST /traces`.
@@ -126,7 +136,7 @@ List endpoints support `limit` from `1` to `100`. Missing trace details return `
 
 ## SDK Demo
 
-The local Python SDK foundation lives under `sdk/agentops`.
+The local Python SDK lives under `sdk/agentops`.
 
 It currently supports:
 

@@ -8,34 +8,25 @@ This is a portfolio-grade engineering project focused on clean architecture, mod
 
 ## Current Status
 
-AgentOps is in the early foundation stage.
+AgentOps is a working V1 observability product foundation.
 
 Completed:
 
-- Repository structure initialized
-- Frontend app initialized with React, TypeScript, Vite, and Tailwind CSS
-- Frontend routing foundation added
-- Shared `MainLayout` shell added
-- Sidebar navigation added
-- Placeholder pages added for Dashboard, Traces, Trace Details, Evaluations, and Settings
-- First reusable frontend UI primitives added
-- Backend MVC foundation added with FastAPI health check
-- PostgreSQL database foundation added with Docker Compose, SQLAlchemy models, and Alembic migrations
-- Trace ingestion API added with MVC flow and PostgreSQL persistence
-- Span ingestion API added with MVC flow and PostgreSQL persistence
-- Evaluation ingestion API added with score validation and PostgreSQL persistence
-- Lightweight local Python SDK foundation added with trace/span submission demo
-- Demo AI agent workflow added for trace, span, and evaluation telemetry
-- Frontend typed API services and React Query data hooks added
-- Mockups added as the visual source of truth
+- FastAPI backend with MVC-style route, controller, service, repository, schema, and model layers
+- PostgreSQL persistence for agents, traces, spans, evaluations, and tool calls
+- Trace, span, evaluation, list, detail, and dashboard summary API endpoints
+- React dashboard, traces list, trace details, evaluations, and settings pages
+- Typed frontend API services and React Query hooks for backend-backed data
+- Dashboard aggregation endpoint with summary metrics, status counts, top agents, recent traces, and time-series data
+- Local editable Python SDK package with trace/span helpers and optional LangChain callback integration
+- Real screenshots and mockups for portfolio presentation
 
 Not built yet:
 
-- Packaged SDK distribution
-- LangChain integration
-- Real dashboard data
-- Authentication
+- Authentication and user/project isolation
 - Production deployment
+- Automated CI checks
+- Advanced SDK behavior such as batching, retries, OpenTelemetry, or multi-framework integrations
 
 ## Product Vision
 
@@ -53,6 +44,18 @@ AgentOps will provide a dashboard for AI agent observability, including:
 
 The product direction is dark-mode-first, SaaS-like, and inspired by tools such as Datadog, Grafana, Linear, Vercel, and Stripe dashboards.
 
+## Product Screenshots
+
+These screenshots are captured from the current running app with backend-backed data.
+
+| Dashboard | Traces |
+| --- | --- |
+| ![AgentOps dashboard showing trace metrics, charts, status counts, and top agents](docs/screenshots/dashboard.png) | ![AgentOps traces table showing real trace rows, filters, status, latency, and costs](docs/screenshots/traces.png) |
+
+| Trace Details | Evaluations |
+| --- | --- |
+| ![AgentOps trace details page showing a real trace, timeline area, spans, evaluations, and honest empty states](docs/screenshots/trace-details.png) | ![AgentOps evaluations page showing real evaluation metrics and honest unsupported analytics empty states](docs/screenshots/evaluations.png) |
+
 ## MVP Scope
 
 ### Backend
@@ -66,33 +69,30 @@ The product direction is dark-mode-first, SaaS-like, and inspired by tools such 
 - Trace ingestion API
 - Span ingestion API
 - Evaluation ingestion API
+- Trace list and trace detail APIs
+- Evaluation list API
+- Dashboard summary aggregation API
 
 ### Frontend
-
-In progress:
 
 - Dashboard page
 - Traces list page
 - Trace details page
 - Evaluations page
 - Settings page
+- Real backend data wiring for dashboard, traces, trace details, and evaluations
+- Honest loading, error, empty, and unsupported-data states
 
 ### SDK
 
-Foundation complete:
-
 - Lightweight Python SDK
+- Editable local install with `pip install -e ./sdk`
 - Trace start/end tracking
 - Basic span tracking
 - Latency measurement
 - Telemetry submission to the backend API
 - Local demo script
-
-Planned:
-
-- LangChain integration
-- Error capture improvements
-- Packaged installation flow
+- Optional LangChain callback integration
 
 ## Tech Stack
 
@@ -105,10 +105,6 @@ Planned:
 - React Router
 - React Query
 - lucide-react
-
-Planned later:
-
-- Recharts
 
 ### Backend
 
@@ -145,13 +141,14 @@ backend/
     routes/       endpoint registration
     controllers/  request/response flow
     services/     application logic
-    repositories/ future persistence access
+    repositories/ persistence access
     schemas/      validation and response shapes
-    models/       future database entities
+    models/       database entities
     config/       app configuration
     database/     SQLAlchemy database setup
     middleware/   future middleware
     utils/        shared backend helpers
+  sdk/            local Python SDK package and examples
 ```
 
 Frontend structure:
@@ -228,6 +225,15 @@ Expected response:
 {"status":"ok","service":"agentops-api","version":"0.1.0"}
 ```
 
+Useful read endpoints:
+
+```txt
+GET /dashboard/summary
+GET /traces?limit=100
+GET /traces/{trace_id}
+GET /evaluations?limit=100
+```
+
 Create a trace:
 
 ```bash
@@ -301,7 +307,7 @@ Current database tables:
 
 ## SDK Demo
 
-The local SDK foundation lives under `backend/sdk/agentops`.
+The local SDK lives under `backend/sdk/agentops`.
 
 Install it locally in editable mode from the `backend/` directory:
 

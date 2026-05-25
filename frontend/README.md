@@ -42,12 +42,13 @@ Pages should compose components. Components should stay presentation-focused. AP
 
 - Shared `MainLayout`
 - Sidebar navigation
-- Route placeholders for Dashboard, Traces, Trace Details, Evaluations, and Settings
+- Route-level pages for Dashboard, Traces, Trace Details, Evaluations, and Settings
 - Tailwind dark-mode-first styling foundation
 - Typed API response models for traces, spans, and evaluations
 - Frontend API service functions for backend read endpoints
-- React Query provider and reusable data hooks for traces, trace details, and evaluations
-- Dashboard metrics and recent traces wired to backend API data through React Query
+- React Query provider and reusable data hooks for dashboard summary, traces, trace details, and evaluations
+- Dashboard metrics, charts, status counts, top agents, and recent traces wired to backend aggregation data
+- Traces, Trace Details, and Evaluations pages wired to backend API data with honest loading, error, and empty states
 
 ## API Services
 
@@ -55,6 +56,7 @@ The frontend API layer lives in `src/services/` and uses native `fetch`.
 
 Available service functions:
 
+- `getDashboardSummary()`
 - `getTraces(limit)`
 - `getTraceDetail(traceId)`
 - `getEvaluations(limit)`
@@ -77,6 +79,7 @@ React Query is configured in `src/app/providers.tsx`.
 
 Reusable data hooks live in `src/hooks/`:
 
+- `useDashboardSummary()`
 - `useTraces(limit)`
 - `useTraceDetail(traceId)`
 - `useEvaluations(limit)`
