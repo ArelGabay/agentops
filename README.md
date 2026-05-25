@@ -379,7 +379,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Backend MVC foundation
 - [x] Database schema
 - [x] Trace ingestion API
 - [x] Span ingestion API
@@ -389,7 +388,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Traces list real data
 - [x] Evaluations real data
 - [x] SDK packaging and LangChain integration
-- [ ] Documentation, screenshots, and portfolio polish
+- [x] Documentation, screenshots, and portfolio polish
 - [ ] Settings page real configuration states
 - [ ] Trace detail span selection and richer span drawer
 - [ ] SDK single-trace LangChain run grouping
@@ -399,6 +398,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] API tests for ingestion and dashboard summary
 - [ ] GitHub Actions build and lint workflow
 - [ ] V1 release checklist and demo script
+- [ ] Production deployment notes and environment guide
 
 ## Next Milestone
 
