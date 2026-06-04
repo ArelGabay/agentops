@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Bot,
@@ -65,7 +66,9 @@ function formatCurrency(value: string | null) {
 export function TraceDetailsPage() {
   const { traceId = "" } = useParams();
   const traceQuery = useTraceDetail(traceId);
-
+  const [selectedSpanId, setSelectedSpanId] = useState<
+    string | null | undefined
+  >(undefined);
   const trace = traceQuery.data;
   const isLoading = traceQuery.isLoading;
   const error = traceQuery.error;
@@ -88,17 +91,6 @@ export function TraceDetailsPage() {
     );
   }
 
-  const spanRows = trace.spans.map((span, index) => [
-    String(index + 1),
-    span.name,
-    span.span_type,
-    span.status,
-    formatDateTime(span.started_at),
-    formatLatency(span.latency_ms),
-    "N/A",
-    "N/A",
-  ]);
-
   const timelineItems = trace.spans.map((span, index) => ({
     label: span.name,
     sublabel: span.span_type,
@@ -109,14 +101,19 @@ export function TraceDetailsPage() {
     icon: <Sparkles className="h-4 w-4" />,
   }));
 
-  const selectedSpan = trace.spans[0];
+  const selectedSpan =
+    selectedSpanId === null
+      ? null
+      : (trace.spans.find((span) => span.id === selectedSpanId) ??
+        trace.spans[0] ??
+        null);
 
   const summaryItems = selectedSpan
     ? [
-        { label: "Span Type", value: selectedSpan.span_type },
+        { label: "Span ID", value: selectedSpan.id },
+        { label: "Trace ID", value: selectedSpan.trace_id },
         { label: "Name", value: selectedSpan.name },
-        { label: "Start Time", value: formatDateTime(selectedSpan.started_at) },
-        { label: "Duration", value: formatLatency(selectedSpan.latency_ms) },
+        { label: "Type", value: selectedSpan.span_type },
         {
           label: "Status",
           value: (
@@ -131,6 +128,10 @@ export function TraceDetailsPage() {
             />
           ),
         },
+        { label: "Started", value: formatDateTime(selectedSpan.started_at) },
+        { label: "Ended", value: formatDateTime(selectedSpan.ended_at) },
+        { label: "Created", value: formatDateTime(selectedSpan.created_at) },
+        { label: "Duration", value: formatLatency(selectedSpan.latency_ms) },
       ]
     : [];
   return (
@@ -272,33 +273,33 @@ export function TraceDetailsPage() {
                   <span>Cost</span>
                 </div>
 
-                {spanRows.map(
-                  ([
-                    index,
-                    name,
-                    type,
-                    status,
-                    startTime,
-                    duration,
-                    tokens,
-                    cost,
-                  ]) => (
-                    <div
-                      className="grid items-center gap-4 border-t border-app-border px-4 py-3 text-sm"
-                      key={index}
+                {trace.spans.map((span, index) => {
+                  const isSelected = selectedSpan?.id === span.id;
+
+                  return (
+                    <button
+                      className={[
+                        "grid w-full items-center gap-4 border-t border-app-border px-4 py-3 text-left text-sm transition",
+                        isSelected
+                          ? "bg-violet-500/10"
+                          : "hover:bg-white/[0.03]",
+                      ].join(" ")}
+                      key={span.id}
+                      onClick={() => setSelectedSpanId(span.id)}
                       style={{ gridTemplateColumns: spanTableColumns }}
+                      type="button"
                     >
-                      <span className="text-slate-500">{index}</span>
+                      <span className="text-slate-500">{index + 1}</span>
                       <span className="truncate font-medium text-slate-100">
-                        {name}
+                        {span.name}
                       </span>
                       <span className="whitespace-nowrap text-slate-300">
-                        {type}
+                        {span.span_type}
                       </span>
                       <span>
                         <StatusBadge
                           status={
-                            status as
+                            span.status as
                               | "success"
                               | "error"
                               | "timeout"
@@ -307,19 +308,24 @@ export function TraceDetailsPage() {
                         />
                       </span>
                       <span className="whitespace-nowrap text-slate-300">
-                        {startTime}
+                        {formatDateTime(span.started_at)}
                       </span>
                       <span className="whitespace-nowrap text-slate-300">
-                        {duration}
+                        {formatLatency(span.latency_ms)}
                       </span>
                       <span className="whitespace-nowrap text-slate-300">
-                        {tokens}
+                        N/A
                       </span>
                       <span className="whitespace-nowrap text-slate-300">
-                        {cost}
+                        N/A
                       </span>
-                    </div>
-                  ),
+                    </button>
+                  );
+                })}
+                {trace.spans.length === 0 && (
+                  <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
+                    No spans found for this trace.
+                  </div>
                 )}
               </div>
             </div>
@@ -416,9 +422,14 @@ export function TraceDetailsPage() {
                       }
                     />
                   )}
-                  <IconButton label="Close span details">
-                    <X className="h-4 w-4" />
-                  </IconButton>
+                  {selectedSpan && (
+                    <IconButton
+                      label="Close span details"
+                      onClick={() => setSelectedSpanId(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </IconButton>
+                  )}
                 </div>
               </div>
 
@@ -439,6 +450,32 @@ export function TraceDetailsPage() {
             ) : (
               <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
                 No span summary available.
+              </div>
+            )}
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="mb-4 text-sm font-semibold text-white">Input</h2>
+            {selectedSpan?.input_text ? (
+              <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-app-border bg-white/[0.03] p-4 text-sm text-slate-300">
+                {selectedSpan.input_text}
+              </pre>
+            ) : (
+              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+                No span input available.
+              </div>
+            )}
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="mb-4 text-sm font-semibold text-white">Output</h2>
+            {selectedSpan?.output_text ? (
+              <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-app-border bg-white/[0.03] p-4 text-sm text-slate-300">
+                {selectedSpan.output_text}
+              </pre>
+            ) : (
+              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
+                No span output available.
               </div>
             )}
           </Card>
