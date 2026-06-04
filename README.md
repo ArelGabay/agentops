@@ -380,7 +380,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Trace ingestion API
 - [x] Span ingestion API
 - [x] Evaluation storage
 - [x] Frontend API services
@@ -390,7 +389,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] SDK packaging and LangChain integration
 - [x] Documentation, screenshots, and portfolio polish
 - [x] Settings page real configuration states
-- [ ] Trace detail span selection and richer span drawer
+- [x] Trace detail span selection and richer span drawer
 - [ ] SDK single-trace LangChain run grouping
 - [ ] Better backend error handling for missing foreign keys
 - [ ] Demo seed command for agents, traces, spans, and evaluations
@@ -400,14 +399,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] V1 release checklist and demo script
 - [ ] Production deployment notes and environment guide
 - [ ] Settings persistence and editable workspace preferences
+- [ ] Trace detail tabs for input, output, and attributes
 
 ## Next Milestone
 
-Settings page real configuration states are complete. The next engineering milestone is trace detail span selection and richer span drawer:
+Trace detail span selection and richer span drawer are complete. The next engineering milestone is SDK single-trace LangChain run grouping:
 
-- allow selecting a span from the spans table
-- show selected span details in the side drawer
-- keep unsupported span fields honest
+- group LangChain callback events into one trace per user-level run
+- avoid duplicate traces from nested LangGraph/LangChain callbacks
+- keep the SDK integration lightweight and optional
 - preserve current trace details API boundaries
 
 ## Project Philosophy
