@@ -380,7 +380,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Span ingestion API
 - [x] Evaluation storage
 - [x] Frontend API services
 - [x] Trace details real data
@@ -390,7 +389,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Documentation, screenshots, and portfolio polish
 - [x] Settings page real configuration states
 - [x] Trace detail span selection and richer span drawer
-- [ ] SDK single-trace LangChain run grouping
+- [x] SDK single-trace LangChain run grouping
 - [ ] Better backend error handling for missing foreign keys
 - [ ] Demo seed command for agents, traces, spans, and evaluations
 - [ ] Frontend loading and empty-state polish pass
@@ -400,14 +399,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Production deployment notes and environment guide
 - [ ] Settings persistence and editable workspace preferences
 - [ ] Trace detail tabs for input, output, and attributes
+- [ ] SDK error reporting and developer-friendly ingestion failures
 
 ## Next Milestone
 
-Trace detail span selection and richer span drawer are complete. The next engineering milestone is SDK single-trace LangChain run grouping:
+SDK single-trace LangChain run grouping is complete. The next engineering milestone is better backend error handling for missing foreign keys:
 
-- group LangChain callback events into one trace per user-level run
-- avoid duplicate traces from nested LangGraph/LangChain callbacks
-- keep the SDK integration lightweight and optional
+- return clear API errors when traces reference missing agents
+- return clear API errors when spans or evaluations reference missing traces
+- keep controller/service/repository responsibilities clean
 - preserve current trace details API boundaries
 
 ## Project Philosophy
