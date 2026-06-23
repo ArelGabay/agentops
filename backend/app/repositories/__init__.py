@@ -10,6 +10,13 @@ from app.repositories.dashboard_repository import (
     list_dashboard_traces_since,
     list_recent_dashboard_traces,
 )
+from app.repositories.demo_seed_repository import (
+    create_demo_agents,
+    create_demo_evaluations,
+    create_demo_spans,
+    create_demo_traces,
+    delete_demo_data,
+)
 
 __all__ = [
     "get_agent_by_id",
@@ -23,4 +30,9 @@ __all__ = [
     "list_traces",
     "list_dashboard_traces_since",
     "list_recent_dashboard_traces",
+    "create_demo_agents",
+    "create_demo_evaluations",
+    "create_demo_spans",
+    "create_demo_traces",
+    "delete_demo_data",
 ]

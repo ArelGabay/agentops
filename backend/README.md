@@ -134,6 +134,23 @@ curl "http://127.0.0.1:8000/evaluations?limit=25"
 
 List endpoints support `limit` from `1` to `100`. Missing trace details return `404`.
 
+## Demo Data
+
+Seed realistic local demo data for dashboards, trace lists, trace details, and evaluations:
+
+```bash
+source .venv/bin/activate
+python -m app.utils.seed_demo_data
+```
+
+The command resets only known demo rows and recreates demo agents, traces, spans, and evaluations.
+
+Expected output:
+
+```txt
+Seeded demo data: 5 agents, 12 traces, 28 spans, 7 evaluations.
+```
+
 ## SDK Demo
 
 The local Python SDK lives under `sdk/agentops`.
@@ -152,7 +169,7 @@ source .venv/bin/activate
 pip install -e ./sdk
 ```
 
-Before running the demo, make sure PostgreSQL and the FastAPI backend are running, and that `agent-demo-1` exists in the `agents` table.
+Before running the demo, make sure PostgreSQL and the FastAPI backend are running. Use the demo seed command first if `agent-demo-1` does not exist yet.
 
 ```bash
 python sdk/demo.py

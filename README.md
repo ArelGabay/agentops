@@ -306,6 +306,24 @@ Current database tables:
 - `evaluations`
 - `tool_calls`
 
+## Demo Data
+
+Seed realistic local demo data from the `backend/` directory:
+
+```bash
+cd backend
+source .venv/bin/activate
+python -m app.utils.seed_demo_data
+```
+
+The command resets only known demo rows and recreates demo agents, traces, spans, and evaluations for dashboards, trace details, and screenshots.
+
+Expected output:
+
+```txt
+Seeded demo data: 5 agents, 12 traces, 28 spans, 7 evaluations.
+```
+
 ## SDK Demo
 
 The local SDK lives under `backend/sdk/agentops`.
@@ -318,7 +336,7 @@ source .venv/bin/activate
 pip install -e ./sdk
 ```
 
-Before running the demo, make sure PostgreSQL and the backend API are running, and that `agent-demo-1` exists in the `agents` table.
+Before running the SDK demo, make sure PostgreSQL and the backend API are running. Use the demo seed command first if `agent-demo-1` does not exist yet.
 
 ```bash
 cd backend
@@ -380,7 +398,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Frontend API services
 - [x] Trace details real data
 - [x] Traces list real data
 - [x] Evaluations real data
@@ -390,7 +407,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Trace detail span selection and richer span drawer
 - [x] SDK single-trace LangChain run grouping
 - [x] Better backend error handling for missing foreign keys
-- [ ] Demo seed command for agents, traces, spans, and evaluations
+- [x] Demo seed command for agents, traces, spans, and evaluations
 - [ ] Frontend loading and empty-state polish pass
 - [ ] API tests for ingestion and dashboard summary
 - [ ] GitHub Actions build and lint workflow
@@ -400,15 +417,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Trace detail tabs for input, output, and attributes
 - [ ] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
+- [ ] Demo data reset safeguards and seed customization
 
 ## Next Milestone
 
-Better backend error handling for missing foreign keys is complete. The next engineering milestone is demo seed command for agents, traces, spans, and evaluations:
+Demo seed command for agents, traces, spans, and evaluations is complete. The next engineering milestone is frontend loading and empty-state polish pass:
 
-- add one repeatable command for realistic local demo data
-- seed agents, traces, spans, and evaluations together
-- keep demo setup simple for screenshots, testing, and recruiter walkthroughs
-- preserve current trace details API boundaries
+- polish loading states across dashboard, traces, trace details, evaluations, and settings
+- make empty states visually consistent and honest
+- keep real-data behavior unchanged while improving presentation quality
 
 ## Project Philosophy
 
