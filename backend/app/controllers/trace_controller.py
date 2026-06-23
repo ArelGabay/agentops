@@ -8,6 +8,7 @@ from app.schemas import (
     TraceResponse,
 )
 from app.services import (
+    ResourceNotFoundError,
     get_recent_traces,
     get_trace_detail,
     ingest_trace,
@@ -15,7 +16,14 @@ from app.services import (
 
 
 def create_trace_controller(db: Session, trace_data: TraceCreate) -> TraceResponse:
-    trace = ingest_trace(db, trace_data)
+    try:
+        trace = ingest_trace(db, trace_data)
+    except ResourceNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=error.detail,
+        ) from error
+
     return TraceResponse.model_validate(trace)
 
 

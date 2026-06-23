@@ -1,3 +1,4 @@
+from app.repositories.agent_repository import get_agent_by_id
 from app.repositories.evaluation_repository import (
     create_evaluation,
     list_evaluations,
@@ -11,6 +12,7 @@ from app.repositories.dashboard_repository import (
 )
 
 __all__ = [
+    "get_agent_by_id",
     "create_evaluation",
     "list_evaluations",
     "list_evaluations_by_trace_id",
