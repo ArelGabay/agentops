@@ -380,7 +380,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Evaluation storage
 - [x] Frontend API services
 - [x] Trace details real data
 - [x] Traces list real data
@@ -390,7 +389,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Settings page real configuration states
 - [x] Trace detail span selection and richer span drawer
 - [x] SDK single-trace LangChain run grouping
-- [ ] Better backend error handling for missing foreign keys
+- [x] Better backend error handling for missing foreign keys
 - [ ] Demo seed command for agents, traces, spans, and evaluations
 - [ ] Frontend loading and empty-state polish pass
 - [ ] API tests for ingestion and dashboard summary
@@ -400,14 +399,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Settings persistence and editable workspace preferences
 - [ ] Trace detail tabs for input, output, and attributes
 - [ ] SDK error reporting and developer-friendly ingestion failures
+- [ ] Backend ingestion validation and status normalization
 
 ## Next Milestone
 
-SDK single-trace LangChain run grouping is complete. The next engineering milestone is better backend error handling for missing foreign keys:
+Better backend error handling for missing foreign keys is complete. The next engineering milestone is demo seed command for agents, traces, spans, and evaluations:
 
-- return clear API errors when traces reference missing agents
-- return clear API errors when spans or evaluations reference missing traces
-- keep controller/service/repository responsibilities clean
+- add one repeatable command for realistic local demo data
+- seed agents, traces, spans, and evaluations together
+- keep demo setup simple for screenshots, testing, and recruiter walkthroughs
 - preserve current trace details API boundaries
 
 ## Project Philosophy

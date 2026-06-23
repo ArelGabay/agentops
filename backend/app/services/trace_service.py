@@ -3,15 +3,22 @@ from sqlalchemy.orm import Session
 from app.models import Evaluation, Span, Trace
 from app.repositories import (
     create_trace,
+    get_agent_by_id,
     get_trace_by_id,
     list_evaluations_by_trace_id,
     list_spans_by_trace_id,
     list_traces,
 )
 from app.schemas import TraceCreate
+from app.services.errors import ResourceNotFoundError
 
 
 def ingest_trace(db: Session, trace_data: TraceCreate) -> Trace:
+    agent = get_agent_by_id(db, trace_data.agent_id)
+
+    if agent is None:
+        raise ResourceNotFoundError("Agent not found")
+
     return create_trace(db, trace_data)
 
 
