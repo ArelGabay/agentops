@@ -7,3 +7,5 @@ sqlalchemy
 psycopg[binary]
 alembic
 requests
+pytest
+httpx
