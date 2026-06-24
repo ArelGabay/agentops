@@ -398,7 +398,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Evaluations real data
 - [x] SDK packaging and LangChain integration
 - [x] Documentation, screenshots, and portfolio polish
 - [x] Settings page real configuration states
@@ -408,7 +407,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Demo seed command for agents, traces, spans, and evaluations
 - [x] Frontend loading and empty-state polish pass
 - [x] API tests for ingestion and dashboard summary
-- [ ] GitHub Actions build and lint workflow
+- [x] GitHub Actions build and lint workflow
 - [ ] V1 release checklist and demo script
 - [ ] Production deployment notes and environment guide
 - [ ] Settings persistence and editable workspace preferences
@@ -418,14 +417,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
+- [ ] Portfolio case study write-up
 
 ## Next Milestone
 
-API tests for ingestion and dashboard summary are complete. The next engineering milestone is GitHub Actions build and lint workflow:
+GitHub Actions build and lint workflow is complete. The next engineering milestone is V1 release checklist and demo script:
 
-- run backend compile and pytest checks in CI
-- run frontend build and lint checks in CI
-- keep the workflow small and readable for the V1 portfolio phase
+- create a repeatable local demo flow from fresh setup to seeded data
+- document the final V1 verification checklist
+- prepare a concise walkthrough script for portfolio reviews
 
 ## Project Philosophy
 
