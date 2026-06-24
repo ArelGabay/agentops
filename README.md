@@ -398,7 +398,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Trace details real data
 - [x] Traces list real data
 - [x] Evaluations real data
 - [x] SDK packaging and LangChain integration
@@ -408,7 +407,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] SDK single-trace LangChain run grouping
 - [x] Better backend error handling for missing foreign keys
 - [x] Demo seed command for agents, traces, spans, and evaluations
-- [ ] Frontend loading and empty-state polish pass
+- [x] Frontend loading and empty-state polish pass
 - [ ] API tests for ingestion and dashboard summary
 - [ ] GitHub Actions build and lint workflow
 - [ ] V1 release checklist and demo script
@@ -418,14 +417,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
+- [ ] Frontend accessibility and keyboard navigation pass
 
 ## Next Milestone
 
-Demo seed command for agents, traces, spans, and evaluations is complete. The next engineering milestone is frontend loading and empty-state polish pass:
+Frontend loading and empty-state polish pass is complete. The next engineering milestone is API tests for ingestion and dashboard summary:
 
-- polish loading states across dashboard, traces, trace details, evaluations, and settings
-- make empty states visually consistent and honest
-- keep real-data behavior unchanged while improving presentation quality
+- add focused backend tests for trace, span, and evaluation ingestion
+- cover clear missing foreign-key API errors
+- cover dashboard summary aggregation response shape and basic metrics
 
 ## Project Philosophy
 

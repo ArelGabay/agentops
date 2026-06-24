@@ -24,6 +24,8 @@ import { FilterSelect } from "../components/ui/FilterSelect";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { SearchInput } from "../components/ui/SearchInput";
 import { StatusBadge } from "../components/ui/StatusBadge";
+import { EmptyState } from "../components/ui/EmptyState";
+import { NoticeCard } from "../components/ui/NoticeCard";
 import { useTraces } from "../hooks";
 
 const metricCardTemplates = [
@@ -315,9 +317,9 @@ export function TracesPage() {
       </div>
 
       {isError && (
-        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+        <NoticeCard className="mt-4" tone="error">
           Traces data is unavailable. Check that the backend is running.
-        </Card>
+        </NoticeCard>
       )}
 
       <Card className="mt-4 p-4">
@@ -469,20 +471,20 @@ export function TracesPage() {
               </div>
             ))}
             {isLoading && (
-              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                Loading traces...
+              <div className="border-t border-app-border p-4">
+                <EmptyState title="Loading traces..." />
               </div>
             )}
 
             {!isLoading && !isError && traces.length === 0 && (
-              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                No traces found yet.
+              <div className="border-t border-app-border p-4">
+                <EmptyState title="No traces found yet." />
               </div>
             )}
 
             {!isLoading && !isError && traces.length > 0 && !hasTraces && (
-              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                No traces match the current filters.
+              <div className="border-t border-app-border p-4">
+                <EmptyState title="No traces match the current filters." />
               </div>
             )}
           </div>

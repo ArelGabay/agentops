@@ -18,6 +18,8 @@ import { KeyValueList } from "../components/ui/KeyValueList";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { Tabs } from "../components/ui/Tabs";
 import { TimelinePreview } from "../components/ui/TimelinePreview";
+import { EmptyState } from "../components/ui/EmptyState";
+import { NoticeCard } from "../components/ui/NoticeCard";
 import { useTraceDetail } from "../hooks";
 import { ApiError } from "../services/apiClient";
 
@@ -76,18 +78,14 @@ export function TraceDetailsPage() {
   const isError = traceQuery.isError;
 
   if (isLoading) {
-    return (
-      <Card className="p-5 text-sm text-slate-300">
-        Loading trace details...
-      </Card>
-    );
+    return <NoticeCard>Loading trace details...</NoticeCard>;
   }
 
   if (isError || !trace) {
     return (
-      <Card className="p-5 text-sm text-red-300">
+      <NoticeCard tone="error">
         {isNotFound ? "Trace not found." : "Trace details unavailable."}
-      </Card>
+      </NoticeCard>
     );
   }
 
@@ -242,9 +240,7 @@ export function TraceDetailsPage() {
               {timelineItems.length > 0 ? (
                 <TimelinePreview items={timelineItems} />
               ) : (
-                <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-                  No Spans found for this trace.
-                </div>
+                <EmptyState title="No spans found for this trace." />
               )}
             </div>
           </Card>
@@ -323,8 +319,8 @@ export function TraceDetailsPage() {
                   );
                 })}
                 {trace.spans.length === 0 && (
-                  <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                    No spans found for this trace.
+                  <div className="border-t border-app-border p-4">
+                    <EmptyState title="No spans found for this trace." />
                   </div>
                 )}
               </div>
@@ -392,9 +388,7 @@ export function TraceDetailsPage() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-                No evaluations found for this trace.
-              </div>
+              <EmptyState title="No evaluations found for this trace." />
             )}
           </Card>
         </div>
@@ -448,9 +442,7 @@ export function TraceDetailsPage() {
             {summaryItems.length > 0 ? (
               <KeyValueList items={summaryItems} />
             ) : (
-              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-                No span summary available.
-              </div>
+              <EmptyState title="No span summary available." />
             )}
           </Card>
 
@@ -461,9 +453,7 @@ export function TraceDetailsPage() {
                 {selectedSpan.input_text}
               </pre>
             ) : (
-              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-                No span input available.
-              </div>
+              <EmptyState title="No span input available." />
             )}
           </Card>
 
@@ -474,9 +464,7 @@ export function TraceDetailsPage() {
                 {selectedSpan.output_text}
               </pre>
             ) : (
-              <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-                No span output available.
-              </div>
+              <EmptyState title="No span output available." />
             )}
           </Card>
 
@@ -484,25 +472,19 @@ export function TraceDetailsPage() {
             <h2 className="mb-4 text-sm font-semibold text-white">
               Latency Breakdown
             </h2>
-            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              Latency breakdown is not available yet.
-            </div>
+            <EmptyState title="Latency breakdown is not available yet." />
           </Card>
 
           <Card className="p-5">
             <h2 className="mb-4 text-sm font-semibold text-white">
               Model Parameters
             </h2>
-            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              Model parameters are not available yet.
-            </div>
+            <EmptyState title="Model parameters are not available yet." />
           </Card>
 
           <Card className="p-5">
             <h2 className="mb-4 text-sm font-semibold text-white">Tags</h2>
-            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              Tags are not available yet.
-            </div>
+            <EmptyState title="Tags are not available yet." />
           </Card>
         </aside>
       </div>

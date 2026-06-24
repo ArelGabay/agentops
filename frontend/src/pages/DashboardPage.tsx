@@ -15,6 +15,8 @@ import { MetricCard } from "../components/metrics/MetricCard";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { ChartCard } from "../components/ui/ChartCard";
+import { EmptyState } from "../components/ui/EmptyState";
+import { NoticeCard } from "../components/ui/NoticeCard";
 import { StatList } from "../components/ui/StatList";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { TablePreview } from "../components/ui/TablePreview";
@@ -377,15 +379,13 @@ export function DashboardPage() {
       </div>
 
       {isLoading && (
-        <Card className="mt-4 border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-200">
-          Loading dashboard data...
-        </Card>
+        <NoticeCard className="mt-4">Loading dashboard data...</NoticeCard>
       )}
 
       {isError && (
-        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+        <NoticeCard className="mt-4" tone="error">
           Dashboard data is unavailable. Check that the backend is running.
-        </Card>
+        </NoticeCard>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -440,9 +440,7 @@ export function DashboardPage() {
           {dashboardTopAgents.length > 0 ? (
             <StatList items={dashboardTopAgents} />
           ) : (
-            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              No agent activity yet.
-            </div>
+            <EmptyState title="No agent activity yet." />
           )}
         </Card>
 
@@ -511,9 +509,7 @@ export function DashboardPage() {
             )}
           />
         ) : (
-          <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-            No traces found yet.
-          </div>
+          <EmptyState title="No traces found yet." />
         )}
       </Card>
     </>

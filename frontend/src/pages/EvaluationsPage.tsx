@@ -24,6 +24,8 @@ import { FilterSelect } from "../components/ui/FilterSelect";
 import { ResultBadge } from "../components/ui/ResultBadge";
 import { ScoreStars } from "../components/ui/ScoreStars";
 import { SearchInput } from "../components/ui/SearchInput";
+import { EmptyState } from "../components/ui/EmptyState";
+import { NoticeCard } from "../components/ui/NoticeCard";
 import { useEvaluations } from "../hooks";
 import {
   formatDateTime,
@@ -77,9 +79,10 @@ type EvaluationResult = "pass" | "partial" | "fail";
 
 function EmptyAnalyticsState({ message }: { message: string }) {
   return (
-    <div className="grid min-h-[220px] place-items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-center text-sm text-slate-400">
-      {message}
-    </div>
+    <EmptyState
+      className="grid min-h-[220px] place-items-center"
+      title={message}
+    />
   );
 }
 
@@ -242,12 +245,7 @@ export function EvaluationsPage() {
   const filteredEvaluationRows = evaluationTableRows.filter((evaluation) => {
     const matchesSearch =
       normalizedSearchQuery.length === 0 ||
-      [
-        evaluation.id,
-        evaluation.traceId,
-        evaluation.task,
-        evaluation.result,
-      ]
+      [evaluation.id, evaluation.traceId, evaluation.task, evaluation.result]
         .join(" ")
         .toLowerCase()
         .includes(normalizedSearchQuery);
@@ -308,9 +306,9 @@ export function EvaluationsPage() {
       </div>
 
       {isError && (
-        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+        <NoticeCard className="mt-4" tone="error">
           Evaluations data is unavailable. Check that the backend is running.
-        </Card>
+        </NoticeCard>
       )}
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.3fr_0.9fr_1fr]">
@@ -488,14 +486,14 @@ export function EvaluationsPage() {
             })}
 
             {isLoading && (
-              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                Loading evaluations...
+              <div className="border-t border-app-border p-4">
+                <EmptyState title="Loading evaluations..." />
               </div>
             )}
 
             {!isLoading && !isError && evaluations.length === 0 && (
-              <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                No evaluations found yet.
+              <div className="border-t border-app-border p-4">
+                <EmptyState title="No evaluations found yet." />
               </div>
             )}
 
@@ -503,8 +501,8 @@ export function EvaluationsPage() {
               !isError &&
               evaluations.length > 0 &&
               !hasEvaluations && (
-                <div className="border-t border-app-border px-4 py-8 text-center text-sm text-slate-400">
-                  No evaluations match the current filters.
+                <div className="border-t border-app-border p-4">
+                  <EmptyState title="No evaluations match the current filters." />
                 </div>
               )}
           </div>
