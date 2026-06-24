@@ -14,6 +14,8 @@ import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { Tabs } from "../components/ui/Tabs";
+import { EmptyState } from "../components/ui/EmptyState";
+import { NoticeCard } from "../components/ui/NoticeCard";
 import { useSettingsSummary } from "../hooks";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -127,15 +129,13 @@ export function SettingsPage() {
       </div>
 
       {isLoading && (
-        <Card className="mt-4 border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-200">
-          Loading settings...
-        </Card>
+        <NoticeCard className="mt-4">Loading settings...</NoticeCard>
       )}
 
       {isError && (
-        <Card className="mt-4 border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+        <NoticeCard className="mt-4" tone="error">
           Settings are unavailable.
-        </Card>
+        </NoticeCard>
       )}
 
       <Tabs
@@ -244,12 +244,13 @@ export function SettingsPage() {
               Configure how and when you want to be notified.
             </p>
 
-            <div className="mt-6 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              {getUnavailableReason(
+            <EmptyState
+              className="mt-6"
+              title={getUnavailableReason(
                 "Notification delivery",
                 "Notification delivery is not available yet.",
               )}
-            </div>
+            />
           </Card>
         </div>
 
@@ -262,12 +263,14 @@ export function SettingsPage() {
               Configure how evaluations are run and scored.
             </p>
 
-            <div className="mt-5 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              {getUnavailableReason(
+            <EmptyState
+              className="mt-5"
+              description={getUnavailableReason(
                 "Evaluation configuration",
-                "Evaluation configuration is not available yet. Evaluations can be ingested and viewed, but model, frequency, and threshold settings are not persisted.",
+                "Evaluations can be ingested and viewed, but model, frequency, and threshold settings are not persisted.",
               )}
-            </div>
+              title="Configuration unavailable"
+            />
           </Card>
 
           <Card className="p-5">
@@ -278,12 +281,14 @@ export function SettingsPage() {
               Select the dimensions to include in evaluations.
             </p>
 
-            <div className="mt-5 rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              {getUnavailableReason(
+            <EmptyState
+              className="mt-5"
+              description={getUnavailableReason(
                 "Evaluation dimensions",
-                "Evaluation dimensions are not configurable yet.",
+                "Dimension-level settings are not configurable yet.",
               )}
-            </div>
+              title="Dimensions unavailable"
+            />
           </Card>
         </div>
 
@@ -304,9 +309,7 @@ export function SettingsPage() {
                 />
               ))}
               {!settings && !isLoading && (
-                <p className="py-4 text-sm text-slate-400">
-                  No configuration data available.
-                </p>
+                <EmptyState title="No configuration data available." />
               )}
             </div>
 
@@ -334,12 +337,12 @@ export function SettingsPage() {
               </Button>
             </div>
 
-            <div className="rounded-lg border border-app-border bg-white/[0.03] px-4 py-8 text-center text-sm text-slate-400">
-              {getUnavailableReason(
+            <EmptyState
+              title={getUnavailableReason(
                 "API key management",
                 "API key management is not available until authentication and API key storage exist.",
               )}
-            </div>
+            />
 
             <Button className="mt-4 w-full" disabled variant="secondary">
               View all API keys
