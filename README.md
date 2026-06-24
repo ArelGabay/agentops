@@ -398,7 +398,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Traces list real data
 - [x] Evaluations real data
 - [x] SDK packaging and LangChain integration
 - [x] Documentation, screenshots, and portfolio polish
@@ -408,7 +407,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Better backend error handling for missing foreign keys
 - [x] Demo seed command for agents, traces, spans, and evaluations
 - [x] Frontend loading and empty-state polish pass
-- [ ] API tests for ingestion and dashboard summary
+- [x] API tests for ingestion and dashboard summary
 - [ ] GitHub Actions build and lint workflow
 - [ ] V1 release checklist and demo script
 - [ ] Production deployment notes and environment guide
@@ -418,14 +417,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
+- [ ] Test coverage expansion for frontend data states
 
 ## Next Milestone
 
-Frontend loading and empty-state polish pass is complete. The next engineering milestone is API tests for ingestion and dashboard summary:
+API tests for ingestion and dashboard summary are complete. The next engineering milestone is GitHub Actions build and lint workflow:
 
-- add focused backend tests for trace, span, and evaluation ingestion
-- cover clear missing foreign-key API errors
-- cover dashboard summary aggregation response shape and basic metrics
+- run backend compile and pytest checks in CI
+- run frontend build and lint checks in CI
+- keep the workflow small and readable for the V1 portfolio phase
 
 ## Project Philosophy
 
