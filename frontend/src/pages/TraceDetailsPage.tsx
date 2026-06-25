@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Bot,
-  ChevronLeft,
-  ChevronRight,
-  MessageSquare,
-  Search,
-  Sparkles,
-  X,
-  ZoomIn,
-} from "lucide-react";
+import { ChevronRight, Sparkles, X } from "lucide-react";
 
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -184,28 +175,6 @@ export function TraceDetailsPage() {
             </span>
           </div>
         </div>
-
-        <div className="flex flex-wrap gap-3">
-          <Button variant="secondary">
-            <MessageSquare className="h-4 w-4" />
-            Give Feedback
-          </Button>
-          <Button variant="primary">
-            <Bot className="h-4 w-4" />
-            View in Playground
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-6 flex flex-wrap justify-end gap-3">
-        <Button variant="secondary">
-          <ChevronLeft className="h-4 w-4" />
-          Previous Trace
-        </Button>
-        <Button variant="secondary">
-          Next Trace
-          <ChevronRight className="h-4 w-4" />
-        </Button>
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -226,15 +195,6 @@ export function TraceDetailsPage() {
                 <h2 className="text-sm font-semibold text-white">
                   Execution Timeline
                 </h2>
-                <div className="flex items-center gap-2">
-                  <Button variant="secondary">Fit to view</Button>
-                  <IconButton label="Zoom in">
-                    <ZoomIn className="h-4 w-4" />
-                  </IconButton>
-                  <IconButton label="Search timeline">
-                    <Search className="h-4 w-4" />
-                  </IconButton>
-                </div>
               </div>
 
               {timelineItems.length > 0 ? (

@@ -12,7 +12,6 @@ import {
   Download,
   FileSearch,
   Filter,
-  RefreshCw,
   Save,
 } from "lucide-react";
 
@@ -26,6 +25,7 @@ import { SearchInput } from "../components/ui/SearchInput";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
+import { RefreshButton } from "../components/ui/RefreshButton";
 import { useTraces } from "../hooks";
 
 const metricCardTemplates = [
@@ -295,17 +295,19 @@ export function TracesPage() {
         />
 
         <div className="flex flex-wrap gap-3">
-          <Button className="min-w-0" variant="secondary">
+          <Button className="min-w-0" disabled variant="secondary">
             <Calendar className="h-4 w-4" />
             <span className="truncate">Latest 100 traces</span>
           </Button>
-          <Button variant="secondary">
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
-          <Button variant="primary">
+          <RefreshButton
+            isRefreshing={tracesQuery.isFetching}
+            onRefresh={() => {
+              void tracesQuery.refetch();
+            }}
+          />
+          <Button disabled variant="primary">
             <Download className="h-4 w-4" />
-            Export
+            Export unavailable
           </Button>
         </div>
       </div>
@@ -382,13 +384,13 @@ export function TracesPage() {
               ]}
               value={latencyFilter}
             />
-            <Button className="opacity-60" variant="secondary">
+            <Button disabled variant="secondary">
               <Filter className="h-4 w-4" />
-              More filters
+              More filters unavailable
             </Button>
-            <Button className="opacity-60" variant="secondary">
+            <Button disabled variant="secondary">
               <Save className="h-4 w-4" />
-              Save view
+              Save view unavailable
             </Button>
           </div>
         </div>

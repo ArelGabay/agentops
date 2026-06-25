@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import {
   Activity,
   Bot,
@@ -215,6 +217,7 @@ function formatCurrency(value: number) {
 }
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const summaryQuery = useDashboardSummary();
 
   const summary = summaryQuery.data;
@@ -367,13 +370,13 @@ export function DashboardPage() {
         />
 
         <div className="flex flex-wrap gap-3">
-          <Button className="min-w-0" variant="secondary">
+          <Button className="min-w-0" disabled variant="secondary">
             <Calendar className="h-4 w-4" />
             <span className="truncate">Last 7 days</span>
           </Button>
-          <Button variant="primary">
+          <Button disabled variant="primary">
             <Download className="h-4 w-4" />
-            Export
+            Export unavailable
           </Button>
         </div>
       </div>
@@ -397,7 +400,16 @@ export function DashboardPage() {
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
         <ChartCard
           title="Traces Over Time"
-          action={<Button variant="secondary">Traces</Button>}
+          action={
+            <Button
+              onClick={() => {
+                navigate("/traces");
+              }}
+              variant="secondary"
+            >
+              Traces
+            </Button>
+          }
         >
           <SimpleLineChart
             ariaLabel="Traces over time"
@@ -408,7 +420,11 @@ export function DashboardPage() {
 
         <ChartCard
           title="Avg. Latency Over Time"
-          action={<Button variant="secondary">Avg. Latency</Button>}
+          action={
+            <Button disabled variant="secondary">
+              Avg. Latency
+            </Button>
+          }
         >
           <SimpleLineChart
             ariaLabel="Average latency over time"
@@ -424,7 +440,14 @@ export function DashboardPage() {
             <h2 className="text-sm font-semibold text-white">
               Traces by Status
             </h2>
-            <Button variant="ghost">View all</Button>
+            <Button
+              onClick={() => {
+                navigate("/traces");
+              }}
+              variant="ghost"
+            >
+              View all
+            </Button>
           </div>
           <StatusDonut
             total={formatNumber(totalTraces)}
@@ -435,7 +458,9 @@ export function DashboardPage() {
         <Card className="p-5">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-white">Top Agents</h2>
-            <Button variant="ghost">View all</Button>
+            <Button disabled variant="ghost">
+              View all
+            </Button>
           </div>
           {dashboardTopAgents.length > 0 ? (
             <StatList items={dashboardTopAgents} />
@@ -446,7 +471,11 @@ export function DashboardPage() {
 
         <ChartCard
           title="Error Rate Over Time"
-          action={<Button variant="secondary">Error Rate</Button>}
+          action={
+            <Button disabled variant="secondary">
+              Error Rate
+            </Button>
+          }
         >
           <SimpleLineChart
             ariaLabel="Error rate over time"
@@ -466,7 +495,14 @@ export function DashboardPage() {
                 : "No backend data found yet."}
             </p>
           </div>
-          <Button variant="secondary">View all traces</Button>
+          <Button
+            onClick={() => {
+              navigate("/traces");
+            }}
+            variant="secondary"
+          >
+            View all traces
+          </Button>
         </div>
 
         {dashboardTraceRows.length > 0 ? (

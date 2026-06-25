@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Columns3,
   Download,
-  Eye,
   Filter,
   ShieldAlert,
   ShieldCheck,
@@ -73,7 +72,7 @@ const metricCardTemplates = [
 ];
 
 const evaluationTableColumns =
-  "minmax(160px,1.05fr) minmax(150px,1fr) minmax(120px,0.8fr) minmax(190px,1.2fr) 140px 132px 140px 190px 96px";
+  "minmax(160px,1.05fr) minmax(150px,1fr) minmax(120px,0.8fr) minmax(190px,1.2fr) 140px 132px 140px 190px";
 
 type EvaluationResult = "pass" | "partial" | "fail";
 
@@ -284,17 +283,17 @@ export function EvaluationsPage() {
         />
 
         <div className="flex flex-wrap gap-3">
-          <Button className="min-w-0" variant="secondary">
+          <Button className="min-w-0" disabled variant="secondary">
             <Calendar className="h-4 w-4" />
             <span className="truncate">Latest 100 evaluations</span>
           </Button>
-          <Button className="opacity-60" variant="secondary">
+          <Button disabled variant="secondary">
             <Filter className="h-4 w-4" />
-            Filters
+            Advanced filters unavailable
           </Button>
-          <Button className="opacity-60" variant="primary">
+          <Button disabled variant="primary">
             <Download className="h-4 w-4" />
-            Export
+            Export unavailable
           </Button>
         </div>
       </div>
@@ -314,21 +313,33 @@ export function EvaluationsPage() {
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.3fr_0.9fr_1fr]">
         <ChartCard
           title="Score Over Time"
-          action={<Button variant="secondary">Daily</Button>}
+          action={
+            <Button disabled variant="secondary">
+              Daily
+            </Button>
+          }
         >
           <EmptyAnalyticsState message="Score time-series data is not available yet." />
         </ChartCard>
 
         <ChartCard
           title="Score Distribution"
-          action={<Button variant="secondary">All Time</Button>}
+          action={
+            <Button disabled variant="secondary">
+              All Time
+            </Button>
+          }
         >
           <EmptyAnalyticsState message="Score distribution data is not available yet." />
         </ChartCard>
 
         <ChartCard
           title="Evaluation Dimensions"
-          action={<Button variant="secondary">All Time</Button>}
+          action={
+            <Button disabled variant="secondary">
+              All Time
+            </Button>
+          }
         >
           <EmptyAnalyticsState message="Evaluation dimension data is not available yet." />
         </ChartCard>
@@ -354,7 +365,9 @@ export function EvaluationsPage() {
             <h2 className="text-sm font-semibold text-white">
               Evaluation by Dataset / Task
             </h2>
-            <Button variant="secondary">All Time</Button>
+            <Button disabled variant="secondary">
+              All Time
+            </Button>
           </div>
 
           <EmptyAnalyticsState message="Dataset and task aggregation is not available yet." />
@@ -390,9 +403,9 @@ export function EvaluationsPage() {
               ]}
               value={resultFilter}
             />
-            <Button className="opacity-60" variant="secondary">
+            <Button disabled variant="secondary">
               <Columns3 className="h-4 w-4" />
-              Columns
+              Columns unavailable
             </Button>
           </div>
         </div>
@@ -411,7 +424,6 @@ export function EvaluationsPage() {
               <span>Result</span>
               <span>Hallucination</span>
               <span>Created At</span>
-              <span>Actions</span>
             </div>
 
             {paginatedEvaluationRows.map((evaluation) => {
@@ -471,15 +483,6 @@ export function EvaluationsPage() {
                   </span>
                   <span className="whitespace-nowrap text-slate-300">
                     {evaluation.createdAt}
-                  </span>
-                  <span>
-                    <button
-                      aria-label={`View ${evaluation.id}`}
-                      className="grid h-8 w-8 place-items-center rounded-lg border border-app-border text-slate-400 transition hover:border-slate-600 hover:text-slate-100"
-                      type="button"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
                   </span>
                 </div>
               );
