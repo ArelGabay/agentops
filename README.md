@@ -478,17 +478,45 @@ V1 is released. The next engineering milestone is trace detail tabs for input, o
 
 ## Project Philosophy
 
-AgentOps is intentionally scoped as a polished V1 product, not an enterprise observability platform.
+AgentOps is built as a focused, production-inspired AI observability product.
 
-V1 should avoid:
+The project prioritizes:
+
+- clean full-stack architecture
+- real backend-backed product behavior
+- readable MVC backend boundaries
+- typed frontend API flows
+- practical SDK telemetry ingestion
+- honest UI states instead of fake data
+- strong local demo quality
+- incremental engineering milestones
+
+The goal is to make AgentOps deeper and more realistic over time without adding complexity just to look advanced.
+
+Near-term V2 work should improve:
+
+- trace debugging depth
+- editable real settings
+- SDK developer experience
+- backend validation
+- demo data safety
+- accessibility
+- testing
+- documentation
+
+AgentOps intentionally avoids premature enterprise complexity until the product needs it.
+
+Out of scope for the near term:
 
 - Microservices
 - Kafka
 - Kubernetes
-- Advanced RBAC
 - Billing
+- Advanced RBAC
+- Hosted multi-tenant SaaS infrastructure
 - OpenTelemetry integration
 - Distributed tracing
+- Large-scale ingestion pipelines
 - Multi-framework SDK support
 
 The priority is to demonstrate strong full-stack fundamentals, clean architecture, thoughtful product design, and practical understanding of AI agent observability.
