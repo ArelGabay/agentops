@@ -8,7 +8,7 @@ This is a portfolio-grade engineering project focused on clean architecture, mod
 
 ## Current Status
 
-AgentOps is a working V1 observability product foundation.
+AgentOps V1 is released as a stable local demo and product foundation.
 
 Completed:
 
@@ -22,11 +22,12 @@ Completed:
 - Backend API tests and GitHub Actions CI for backend/frontend verification
 - Real screenshots and mockups for portfolio presentation
 - V1 local demo guide for recruiter-friendly setup and review
+- Stable `v1.0.0` Git tag for reviewing the exact V1 snapshot
 
 Not built yet:
 
 - Authentication and user/project isolation
-- Production deployment
+- Hosted SaaS productization
 - Advanced SDK behavior such as batching, retries, OpenTelemetry, or multi-framework integrations
 
 ## V1 Local Demo
@@ -51,7 +52,7 @@ cd agentops
 git checkout v1.0.0
 ```
 
-The V1 source archive will also be available from GitHub Releases:
+The V1 source archive is also available from GitHub Releases:
 
 ```txt
 https://github.com/ArelGabay/agentops/releases
@@ -59,7 +60,7 @@ https://github.com/ArelGabay/agentops/releases
 
 ## Product Vision
 
-AgentOps will provide a dashboard for AI agent observability, including:
+AgentOps provides a dashboard for AI agent observability, including:
 
 - Agent performance monitoring
 - Trace timelines
@@ -72,6 +73,25 @@ AgentOps will provide a dashboard for AI agent observability, including:
 - Execution metadata analysis
 
 The product direction is dark-mode-first, SaaS-like, and inspired by tools such as Datadog, Grafana, Linear, Vercel, and Stripe dashboards.
+
+## V2 Direction
+
+V2 will focus on making AgentOps deeper, more reliable, and more product-like while keeping the project focused.
+
+The next version should improve:
+
+- trace debugging depth
+- editable real settings
+- SDK developer experience
+- backend ingestion validation
+- safe and repeatable demo data
+- frontend accessibility
+- frontend data-state tests
+- evaluation and trace analytics
+- API and SDK documentation
+- release notes and project maintenance
+
+V2 is not planned as a public self-hosting guide or enterprise platform. Hosted deployment, authentication, billing, RBAC, OpenTelemetry, and large-scale infrastructure remain future productization work.
 
 ## Product Screenshots
 
@@ -437,24 +457,24 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] API tests for ingestion and dashboard summary
 - [x] GitHub Actions build and lint workflow
 - [x] V1 release checklist and demo script
-- [ ] Production deployment notes and environment guide
-- [ ] Settings persistence and editable workspace preferences
 - [ ] Trace detail tabs for input, output, and attributes
+- [ ] Settings persistence and editable workspace preferences
 - [ ] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
+- [ ] Trace and evaluation analytics improvements
+- [ ] API and SDK documentation polish
 - [ ] Portfolio case study write-up
-- [ ] V1 release maintenance and patch notes
 
 ## Next Milestone
 
-V1 release checklist and demo script is complete. The next engineering milestone is production deployment notes and environment guide:
+V1 is released. The next engineering milestone is trace detail tabs for input, output, and attributes:
 
-- document required production environment variables
-- describe deployment architecture options for backend, frontend, database, and migrations
-- keep the guidance practical without deploying the app yet
+- make trace details more useful as the main debugging view
+- show real span input, output, and attributes where backend data exists
+- keep unsupported fields honest with empty states instead of fake values
 
 ## Project Philosophy
 
