@@ -19,14 +19,43 @@ Completed:
 - Typed frontend API services and React Query hooks for backend-backed data
 - Dashboard aggregation endpoint with summary metrics, status counts, top agents, recent traces, and time-series data
 - Local editable Python SDK package with trace/span helpers and optional LangChain callback integration
+- Backend API tests and GitHub Actions CI for backend/frontend verification
 - Real screenshots and mockups for portfolio presentation
+- V1 local demo guide for recruiter-friendly setup and review
 
 Not built yet:
 
 - Authentication and user/project isolation
 - Production deployment
-- Automated CI checks
 - Advanced SDK behavior such as batching, retries, OpenTelemetry, or multi-framework integrations
+
+## V1 Local Demo
+
+The easiest way to review AgentOps V1 is to use the local demo guide:
+
+[AgentOps V1 Local Demo Guide](docs/release.md)
+
+The guide includes:
+
+- copy/paste backend and frontend setup commands
+- seeded demo data instructions
+- pages to review in the browser
+- optional SDK demo commands
+- expected results for the local V1 demo
+
+After the V1 release is tagged, reviewers can use the stable `v1.0.0` snapshot:
+
+```bash
+git clone https://github.com/ArelGabay/agentops.git
+cd agentops
+git checkout v1.0.0
+```
+
+The V1 source archive will also be available from GitHub Releases:
+
+```txt
+https://github.com/ArelGabay/agentops/releases
+```
 
 ## Product Vision
 
@@ -398,7 +427,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] SDK packaging and LangChain integration
 - [x] Documentation, screenshots, and portfolio polish
 - [x] Settings page real configuration states
 - [x] Trace detail span selection and richer span drawer
@@ -408,7 +436,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Frontend loading and empty-state polish pass
 - [x] API tests for ingestion and dashboard summary
 - [x] GitHub Actions build and lint workflow
-- [ ] V1 release checklist and demo script
+- [x] V1 release checklist and demo script
 - [ ] Production deployment notes and environment guide
 - [ ] Settings persistence and editable workspace preferences
 - [ ] Trace detail tabs for input, output, and attributes
@@ -418,14 +446,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
 - [ ] Portfolio case study write-up
+- [ ] V1 release maintenance and patch notes
 
 ## Next Milestone
 
-GitHub Actions build and lint workflow is complete. The next engineering milestone is V1 release checklist and demo script:
+V1 release checklist and demo script is complete. The next engineering milestone is production deployment notes and environment guide:
 
-- create a repeatable local demo flow from fresh setup to seeded data
-- document the final V1 verification checklist
-- prepare a concise walkthrough script for portfolio reviews
+- document required production environment variables
+- describe deployment architecture options for backend, frontend, database, and migrations
+- keep the guidance practical without deploying the app yet
 
 ## Project Philosophy
 
