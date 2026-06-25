@@ -13,7 +13,6 @@ import { PageHeader } from "../components/layout/PageHeader";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { StatusBadge } from "../components/ui/StatusBadge";
-import { Tabs } from "../components/ui/Tabs";
 import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
 import { useSettingsSummary } from "../hooks";
@@ -137,18 +136,6 @@ export function SettingsPage() {
           Settings are unavailable.
         </NoticeCard>
       )}
-
-      <Tabs
-        items={[
-          { label: "General", active: true },
-          { label: "Evaluations" },
-          { label: "Alerts" },
-          { label: "Integrations" },
-          { label: "API Keys" },
-          { label: "Team" },
-          { label: "Billing" },
-        ]}
-      />
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.3fr_0.85fr_0.85fr]">
         <div className="space-y-4">

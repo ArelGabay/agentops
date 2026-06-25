@@ -23,6 +23,7 @@ Completed:
 - Real screenshots and mockups for portfolio presentation
 - V1 local demo guide for recruiter-friendly setup and review
 - Stable `v1.0.0` Git tag for reviewing the exact V1 snapshot
+- Product surface cleanup so visible navigation and actions are honest
 
 Not built yet:
 
@@ -80,6 +81,7 @@ V2 will focus on making AgentOps deeper, more reliable, and more product-like wh
 
 The next version should improve:
 
+- product surface completeness
 - trace debugging depth
 - editable real settings
 - SDK developer experience
@@ -447,7 +449,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Documentation, screenshots, and portfolio polish
 - [x] Settings page real configuration states
 - [x] Trace detail span selection and richer span drawer
 - [x] SDK single-trace LangChain run grouping
@@ -457,6 +458,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] API tests for ingestion and dashboard summary
 - [x] GitHub Actions build and lint workflow
 - [x] V1 release checklist and demo script
+- [x] Product surface cleanup and navigation honesty
 - [ ] Trace detail tabs for input, output, and attributes
 - [ ] Settings persistence and editable workspace preferences
 - [ ] SDK error reporting and developer-friendly ingestion failures
