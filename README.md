@@ -449,7 +449,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Settings page real configuration states
 - [x] Trace detail span selection and richer span drawer
 - [x] SDK single-trace LangChain run grouping
 - [x] Better backend error handling for missing foreign keys
@@ -459,7 +458,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] GitHub Actions build and lint workflow
 - [x] V1 release checklist and demo script
 - [x] Product surface cleanup and navigation honesty
-- [ ] Trace detail tabs for input, output, and attributes
+- [x] Trace detail tabs for input, output, and attributes
 - [ ] Settings persistence and editable workspace preferences
 - [ ] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
@@ -469,14 +468,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Trace and evaluation analytics improvements
 - [ ] API and SDK documentation polish
 - [ ] Portfolio case study write-up
+- [ ] Agents page read-only overview
 
 ## Next Milestone
 
-V1 is released. The next engineering milestone is trace detail tabs for input, output, and attributes:
+V1 is released. The next engineering milestone is settings persistence and editable workspace preferences:
 
-- make trace details more useful as the main debugging view
-- show real span input, output, and attributes where backend data exists
-- keep unsupported fields honest with empty states instead of fake values
+- persist editable workspace preferences instead of showing static settings
+- keep settings changes scoped, real, and backend-backed
+- continue removing fake product behavior from the visible V2 surface
 
 ## Project Philosophy
 
