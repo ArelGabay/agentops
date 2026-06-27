@@ -22,6 +22,8 @@ from app.schemas.dashboard_schema import (
 from app.schemas.settings_schema import (
     SettingsAppResponse,
     SettingsCapabilityResponse,
+    SettingsPreferencesResponse,
+    SettingsPreferencesUpdate,
     SettingsUnavailableFeatureResponse,
     SettingsSummaryResponse,
 )
@@ -45,6 +47,8 @@ __all__ = [
     "DashboardTopAgentResponse",
     "SettingsAppResponse",
     "SettingsCapabilityResponse",
+    "SettingsPreferencesResponse",
+    "SettingsPreferencesUpdate",
     "SettingsUnavailableFeatureResponse",
     "SettingsSummaryResponse",
 ]

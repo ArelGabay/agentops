@@ -7,6 +7,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import { PageHeader } from "../components/layout/PageHeader";
@@ -15,7 +16,8 @@ import { Card } from "../components/ui/Card";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
-import { useSettingsSummary } from "../hooks";
+import { useSettingsSummary, useUpdateSettingsPreferences } from "../hooks";
+import type { SettingsPreferencesUpdate } from "../types";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -33,6 +35,50 @@ function StaticInput({ value }: { value: string }) {
     <div className="flex h-11 items-center rounded-lg border border-app-border bg-white/[0.02] px-3 text-sm text-slate-100">
       {value}
     </div>
+  );
+}
+
+function TextInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <input
+      className="h-11 w-full rounded-lg border border-app-border bg-white/[0.02] px-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      type="text"
+      value={value}
+    />
+  );
+}
+
+function SelectInput({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <select
+      className="h-11 w-full rounded-lg border border-app-border bg-white/[0.02] px-3 text-sm text-slate-100 outline-none transition focus:border-slate-500"
+      onChange={(event) => onChange(event.target.value)}
+      value={value}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -99,9 +145,59 @@ function formatCapabilityStatus(status: string) {
 export function SettingsPage() {
   const settingsQuery = useSettingsSummary();
 
+  const updateSettingsMutation = useUpdateSettingsPreferences();
+
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [timezone, setTimezone] = useState("UTC");
+  const [themePreference, setThemePreference] =
+    useState<SettingsPreferencesUpdate["theme_preference"]>("dark");
+  const [accentColor, setAccentColor] =
+    useState<SettingsPreferencesUpdate["accent_color"]>("violet");
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
   const settings = settingsQuery.data;
   const isLoading = settingsQuery.isLoading;
   const isError = settingsQuery.isError;
+
+  useEffect(() => {
+    if (!settings) {
+      return;
+    }
+
+    setWorkspaceName(settings.preferences.workspace_name);
+    setTimezone(settings.preferences.timezone);
+    setThemePreference(settings.preferences.theme_preference);
+    setAccentColor(settings.preferences.accent_color);
+  }, [settings]);
+
+  const preferences = settings?.preferences;
+  const hasSettings = Boolean(preferences);
+
+  const formValues: SettingsPreferencesUpdate = {
+    workspace_name: workspaceName,
+    timezone,
+    theme_preference: themePreference,
+    accent_color: accentColor,
+  };
+
+  const isDirty =
+    preferences !== undefined &&
+    (workspaceName !== preferences.workspace_name ||
+      timezone !== preferences.timezone ||
+      themePreference !== preferences.theme_preference ||
+      accentColor !== preferences.accent_color);
+
+  async function handleSave() {
+    setSaveMessage(null);
+
+    try {
+      await updateSettingsMutation.mutateAsync(formValues);
+      setSaveMessage("Settings saved.");
+      void settingsQuery.refetch();
+    } catch {
+      setSaveMessage("Unable to save settings.");
+    }
+  }
 
   const getUnavailableReason = (name: string, fallback: string) =>
     settings?.unavailable_features.find((feature) => feature.name === name)
@@ -149,21 +245,36 @@ export function SettingsPage() {
                   Update your workspace details and preferences.
                 </p>
               </div>
-              <Button disabled variant="primary">
-                Settings Read-only
+              <Button
+                disabled={
+                  !hasSettings || !isDirty || updateSettingsMutation.isPending
+                }
+                onClick={() => {
+                  void handleSave();
+                }}
+                variant="primary"
+              >
+                Save Changes
               </Button>
             </div>
 
             <div className="grid gap-5 lg:grid-cols-[1fr_180px]">
               <div className="space-y-4">
                 <Field label="Workspace Name">
-                  <StaticInput value={settings?.app.name ?? "N/A"} />
+                  <TextInput
+                    onChange={setWorkspaceName}
+                    value={workspaceName}
+                  />
                 </Field>
                 <Field label="Environment">
                   <StaticInput value={settings?.app.environment ?? "N/A"} />
                 </Field>
                 <Field label="Timezone">
-                  <StaticInput value="Not configured" />
+                  <TextInput
+                    onChange={setTimezone}
+                    placeholder="UTC"
+                    value={timezone}
+                  />
                 </Field>
               </div>
 
@@ -180,6 +291,15 @@ export function SettingsPage() {
                 </p>
               </div>
             </div>
+
+            {saveMessage && (
+              <NoticeCard
+                className="mt-5"
+                tone={saveMessage.includes("Unable") ? "error" : "info"}
+              >
+                {saveMessage}
+              </NoticeCard>
+            )}
           </Card>
 
           <Card className="p-5">
@@ -192,15 +312,17 @@ export function SettingsPage() {
               <div>
                 <p className="mb-3 text-sm font-medium text-slate-200">Theme</p>
                 <div className="rounded-lg border border-app-border bg-white/[0.03] p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="flex items-center gap-2 text-sm font-medium text-slate-100">
-                      <Moon className="h-4 w-4 text-violet-300" />
-                      Dark mode
-                    </span>
-                    <StatusBadge status="success" label="Active" />
-                  </div>
+                  <SelectInput
+                    onChange={(value) =>
+                      setThemePreference(
+                        value as SettingsPreferencesUpdate["theme_preference"],
+                      )
+                    }
+                    options={[{ label: "Dark", value: "dark" }]}
+                    value={themePreference}
+                  />
                   <p className="mt-2 text-xs text-slate-500">
-                    Light and system themes are not implemented yet.
+                    Dark mode is the only supported theme in this milestone.
                   </p>
                 </div>
               </div>
@@ -210,15 +332,23 @@ export function SettingsPage() {
                   Accent Color
                 </p>
                 <div className="rounded-lg border border-app-border bg-white/[0.03] p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="flex items-center gap-2 text-sm font-medium text-slate-100">
-                      <span className="h-4 w-4 rounded-full bg-violet-500" />
-                      Violet
-                    </span>
-                    <StatusBadge status="success" label="Active" />
-                  </div>
+                  <SelectInput
+                    onChange={(value) =>
+                      setAccentColor(
+                        value as SettingsPreferencesUpdate["accent_color"],
+                      )
+                    }
+                    options={[
+                      { label: "Violet", value: "violet" },
+                      { label: "Blue", value: "blue" },
+                      { label: "Emerald", value: "emerald" },
+                      { label: "Amber", value: "amber" },
+                    ]}
+                    value={accentColor}
+                  />
                   <p className="mt-2 text-xs text-slate-500">
-                    Accent color customization is not persisted yet.
+                    Accent color is persisted now and reserved for broader UI
+                    use later.
                   </p>
                 </div>
               </div>

@@ -449,7 +449,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Trace detail span selection and richer span drawer
 - [x] SDK single-trace LangChain run grouping
 - [x] Better backend error handling for missing foreign keys
 - [x] Demo seed command for agents, traces, spans, and evaluations
@@ -459,7 +458,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] V1 release checklist and demo script
 - [x] Product surface cleanup and navigation honesty
 - [x] Trace detail tabs for input, output, and attributes
-- [ ] Settings persistence and editable workspace preferences
+- [x] Settings persistence and editable workspace preferences
 - [ ] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
@@ -469,14 +468,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] API and SDK documentation polish
 - [ ] Portfolio case study write-up
 - [ ] Agents page read-only overview
+- [ ] Settings API tests and validation coverage
 
 ## Next Milestone
 
-V1 is released. The next engineering milestone is settings persistence and editable workspace preferences:
+V1 is released. The next engineering milestone is SDK error reporting and developer-friendly ingestion failures:
 
-- persist editable workspace preferences instead of showing static settings
-- keep settings changes scoped, real, and backend-backed
-- continue removing fake product behavior from the visible V2 surface
+- surface backend ingestion failures more clearly inside the SDK
+- make local integration mistakes easier to diagnose during demos and development
+- keep the SDK simple while improving developer experience
 
 ## Project Philosophy
 
