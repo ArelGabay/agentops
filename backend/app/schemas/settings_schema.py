@@ -20,7 +20,22 @@ class SettingsUnavailableFeatureResponse(BaseModel):
     reason: str
 
 
+class SettingsPreferencesResponse(BaseModel):
+    workspace_name: str
+    timezone: str
+    theme_preference: Literal["dark"]
+    accent_color: Literal["violet", "blue", "emerald", "amber"]
+
+
+class SettingsPreferencesUpdate(BaseModel):
+    workspace_name: str
+    timezone: str
+    theme_preference: Literal["dark"]
+    accent_color: Literal["violet", "blue", "emerald", "amber"]
+
+
 class SettingsSummaryResponse(BaseModel):
     app: SettingsAppResponse
+    preferences: SettingsPreferencesResponse
     capabilities: list[SettingsCapabilityResponse]
     unavailable_features: list[SettingsUnavailableFeatureResponse]

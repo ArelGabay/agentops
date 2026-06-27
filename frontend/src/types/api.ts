@@ -80,6 +80,7 @@ export type DashboardTimeSeriesPoint = {
 
 export type SettingsSummary = {
   app: SettingsApp;
+  preferences: SettingsPreferences;
   capabilities: SettingsCapability[];
   unavailable_features: SettingsUnavailableFeature[];
 };
@@ -88,6 +89,20 @@ export type SettingsApp = {
   name: string;
   environment: string;
   version: string;
+};
+
+export type SettingsPreferences = {
+  workspace_name: string;
+  timezone: string;
+  theme_preference: "dark";
+  accent_color: "violet" | "blue" | "emerald" | "amber";
+};
+
+export type SettingsPreferencesUpdate = {
+  workspace_name: string;
+  timezone: string;
+  theme_preference: "dark";
+  accent_color: "violet" | "blue" | "emerald" | "amber";
 };
 
 export type SettingsCapability = {

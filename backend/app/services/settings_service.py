@@ -1,19 +1,51 @@
+from sqlalchemy.orm import Session
+
 from app.config.settings import settings
+from app.repositories import (
+    create_settings_preference,
+    get_settings_preference,
+    update_settings_preference,
+)
 from app.schemas import (
     SettingsAppResponse,
     SettingsCapabilityResponse,
-    SettingsUnavailableFeatureResponse,
+    SettingsPreferencesResponse,
+    SettingsPreferencesUpdate,
     SettingsSummaryResponse,
+    SettingsUnavailableFeatureResponse,
 )
 
 
-def get_settings_summary() -> SettingsSummaryResponse:
+def _build_default_preferences() -> SettingsPreferencesResponse:
+    return SettingsPreferencesResponse(
+        workspace_name=settings.app_name,
+        timezone="UTC",
+        theme_preference="dark",
+        accent_color="violet",
+    )
+
+
+def get_settings_summary(db: Session) -> SettingsSummaryResponse:
+    preference = get_settings_preference(db)
+
+    preferences = (
+        SettingsPreferencesResponse(
+            workspace_name=preference.workspace_name,
+            timezone=preference.timezone,
+            theme_preference=preference.theme_preference,
+            accent_color=preference.accent_color,
+        )
+        if preference is not None
+        else _build_default_preferences()
+    )
+
     return SettingsSummaryResponse(
         app=SettingsAppResponse(
             name=settings.app_name,
             environment=settings.app_env,
             version="0.1.0",
         ),
+        preferences=preferences,
         capabilities=[
             SettingsCapabilityResponse(
                 name="Trace ingestion",
@@ -67,9 +99,37 @@ def get_settings_summary() -> SettingsSummaryResponse:
                 name="Evaluation dimensions",
                 reason="Evaluation dimensions are not configurable yet.",
             ),
-            SettingsUnavailableFeatureResponse(
-                name="Editable workspace preferences",
-                reason="Workspace settings are read-only until persisted settings exist.",
-            ),
         ],
+    )
+
+
+def save_settings_preferences(
+    db: Session,
+    preferences_data: SettingsPreferencesUpdate,
+) -> SettingsPreferencesResponse:
+    preference = get_settings_preference(db)
+
+    if preference is None:
+        preference = create_settings_preference(
+            db,
+            workspace_name=preferences_data.workspace_name,
+            timezone=preferences_data.timezone,
+            theme_preference=preferences_data.theme_preference,
+            accent_color=preferences_data.accent_color,
+        )
+    else:
+        preference = update_settings_preference(
+            db,
+            preference,
+            workspace_name=preferences_data.workspace_name,
+            timezone=preferences_data.timezone,
+            theme_preference=preferences_data.theme_preference,
+            accent_color=preferences_data.accent_color,
+        )
+
+    return SettingsPreferencesResponse(
+        workspace_name=preference.workspace_name,
+        timezone=preference.timezone,
+        theme_preference=preference.theme_preference,
+        accent_color=preference.accent_color,
     )

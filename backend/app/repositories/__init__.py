@@ -17,6 +17,11 @@ from app.repositories.demo_seed_repository import (
     create_demo_traces,
     delete_demo_data,
 )
+from app.repositories.settings_repository import (
+    get_settings_preference,
+    create_settings_preference,
+    update_settings_preference,
+)
 
 __all__ = [
     "get_agent_by_id",
@@ -35,4 +40,7 @@ __all__ = [
     "create_demo_spans",
     "create_demo_traces",
     "delete_demo_data",
+    "get_settings_preference",
+    "create_settings_preference",
+    "update_settings_preference",
 ]

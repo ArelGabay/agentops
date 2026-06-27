@@ -4,4 +4,5 @@ export {
   getSettingsSummary,
   getTraceDetail,
   getTraces,
+  updateSettingsPreferences,
 } from "./observabilityApi";

@@ -1,12 +1,14 @@
-import type {
+import {
   DashboardSummary,
   EvaluationRead,
   SettingsSummary,
   TraceDetail,
   TraceListItem,
+  SettingsPreferences,
+  SettingsPreferencesUpdate,
 } from "../types";
 
-import { apiGet } from "./apiClient";
+import { apiGet, apiPut } from "./apiClient";
 
 export function getTraces(limit = 25) {
   return apiGet<TraceListItem[]>(`/traces?limit=${limit}`);
@@ -26,4 +28,10 @@ export function getDashboardSummary() {
 
 export function getSettingsSummary() {
   return apiGet<SettingsSummary>("/settings/summary");
+}
+
+export function updateSettingsPreferences(
+  preferences: SettingsPreferencesUpdate,
+) {
+  return apiPut<SettingsPreferences>("/settings/preferences", preferences);
 }
