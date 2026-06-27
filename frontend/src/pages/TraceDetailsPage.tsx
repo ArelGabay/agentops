@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChevronRight, Sparkles, X } from "lucide-react";
 
-import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { IconButton } from "../components/ui/IconButton";
 import { KeyValueList } from "../components/ui/KeyValueList";
@@ -13,6 +12,32 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
 import { useTraceDetail } from "../hooks";
 import { ApiError } from "../services/apiClient";
+
+type TraceDetailsTab =
+  | "Timeline"
+  | "Spans"
+  | "Input"
+  | "Output"
+  | "Evaluations"
+  | "Attributes";
+
+type SpanDetailsTab = "Overview" | "Input" | "Output" | "Attributes";
+
+const spanDetailsTabs: { label: SpanDetailsTab }[] = [
+  { label: "Overview" },
+  { label: "Input" },
+  { label: "Output" },
+  { label: "Attributes" },
+];
+
+const traceDetailsTabs: { label: TraceDetailsTab }[] = [
+  { label: "Timeline" },
+  { label: "Spans" },
+  { label: "Input" },
+  { label: "Output" },
+  { label: "Evaluations" },
+  { label: "Attributes" },
+];
 
 const spanTableColumns =
   "56px minmax(260px,1.5fr) 88px 116px 180px 104px 96px 96px";
@@ -56,12 +81,62 @@ function formatCurrency(value: string | null) {
   return `$${Number(value).toFixed(2)}`;
 }
 
+function TextBlock({
+  title,
+  value,
+  emptyTitle,
+}: {
+  title: string;
+  value: string | null;
+  emptyTitle: string;
+}) {
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-semibold text-white">{title}</h3>
+      {value ? (
+        <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded-lg border border-app-border bg-white/[0.03] p-4 text-sm text-slate-300">
+          {value}
+        </pre>
+      ) : (
+        <EmptyState title={emptyTitle} />
+      )}
+    </div>
+  );
+}
+
+function AttributeList({
+  items,
+}: {
+  items: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {items.map((item) => (
+        <div
+          className="rounded-lg border border-app-border bg-white/[0.03] p-4"
+          key={item.label}
+        >
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            {item.label}
+          </p>
+          <p className="mt-2 break-words text-sm text-slate-100">
+            {item.value}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function TraceDetailsPage() {
   const { traceId = "" } = useParams();
   const traceQuery = useTraceDetail(traceId);
   const [selectedSpanId, setSelectedSpanId] = useState<
     string | null | undefined
   >(undefined);
+  const [activeTab, setActiveTab] = useState<TraceDetailsTab>("Timeline");
+  const [activeSpanTab, setActiveSpanTab] =
+    useState<SpanDetailsTab>("Overview");
   const trace = traceQuery.data;
   const isLoading = traceQuery.isLoading;
   const error = traceQuery.error;
@@ -123,6 +198,32 @@ export function TraceDetailsPage() {
         { label: "Duration", value: formatLatency(selectedSpan.latency_ms) },
       ]
     : [];
+
+  const traceAttributeItems = [
+    { label: "Trace ID", value: trace.id },
+    { label: "Agent ID", value: trace.agent_id },
+    { label: "Status", value: trace.status },
+    { label: "Started", value: formatDateTime(trace.started_at) },
+    { label: "Ended", value: formatDateTime(trace.ended_at) },
+    { label: "Created", value: formatDateTime(trace.created_at) },
+    { label: "Duration", value: formatLatency(trace.latency_ms) },
+    { label: "Total Tokens", value: formatNumber(trace.total_tokens) },
+    { label: "Total Cost", value: formatCurrency(trace.total_cost) },
+  ];
+
+  const selectedSpanAttributeItems = selectedSpan
+    ? [
+        { label: "Span ID", value: selectedSpan.id },
+        { label: "Trace ID", value: selectedSpan.trace_id },
+        { label: "Name", value: selectedSpan.name },
+        { label: "Type", value: selectedSpan.span_type },
+        { label: "Status", value: selectedSpan.status },
+        { label: "Started", value: formatDateTime(selectedSpan.started_at) },
+        { label: "Ended", value: formatDateTime(selectedSpan.ended_at) },
+        { label: "Created", value: formatDateTime(selectedSpan.created_at) },
+        { label: "Duration", value: formatLatency(selectedSpan.latency_ms) },
+      ]
+    : [];
   return (
     <>
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -178,178 +279,232 @@ export function TraceDetailsPage() {
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="min-w-0 space-y-4">
+        <div className="min-w-0">
           <Card className="overflow-hidden">
             <Tabs
-              items={[
-                { label: "Timeline", active: true },
-                { label: "Spans" },
-                { label: "Logs" },
-                { label: "Evaluations" },
-                { label: "Metadata" },
-              ]}
+              activeLabel={activeTab}
+              items={traceDetailsTabs}
+              onChange={(label) => {
+                setActiveTab(label as TraceDetailsTab);
+              }}
             />
 
             <div className="p-5">
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-sm font-semibold text-white">
-                  Execution Timeline
-                </h2>
-              </div>
+              {activeTab === "Timeline" && (
+                <div>
+                  <h2 className="mb-5 text-sm font-semibold text-white">
+                    Execution Timeline
+                  </h2>
 
-              {timelineItems.length > 0 ? (
-                <TimelinePreview items={timelineItems} />
-              ) : (
-                <EmptyState title="No spans found for this trace." />
-              )}
-            </div>
-          </Card>
-
-          <Card className="p-5">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-white">
-                Spans ({trace.spans.length})
-              </h2>
-              <Button variant="secondary">View all spans</Button>
-            </div>
-
-            <div className="overflow-x-auto rounded-lg border border-app-border">
-              <div className="min-w-[1120px]">
-                <div
-                  className="grid items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500"
-                  style={{ gridTemplateColumns: spanTableColumns }}
-                >
-                  <span>#</span>
-                  <span>Name</span>
-                  <span>Type</span>
-                  <span>Status</span>
-                  <span>Start Time</span>
-                  <span>Duration</span>
-                  <span>Tokens</span>
-                  <span>Cost</span>
-                </div>
-
-                {trace.spans.map((span, index) => {
-                  const isSelected = selectedSpan?.id === span.id;
-
-                  return (
-                    <button
-                      className={[
-                        "grid w-full items-center gap-4 border-t border-app-border px-4 py-3 text-left text-sm transition",
-                        isSelected
-                          ? "bg-violet-500/10"
-                          : "hover:bg-white/[0.03]",
-                      ].join(" ")}
-                      key={span.id}
-                      onClick={() => setSelectedSpanId(span.id)}
-                      style={{ gridTemplateColumns: spanTableColumns }}
-                      type="button"
-                    >
-                      <span className="text-slate-500">{index + 1}</span>
-                      <span className="truncate font-medium text-slate-100">
-                        {span.name}
-                      </span>
-                      <span className="whitespace-nowrap text-slate-300">
-                        {span.span_type}
-                      </span>
-                      <span>
-                        <StatusBadge
-                          status={
-                            span.status as
-                              | "success"
-                              | "error"
-                              | "timeout"
-                              | "canceled"
-                          }
-                        />
-                      </span>
-                      <span className="whitespace-nowrap text-slate-300">
-                        {formatDateTime(span.started_at)}
-                      </span>
-                      <span className="whitespace-nowrap text-slate-300">
-                        {formatLatency(span.latency_ms)}
-                      </span>
-                      <span className="whitespace-nowrap text-slate-300">
-                        N/A
-                      </span>
-                      <span className="whitespace-nowrap text-slate-300">
-                        N/A
-                      </span>
-                    </button>
-                  );
-                })}
-                {trace.spans.length === 0 && (
-                  <div className="border-t border-app-border p-4">
+                  {timelineItems.length > 0 ? (
+                    <TimelinePreview items={timelineItems} />
+                  ) : (
                     <EmptyState title="No spans found for this trace." />
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
+                  )}
+                </div>
+              )}
 
-          <Card className="p-5">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-white">
-                Evaluations ({trace.evaluations.length})
-              </h2>
-            </div>
+              {activeTab === "Spans" && (
+                <div>
+                  <h2 className="mb-5 text-sm font-semibold text-white">
+                    Spans ({trace.spans.length})
+                  </h2>
 
-            {trace.evaluations.length > 0 ? (
-              <div className="space-y-3">
-                {trace.evaluations.map((evaluation) => (
-                  <div
-                    className="rounded-lg border border-app-border bg-white/[0.03] p-4"
-                    key={evaluation.id}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-medium text-slate-100">
-                          {evaluation.evaluator_name}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {formatDateTime(evaluation.created_at)}
-                        </p>
+                  <div className="overflow-x-auto rounded-lg border border-app-border">
+                    <div className="min-w-[1120px]">
+                      <div
+                        className="grid items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500"
+                        style={{ gridTemplateColumns: spanTableColumns }}
+                      >
+                        <span>#</span>
+                        <span>Name</span>
+                        <span>Type</span>
+                        <span>Status</span>
+                        <span>Start Time</span>
+                        <span>Duration</span>
+                        <span>Tokens</span>
+                        <span>Cost</span>
                       </div>
-                      <StatusBadge
-                        label={evaluation.result}
-                        status={
-                          evaluation.result === "pass" ? "success" : "error"
-                        }
-                      />
-                    </div>
 
-                    <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
-                      <span className="text-slate-400">
-                        Score{" "}
-                        <span className="ml-2 text-slate-100">
-                          {evaluation.score}/100
-                        </span>
-                      </span>
-                      <span className="text-slate-400">
-                        Hallucination{" "}
-                        <span className="ml-2 text-slate-100">
-                          {evaluation.hallucination_score ?? "N/A"}
-                        </span>
-                      </span>
-                      <span className="text-slate-400">
-                        Result{" "}
-                        <span className="ml-2 text-slate-100">
-                          {evaluation.result}
-                        </span>
-                      </span>
-                    </div>
+                      {trace.spans.map((span, index) => {
+                        const isSelected = selectedSpan?.id === span.id;
 
-                    {evaluation.feedback && (
-                      <p className="mt-3 text-sm text-slate-300">
-                        {evaluation.feedback}
-                      </p>
+                        return (
+                          <button
+                            className={[
+                              "grid w-full items-center gap-4 border-t border-app-border px-4 py-3 text-left text-sm transition",
+                              isSelected
+                                ? "bg-violet-500/10"
+                                : "hover:bg-white/[0.03]",
+                            ].join(" ")}
+                            key={span.id}
+                            onClick={() => setSelectedSpanId(span.id)}
+                            style={{ gridTemplateColumns: spanTableColumns }}
+                            type="button"
+                          >
+                            <span className="text-slate-500">{index + 1}</span>
+                            <span className="truncate font-medium text-slate-100">
+                              {span.name}
+                            </span>
+                            <span className="whitespace-nowrap text-slate-300">
+                              {span.span_type}
+                            </span>
+                            <span>
+                              <StatusBadge
+                                status={
+                                  span.status as
+                                    | "success"
+                                    | "error"
+                                    | "timeout"
+                                    | "canceled"
+                                }
+                              />
+                            </span>
+                            <span className="whitespace-nowrap text-slate-300">
+                              {formatDateTime(span.started_at)}
+                            </span>
+                            <span className="whitespace-nowrap text-slate-300">
+                              {formatLatency(span.latency_ms)}
+                            </span>
+                            <span className="whitespace-nowrap text-slate-300">
+                              N/A
+                            </span>
+                            <span className="whitespace-nowrap text-slate-300">
+                              N/A
+                            </span>
+                          </button>
+                        );
+                      })}
+
+                      {trace.spans.length === 0 && (
+                        <div className="border-t border-app-border p-4">
+                          <EmptyState title="No spans found for this trace." />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "Input" && (
+                <div className="space-y-5">
+                  <TextBlock
+                    emptyTitle="No trace input available."
+                    title="Trace Input"
+                    value={trace.input_text}
+                  />
+                  <TextBlock
+                    emptyTitle="No selected span input available."
+                    title="Selected Span Input"
+                    value={selectedSpan?.input_text ?? null}
+                  />
+                </div>
+              )}
+
+              {activeTab === "Output" && (
+                <div className="space-y-5">
+                  <TextBlock
+                    emptyTitle="No trace output available."
+                    title="Trace Output"
+                    value={trace.output_text}
+                  />
+                  <TextBlock
+                    emptyTitle="No selected span output available."
+                    title="Selected Span Output"
+                    value={selectedSpan?.output_text ?? null}
+                  />
+                </div>
+              )}
+
+              {activeTab === "Evaluations" && (
+                <div>
+                  <h2 className="mb-5 text-sm font-semibold text-white">
+                    Evaluations ({trace.evaluations.length})
+                  </h2>
+
+                  {trace.evaluations.length > 0 ? (
+                    <div className="space-y-3">
+                      {trace.evaluations.map((evaluation) => (
+                        <div
+                          className="rounded-lg border border-app-border bg-white/[0.03] p-4"
+                          key={evaluation.id}
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-medium text-slate-100">
+                                {evaluation.evaluator_name}
+                              </p>
+                              <p className="mt-1 text-xs text-slate-500">
+                                {formatDateTime(evaluation.created_at)}
+                              </p>
+                            </div>
+                            <StatusBadge
+                              label={evaluation.result}
+                              status={
+                                evaluation.result === "pass"
+                                  ? "success"
+                                  : "error"
+                              }
+                            />
+                          </div>
+
+                          <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                            <span className="text-slate-400">
+                              Score{" "}
+                              <span className="ml-2 text-slate-100">
+                                {evaluation.score}/100
+                              </span>
+                            </span>
+                            <span className="text-slate-400">
+                              Hallucination{" "}
+                              <span className="ml-2 text-slate-100">
+                                {evaluation.hallucination_score ?? "N/A"}
+                              </span>
+                            </span>
+                            <span className="text-slate-400">
+                              Result{" "}
+                              <span className="ml-2 text-slate-100">
+                                {evaluation.result}
+                              </span>
+                            </span>
+                          </div>
+
+                          {evaluation.feedback && (
+                            <p className="mt-3 text-sm text-slate-300">
+                              {evaluation.feedback}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState title="No evaluations found for this trace." />
+                  )}
+                </div>
+              )}
+
+              {activeTab === "Attributes" && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="mb-4 text-sm font-semibold text-white">
+                      Trace Attributes
+                    </h2>
+                    <AttributeList items={traceAttributeItems} />
+                  </div>
+
+                  <div>
+                    <h2 className="mb-4 text-sm font-semibold text-white">
+                      Selected Span Attributes
+                    </h2>
+                    {selectedSpanAttributeItems.length > 0 ? (
+                      <AttributeList items={selectedSpanAttributeItems} />
+                    ) : (
+                      <EmptyState title="No span selected." />
                     )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState title="No evaluations found for this trace." />
-            )}
+                </div>
+              )}
+            </div>
           </Card>
         </div>
 
@@ -386,65 +541,53 @@ export function TraceDetailsPage() {
                   )}
                 </div>
               </div>
-
-              <div className="mt-4 grid grid-cols-4 gap-4 text-sm text-slate-400">
-                <span className="text-violet-300">Overview</span>
-                <span>Input</span>
-                <span>Output</span>
-                <span>Attributes</span>
-              </div>
             </div>
-            <div className="h-0.5 w-24 bg-violet-500" />
-          </Card>
 
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Summary</h2>
-            {summaryItems.length > 0 ? (
-              <KeyValueList items={summaryItems} />
-            ) : (
-              <EmptyState title="No span summary available." />
-            )}
-          </Card>
+            <Tabs
+              activeLabel={activeSpanTab}
+              items={spanDetailsTabs}
+              onChange={(label) => {
+                setActiveSpanTab(label as SpanDetailsTab);
+              }}
+            />
 
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Input</h2>
-            {selectedSpan?.input_text ? (
-              <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-app-border bg-white/[0.03] p-4 text-sm text-slate-300">
-                {selectedSpan.input_text}
-              </pre>
-            ) : (
-              <EmptyState title="No span input available." />
-            )}
-          </Card>
+            <div className="p-5">
+              {activeSpanTab === "Overview" && (
+                <>
+                  <h2 className="mb-4 text-sm font-semibold text-white">
+                    Summary
+                  </h2>
+                  {summaryItems.length > 0 ? (
+                    <KeyValueList items={summaryItems} />
+                  ) : (
+                    <EmptyState title="No span summary available." />
+                  )}
+                </>
+              )}
 
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Output</h2>
-            {selectedSpan?.output_text ? (
-              <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-app-border bg-white/[0.03] p-4 text-sm text-slate-300">
-                {selectedSpan.output_text}
-              </pre>
-            ) : (
-              <EmptyState title="No span output available." />
-            )}
-          </Card>
+              {activeSpanTab === "Input" && (
+                <TextBlock
+                  emptyTitle="No span input available."
+                  title="Input"
+                  value={selectedSpan?.input_text ?? null}
+                />
+              )}
 
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">
-              Latency Breakdown
-            </h2>
-            <EmptyState title="Latency breakdown is not available yet." />
-          </Card>
+              {activeSpanTab === "Output" && (
+                <TextBlock
+                  emptyTitle="No span output available."
+                  title="Output"
+                  value={selectedSpan?.output_text ?? null}
+                />
+              )}
 
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">
-              Model Parameters
-            </h2>
-            <EmptyState title="Model parameters are not available yet." />
-          </Card>
-
-          <Card className="p-5">
-            <h2 className="mb-4 text-sm font-semibold text-white">Tags</h2>
-            <EmptyState title="Tags are not available yet." />
+              {activeSpanTab === "Attributes" &&
+                (selectedSpanAttributeItems.length > 0 ? (
+                  <AttributeList items={selectedSpanAttributeItems} />
+                ) : (
+                  <EmptyState title="No span selected." />
+                ))}
+            </div>
           </Card>
         </aside>
       </div>
