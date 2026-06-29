@@ -29,6 +29,41 @@ with TraceTracker(
 print(trace.id)
 ```
 
+## Error Handling
+
+The SDK raises AgentOps-specific exceptions when ingestion fails.
+
+```python
+from agentops import AgentOpsAPIError, AgentOpsClient, TraceTracker
+
+client = AgentOpsClient(base_url="http://127.0.0.1:8000")
+
+try:
+    with TraceTracker(
+        client=client,
+        agent_id="missing-agent",
+        input_text="Where is my order?",
+    ) as trace:
+        trace.set_output("Your order is out for delivery.")
+except AgentOpsAPIError as error:
+    print(error)
+    print(error.status_code)
+    print(error.path)
+    print(error.detail)
+```
+
+Example output:
+
+```txt
+POST /traces failed with 404: Agent not found
+```
+
+Use `AgentOpsRequestError` for connectivity problems such as:
+
+- backend not running
+- wrong `base_url`
+- request timeout or connection failure
+
 ## LangChain Callback
 
 LangChain support is optional. Install LangChain separately in the application that uses it.
