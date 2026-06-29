@@ -449,7 +449,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] SDK single-trace LangChain run grouping
 - [x] Better backend error handling for missing foreign keys
 - [x] Demo seed command for agents, traces, spans, and evaluations
 - [x] Frontend loading and empty-state polish pass
@@ -459,7 +458,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Product surface cleanup and navigation honesty
 - [x] Trace detail tabs for input, output, and attributes
 - [x] Settings persistence and editable workspace preferences
-- [ ] SDK error reporting and developer-friendly ingestion failures
+- [x] SDK error reporting and developer-friendly ingestion failures
 - [ ] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
@@ -472,11 +471,11 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## Next Milestone
 
-V1 is released. The next engineering milestone is SDK error reporting and developer-friendly ingestion failures:
+The next engineering milestone is backend ingestion validation and status normalization:
 
-- surface backend ingestion failures more clearly inside the SDK
-- make local integration mistakes easier to diagnose during demos and development
-- keep the SDK simple while improving developer experience
+- validate incoming ingestion payloads more strictly at the backend boundary
+- normalize status values so traces, spans, and evaluations stay consistent
+- improve data quality without expanding the V2 product surface too early
 
 ## Project Philosophy
 
