@@ -449,7 +449,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Better backend error handling for missing foreign keys
 - [x] Demo seed command for agents, traces, spans, and evaluations
 - [x] Frontend loading and empty-state polish pass
 - [x] API tests for ingestion and dashboard summary
@@ -459,7 +458,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Trace detail tabs for input, output, and attributes
 - [x] Settings persistence and editable workspace preferences
 - [x] SDK error reporting and developer-friendly ingestion failures
-- [ ] Backend ingestion validation and status normalization
+- [x] Backend ingestion validation and status normalization
 - [ ] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
@@ -468,14 +467,16 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Portfolio case study write-up
 - [ ] Agents page read-only overview
 - [ ] Settings API tests and validation coverage
+- [ ] Read-only tools and integrations overview
+- [ ] Provider-aware raw status capture and mapping
 
 ## Next Milestone
 
-The next engineering milestone is backend ingestion validation and status normalization:
+The next engineering milestone is demo data reset safeguards and seed customization:
 
-- validate incoming ingestion payloads more strictly at the backend boundary
-- normalize status values so traces, spans, and evaluations stay consistent
-- improve data quality without expanding the V2 product surface too early
+- make demo seeding safe to rerun without polluting local data
+- support clearer reset behavior for seeded agents, traces, spans, and evaluations
+- keep the demo workflow reliable for interviews, screenshots, and local validation
 
 ## Project Philosophy
 

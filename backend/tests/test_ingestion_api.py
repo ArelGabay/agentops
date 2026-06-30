@@ -66,6 +66,44 @@ def test_create_trace_returns_201_when_agent_exists(
     assert data["total_cost"] == "0.0500"
 
 
+def test_create_trace_normalizes_status_variants(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    seed_agent(db_session)
+
+    response = client.post(
+        "/traces",
+        json={
+            "agent_id": "agent-test",
+            "status": "In Progress",
+            "started_at": STARTED_AT,
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "in-progress"
+
+
+def test_create_trace_returns_422_for_unknown_status(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    seed_agent(db_session)
+
+    response = client.post(
+        "/traces",
+        json={
+            "agent_id": "agent-test",
+            "status": "pending",
+            "started_at": STARTED_AT,
+        },
+    )
+
+    assert response.status_code == 422
+
+
 def test_create_trace_returns_404_when_agent_is_missing(
     client: TestClient,
 ) -> None:
@@ -107,6 +145,45 @@ def test_create_span_returns_201_when_trace_exists(
     assert data["span_type"] == "chain"
     assert data["status"] == "success"
     assert data["latency_ms"] == 250
+
+
+def test_create_span_normalizes_status_variants(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    seed_trace(db_session)
+
+    response = client.post(
+        "/spans",
+        json={
+            "trace_id": "trace-test",
+            "name": "Test Span",
+            "span_type": "chain",
+            "status": "in_progress",
+            "started_at": STARTED_AT,
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "in-progress"
+
+
+def test_create_span_returns_422_for_unknown_status(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/spans",
+        json={
+            "trace_id": "missing-trace",
+            "name": "Test Span",
+            "span_type": "chain",
+            "status": "pending",
+            "started_at": STARTED_AT,
+        },
+    )
+
+    assert response.status_code == 422
 
 
 def test_create_span_returns_404_when_trace_is_missing(
@@ -153,6 +230,46 @@ def test_create_evaluation_returns_201_when_trace_exists(
     assert data["result"] == "pass"
     assert data["hallucination_score"] == "5.00"
     assert data["feedback"] == "Looks good."
+
+
+def test_create_evaluation_normalizes_result_variants(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    seed_trace(db_session)
+
+    response = client.post(
+        "/evaluations",
+        json={
+            "trace_id": "trace-test",
+            "evaluator_name": "quality",
+            "score": 90,
+            "result": "FAIL",
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["result"] == "fail"
+
+
+def test_create_evaluation_returns_422_for_unknown_result(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    seed_trace(db_session)
+
+    response = client.post(
+        "/evaluations",
+        json={
+            "trace_id": "trace-test",
+            "evaluator_name": "quality",
+            "score": 90,
+            "result": "good",
+        },
+    )
+
+    assert response.status_code == 422
 
 
 def test_create_evaluation_returns_404_when_trace_is_missing(
