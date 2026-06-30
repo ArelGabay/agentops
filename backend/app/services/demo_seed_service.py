@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-
 from sqlalchemy.orm import Session
 
 from app.models import Agent, Evaluation, Span, Trace
@@ -11,7 +10,10 @@ from app.repositories import (
     create_demo_spans,
     create_demo_traces,
     delete_demo_data,
+    get_demo_data_counts,
 )
+
+from app.services.errors import DemoSeedResetRequiredError
 
 
 DEMO_AGENT_IDS = [
@@ -29,17 +31,73 @@ class DemoSeedSummary:
     traces: int
     spans: int
     evaluations: int
+    existing_agents: int
+    existing_traces: int
+    existing_spans: int
+    existing_evaluations: int
+    found_existing_data: bool
+    reset_performed: bool
+    dry_run: bool
 
 
-def seed_demo_data(db: Session) -> DemoSeedSummary:
-    now = datetime.now(UTC)
+def seed_demo_data(
+    db: Session,
+    *,
+    reset: bool = False,
+    dry_run: bool = False,
+    trace_limit: int | None = None,
+    base_time: datetime | None = None,
+) -> DemoSeedSummary:
+    now = base_time or datetime.now(UTC)
+
+    existing = get_demo_data_counts(db, DEMO_AGENT_IDS)
+    found_existing_data = any(
+        [
+            existing.agents,
+            existing.traces,
+            existing.spans,
+            existing.evaluations,
+        ]
+    )
+
+    if found_existing_data and not reset:
+        raise DemoSeedResetRequiredError(
+            "Demo data already exists. Rerun with --reset to replace it."
+        )
 
     agents = _build_agents()
     traces = _build_traces(now)
     spans = _build_spans(now)
     evaluations = _build_evaluations(now)
 
-    delete_demo_data(db, DEMO_AGENT_IDS)
+    if trace_limit is not None:
+        traces = traces[:trace_limit]
+        trace_ids = {trace.id for trace in traces}
+        spans = [span for span in spans if span.trace_id in trace_ids]
+        evaluations = [
+            evaluation
+            for evaluation in evaluations
+            if evaluation.trace_id in trace_ids
+        ]
+
+    if dry_run:
+        return DemoSeedSummary(
+            agents=len(agents),
+            traces=len(traces),
+            spans=len(spans),
+            evaluations=len(evaluations),
+            existing_agents=existing.agents,
+            existing_traces=existing.traces,
+            existing_spans=existing.spans,
+            existing_evaluations=existing.evaluations,
+            found_existing_data=found_existing_data,
+            reset_performed=False,
+            dry_run=True,
+        )
+
+    if found_existing_data and reset:
+        delete_demo_data(db, DEMO_AGENT_IDS)
+
     create_demo_agents(db, agents)
     create_demo_traces(db, traces)
     create_demo_spans(db, spans)
@@ -50,6 +108,13 @@ def seed_demo_data(db: Session) -> DemoSeedSummary:
         traces=len(traces),
         spans=len(spans),
         evaluations=len(evaluations),
+        existing_agents=existing.agents,
+        existing_traces=existing.traces,
+        existing_spans=existing.spans,
+        existing_evaluations=existing.evaluations,
+        found_existing_data=found_existing_data,
+        reset_performed=found_existing_data and reset,
+        dry_run=False,
     )
 
 

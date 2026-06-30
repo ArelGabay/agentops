@@ -11,11 +11,13 @@ from app.repositories.dashboard_repository import (
     list_recent_dashboard_traces,
 )
 from app.repositories.demo_seed_repository import (
+    DemoDataCounts,
     create_demo_agents,
     create_demo_evaluations,
     create_demo_spans,
     create_demo_traces,
     delete_demo_data,
+    get_demo_data_counts,
 )
 from app.repositories.settings_repository import (
     get_settings_preference,
@@ -43,4 +45,6 @@ __all__ = [
     "get_settings_preference",
     "create_settings_preference",
     "update_settings_preference",
+    "DemoDataCounts",
+    "get_demo_data_counts",
 ]

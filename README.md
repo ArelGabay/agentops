@@ -367,12 +367,27 @@ source .venv/bin/activate
 python -m app.utils.seed_demo_data
 ```
 
-The command resets only known demo rows and recreates demo agents, traces, spans, and evaluations for dashboards, trace details, and screenshots.
+The command seeds known demo agents, traces, spans, and evaluations for dashboards, trace details, and screenshots.
+
+Default behavior is safe:
+
+- if no demo data exists, it creates the demo dataset
+- if demo data already exists, it refuses to overwrite it unless `--reset` is provided
+- `--dry-run` previews the dataset without writing to the database
 
 Expected output:
 
 ```txt
 Seeded demo data: 5 agents, 12 traces, 28 spans, 7 evaluations.
+```
+
+Useful options:
+
+```bash
+python -m app.utils.seed_demo_data --dry-run
+python -m app.utils.seed_demo_data --reset
+python -m app.utils.seed_demo_data --trace-limit 3 --reset
+python -m app.utils.seed_demo_data --base-time 2026-07-01T12:00:00+00:00 --dry-run
 ```
 
 ## SDK Demo
@@ -449,7 +464,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Demo seed command for agents, traces, spans, and evaluations
 - [x] Frontend loading and empty-state polish pass
 - [x] API tests for ingestion and dashboard summary
 - [x] GitHub Actions build and lint workflow
@@ -459,7 +473,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Settings persistence and editable workspace preferences
 - [x] SDK error reporting and developer-friendly ingestion failures
 - [x] Backend ingestion validation and status normalization
-- [ ] Demo data reset safeguards and seed customization
+- [x] Demo data reset safeguards and seed customization
 - [ ] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
 - [ ] Trace and evaluation analytics improvements
@@ -469,14 +483,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Settings API tests and validation coverage
 - [ ] Read-only tools and integrations overview
 - [ ] Provider-aware raw status capture and mapping
+- [ ] Dashboard time-range filters and comparisons
 
 ## Next Milestone
 
-The next engineering milestone is demo data reset safeguards and seed customization:
+The next engineering milestone is frontend accessibility and keyboard navigation pass:
 
-- make demo seeding safe to rerun without polluting local data
-- support clearer reset behavior for seeded agents, traces, spans, and evaluations
-- keep the demo workflow reliable for interviews, screenshots, and local validation
+- improve keyboard reachability across dashboards, tables, filters, and trace views
+- strengthen semantic structure and focus behavior without redesigning the product
+- make the app feel more complete and production-minded for real users and reviewers
 
 ## Project Philosophy
 

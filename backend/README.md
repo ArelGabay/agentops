@@ -143,12 +143,26 @@ source .venv/bin/activate
 python -m app.utils.seed_demo_data
 ```
 
-The command resets only known demo rows and recreates demo agents, traces, spans, and evaluations.
+The command seeds known demo rows safely.
+
+- first run creates the demo dataset
+- rerunning without `--reset` refuses to overwrite existing demo data
+- `--reset` explicitly replaces known demo rows
+- `--dry-run` previews the result without writing to the database
 
 Expected output:
 
 ```txt
 Seeded demo data: 5 agents, 12 traces, 28 spans, 7 evaluations.
+```
+
+Useful options:
+
+```bash
+python -m app.utils.seed_demo_data --dry-run
+python -m app.utils.seed_demo_data --reset
+python -m app.utils.seed_demo_data --trace-limit 3 --reset
+python -m app.utils.seed_demo_data --base-time 2026-07-01T12:00:00+00:00 --dry-run
 ```
 
 ## SDK Demo
