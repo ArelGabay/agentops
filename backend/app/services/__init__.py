@@ -1,5 +1,5 @@
 from app.services.health_service import get_health_status
-from app.services.errors import ResourceNotFoundError
+from app.services.errors import ResourceNotFoundError, DemoSeedResetRequiredError
 from app.services.evaluation_service import get_recent_evaluations, ingest_evaluation
 from app.services.span_service import ingest_span
 from app.services.trace_service import get_recent_traces, get_trace_detail, ingest_trace
@@ -21,4 +21,5 @@ __all__ = [
     "save_settings_preferences",
     "DemoSeedSummary",
     "seed_demo_data",
+    "DemoSeedResetRequiredError",
 ]
