@@ -496,7 +496,7 @@ V2 is on track when the app feels complete in its current scope, the SDK and bac
 - [ ] Provider-aware raw status capture and mapping
 - [ ] Dashboard time-range filters and comparisons
 - [ ] Portfolio case study write-up
-- [ ] V2 release hardening and sign-off
+- [ ] **V2 release hardening and sign-off**
 
 ## Next Milestone
 
