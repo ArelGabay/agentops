@@ -13,6 +13,7 @@ import {
 
 import { useDashboardSummary } from "../hooks";
 import { PageHeader } from "../components/layout/PageHeader";
+import { SimpleLineChart } from "../components/charts/SimpleLineChart";
 import { MetricCard } from "../components/metrics/MetricCard";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -60,98 +61,6 @@ const metricCardTemplates = [
     sparkline: [44, 41, 35, 49, 55, 42, 39, 47, 37, 50, 58, 66],
   },
 ];
-
-type SimpleLineChartPoint = {
-  label: string;
-  value: number | null;
-};
-
-function SimpleLineChart({
-  ariaLabel,
-  points,
-  tone = "violet",
-}: {
-  ariaLabel: string;
-  points: SimpleLineChartPoint[];
-  tone?: "violet" | "blue" | "red";
-}) {
-  const strokeStyles = {
-    violet: "stroke-violet-400",
-    blue: "stroke-blue-400",
-    red: "stroke-red-400",
-  };
-
-  const fillStyles = {
-    violet: "fill-violet-500/15",
-    blue: "fill-blue-500/15",
-    red: "fill-red-500/15",
-  };
-
-  const values = points
-    .map((point) => point.value)
-    .filter((value): value is number => value !== null);
-
-  if (values.length === 0 || values.every((value) => value === 0)) {
-    return (
-      <div className="grid h-56 place-items-center rounded-lg border border-app-border bg-white/[0.03] px-4 text-center text-sm text-slate-400">
-        Time-series chart data is not available yet.
-      </div>
-    );
-  }
-
-  const maxValue = Math.max(...values);
-  const chartPoints = points.map((point, index) => {
-    const x = 20 + index * (600 / Math.max(points.length - 1, 1));
-    const normalizedValue = point.value ?? 0;
-    const y = 180 - (normalizedValue / maxValue) * 120;
-
-    return { x, y };
-  });
-
-  const linePath = chartPoints
-    .map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`)
-    .join(" ");
-
-  const areaPath = `${linePath} L620 220 L20 220 Z`;
-
-  return (
-    <div className="h-56">
-      <svg
-        aria-label={ariaLabel}
-        className="h-full w-full"
-        role="img"
-        viewBox="0 0 640 220"
-      >
-        <path
-          className="stroke-slate-700/60"
-          d="M20 40H620 M20 85H620 M20 130H620 M20 175H620"
-          fill="none"
-          strokeDasharray="4 6"
-          strokeWidth="1"
-        />
-        <path className={fillStyles[tone]} d={areaPath} />
-        <path
-          className={strokeStyles[tone]}
-          d={linePath}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="3"
-        />
-        {chartPoints.map((point, index) => (
-          <circle
-            className={["fill-white", strokeStyles[tone]].join(" ")}
-            cx={point.x}
-            cy={point.y}
-            key={`${points[index]?.label}-${index}`}
-            r="4"
-            strokeWidth="2"
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
 
 type StatusDonutItem = {
   label: string;
