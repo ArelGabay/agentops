@@ -509,7 +509,10 @@ export function TraceDetailsPage() {
         </div>
 
         <aside className="space-y-4">
-          <Card className="overflow-hidden">
+          <Card
+            aria-label="Selected span details"
+            className="overflow-hidden"
+          >
             <div className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">

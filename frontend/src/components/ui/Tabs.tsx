@@ -10,12 +10,17 @@ type TabsProps = {
 
 export function Tabs({ activeLabel, items, onChange }: TabsProps) {
   return (
-    <div className="flex overflow-x-auto border-b border-app-border">
+    <div
+      aria-orientation="horizontal"
+      className="flex overflow-x-auto border-b border-app-border"
+      role="tablist"
+    >
       {items.map((item) => {
         const isActive = item.label === activeLabel;
 
         return (
           <button
+            aria-selected={isActive}
             className={[
               "relative h-12 shrink-0 px-5 text-sm font-medium transition",
               isActive
@@ -24,6 +29,8 @@ export function Tabs({ activeLabel, items, onChange }: TabsProps) {
             ].join(" ")}
             key={item.label}
             onClick={() => onChange(item.label)}
+            role="tab"
+            tabIndex={0}
             type="button"
           >
             {item.label}

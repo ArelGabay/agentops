@@ -464,7 +464,6 @@ These mockups are the primary design reference for layout, spacing, component pa
 
 ## MVP Progress
 
-- [x] Frontend loading and empty-state polish pass
 - [x] API tests for ingestion and dashboard summary
 - [x] GitHub Actions build and lint workflow
 - [x] V1 release checklist and demo script
@@ -474,7 +473,7 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] SDK error reporting and developer-friendly ingestion failures
 - [x] Backend ingestion validation and status normalization
 - [x] Demo data reset safeguards and seed customization
-- [ ] Frontend accessibility and keyboard navigation pass
+- [x] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
 - [ ] Trace and evaluation analytics improvements
 - [ ] API and SDK documentation polish
@@ -484,14 +483,15 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [ ] Read-only tools and integrations overview
 - [ ] Provider-aware raw status capture and mapping
 - [ ] Dashboard time-range filters and comparisons
+- [ ] Release candidate polish and issue triage
 
 ## Next Milestone
 
-The next engineering milestone is frontend accessibility and keyboard navigation pass:
+The next engineering milestone is test coverage expansion for frontend data states:
 
-- improve keyboard reachability across dashboards, tables, filters, and trace views
-- strengthen semantic structure and focus behavior without redesigning the product
-- make the app feel more complete and production-minded for real users and reviewers
+- add focused frontend tests around loading, error, empty, and success states
+- protect the honest UI behavior we already added across dashboard, traces, evaluations, and settings
+- make refactors safer by locking in the expected product behavior with real test coverage
 
 ## Project Philosophy
 

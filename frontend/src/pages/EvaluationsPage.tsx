@@ -410,7 +410,11 @@ export function EvaluationsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-app-border">
+        <div
+          className="overflow-x-auto rounded-lg border border-app-border"
+          aria-label="Evaluations table"
+          role="region"
+        >
           <div className="min-w-[1540px]">
             <div
               className="grid w-full items-center gap-4 bg-white/[0.03] px-4 py-3 text-xs font-medium uppercase text-slate-500"
@@ -545,7 +549,9 @@ export function EvaluationsPage() {
 
           <div className="flex items-center gap-3">
             <span>Rows per page</span>
-            <Button variant="secondary">10</Button>
+            <span className="inline-flex h-10 items-center rounded-lg border border-app-border bg-white/[0.04] px-4 text-sm text-slate-300">
+              10
+            </span>
           </div>
         </div>
       </Card>
