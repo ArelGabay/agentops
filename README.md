@@ -476,14 +476,14 @@ These mockups are the primary design reference for layout, spacing, component pa
 - [x] Frontend accessibility and keyboard navigation pass
 - [ ] Test coverage expansion for frontend data states
 - [ ] Trace and evaluation analytics improvements
-- [ ] API and SDK documentation polish
-- [ ] Portfolio case study write-up
 - [ ] Agents page read-only overview
-- [ ] Settings API tests and validation coverage
 - [ ] Read-only tools and integrations overview
+- [ ] Settings API tests and validation coverage
+- [ ] API and SDK documentation polish
 - [ ] Provider-aware raw status capture and mapping
 - [ ] Dashboard time-range filters and comparisons
-- [ ] Release candidate polish and issue triage
+- [ ] Portfolio case study write-up
+- [ ] V2 release hardening and sign-off
 
 ## Next Milestone
 
