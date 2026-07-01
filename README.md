@@ -462,11 +462,24 @@ Current mockups include:
 
 These mockups are the primary design reference for layout, spacing, component patterns, and dark-mode SaaS styling.
 
-## MVP Progress
+## Current Version Goal
 
-- [x] API tests for ingestion and dashboard summary
-- [x] GitHub Actions build and lint workflow
-- [x] V1 release checklist and demo script
+The current working version is V2.
+
+V2 should feel complete, intentional, and recruiter-ready without pretending to be a fully commercial SaaS platform yet.
+
+The goal of V2 is to:
+
+- make every visible product surface feel real and honest
+- deepen debugging and observability workflows
+- improve reliability through stronger tests and validation
+- strengthen documentation and portfolio presentation
+- finish with a clear release milestone instead of an endless feature stream
+
+V2 is on track when the app feels complete in its current scope, the SDK and backend workflows are dependable, and the remaining future ideas clearly belong to V3 rather than “unfinished V2.”
+
+## V2 Milestones
+
 - [x] Product surface cleanup and navigation honesty
 - [x] Trace detail tabs for input, output, and attributes
 - [x] Settings persistence and editable workspace preferences
