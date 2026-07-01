@@ -488,7 +488,7 @@ V2 is on track when the app feels complete in its current scope, the SDK and bac
 - [x] Demo data reset safeguards and seed customization
 - [x] Frontend accessibility and keyboard navigation pass
 - [x] Test coverage expansion for frontend data states
-- [ ] Trace and evaluation analytics improvements
+- [x] Trace and evaluation analytics improvements
 - [ ] Agents page read-only overview
 - [ ] Read-only tools and integrations overview
 - [ ] Settings API tests and validation coverage
@@ -500,11 +500,11 @@ V2 is on track when the app feels complete in its current scope, the SDK and bac
 
 ## Next Milestone
 
-The next engineering milestone is trace and evaluation analytics improvements:
+The next engineering milestone is agents page read-only overview:
 
-- deepen the product value of dashboard, traces, and evaluations with more useful real insights
-- improve analytics without reintroducing fake or unsupported UI behavior
-- make the observability experience feel more complete before the final V2 hardening pass
+- add a real implemented Agents surface instead of leaving that product area hidden
+- keep it read-only and honest, using existing backend data where possible
+- make the V2 navigation feel even more complete without inventing edit flows too early
 
 ## Project Philosophy
 

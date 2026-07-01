@@ -65,10 +65,10 @@ describe("EvaluationsPage", () => {
     renderWithProviders(<EvaluationsPage />);
 
     expect(
-      screen.getByText("Score time-series data is not available yet."),
+      screen.getByText("No score time-series data is available yet."),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Evaluation result aggregation is not available yet."),
+      screen.getByText("Failing dimension data is not available yet."),
     ).toBeInTheDocument();
   });
 
@@ -123,6 +123,6 @@ describe("EvaluationsPage", () => {
 
     expect(screen.getByText("eval-001")).toBeInTheDocument();
     expect(screen.getByText("trace-001")).toBeInTheDocument();
-    expect(screen.getByText("quality-review")).toBeInTheDocument();
+    expect(screen.getAllByText("quality-review")).toHaveLength(2);
   });
 });

@@ -26,6 +26,7 @@ import { StatusBadge } from "../components/ui/StatusBadge";
 import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
 import { RefreshButton } from "../components/ui/RefreshButton";
+import { StatList } from "../components/ui/StatList";
 import { useTraces } from "../hooks";
 
 const metricCardTemplates = [
@@ -198,6 +199,53 @@ export function TracesPage() {
     };
   });
 
+  const traceStatusItems = [
+    {
+      label: "Success",
+      value: formatNumber(successfulTraces),
+      meta: formatPercent(successRate),
+      trend: "up" as const,
+    },
+    {
+      label: "Error",
+      value: formatNumber(errorTraces),
+      meta: formatPercent(errorRate),
+      trend: "down" as const,
+    },
+    {
+      label: "With Latency",
+      value: formatNumber(tracesWithLatency.length),
+      meta:
+        totalTraces > 0
+          ? formatPercent((tracesWithLatency.length / totalTraces) * 100)
+          : formatPercent(0),
+      trend: "neutral" as const,
+    },
+  ];
+
+  const traceAgentCounts = new Map<string, number>();
+
+  for (const trace of traces) {
+    traceAgentCounts.set(
+      trace.agent_id,
+      (traceAgentCounts.get(trace.agent_id) ?? 0) + 1,
+    );
+  }
+
+  const topTraceAgentItems = Array.from(traceAgentCounts.entries())
+    .sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1])
+    .slice(0, 5)
+    .map(([label, count]) => {
+      const percent = totalTraces > 0 ? (count / totalTraces) * 100 : 0;
+
+      return {
+        label,
+        value: formatNumber(count),
+        meta: formatPercent(percent),
+        trend: "neutral" as const,
+      };
+    });
+
   const traceTableRows = traces.map((trace) => ({
     id: trace.id,
     agent: trace.agent_id,
@@ -316,6 +364,28 @@ export function TracesPage() {
         {tracesMetricCards.map((metric) => (
           <MetricCard key={metric.title} {...metric} />
         ))}
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <Card className="p-5">
+          <h2 className="mb-5 text-sm font-semibold text-white">
+            Trace Status Breakdown
+          </h2>
+          {totalTraces > 0 ? (
+            <StatList items={traceStatusItems} />
+          ) : (
+            <EmptyState title="No trace status data yet." />
+          )}
+        </Card>
+
+        <Card className="p-5">
+          <h2 className="mb-5 text-sm font-semibold text-white">Top Agents</h2>
+          {topTraceAgentItems.length > 0 ? (
+            <StatList items={topTraceAgentItems} />
+          ) : (
+            <EmptyState title="No agent activity yet." />
+          )}
+        </Card>
       </div>
 
       {isError && (

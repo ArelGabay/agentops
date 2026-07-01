@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { PageHeader } from "../components/layout/PageHeader";
+import { SimpleLineChart } from "../components/charts/SimpleLineChart";
 import { MetricCard } from "../components/metrics/MetricCard";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -25,6 +26,7 @@ import { ScoreStars } from "../components/ui/ScoreStars";
 import { SearchInput } from "../components/ui/SearchInput";
 import { EmptyState } from "../components/ui/EmptyState";
 import { NoticeCard } from "../components/ui/NoticeCard";
+import { StatList } from "../components/ui/StatList";
 import { useEvaluations } from "../hooks";
 import {
   formatDateTime,
@@ -123,6 +125,9 @@ export function EvaluationsPage() {
   const isError = evaluationsQuery.isError;
 
   const totalEvaluations = evaluations.length;
+  const normalizedResults = evaluations.map((evaluation) =>
+    normalizeResult(evaluation.result),
+  );
 
   const scoreValues = evaluations
     .map((evaluation) => Number(evaluation.score))
@@ -133,12 +138,12 @@ export function EvaluationsPage() {
       ? scoreValues.reduce((sum, score) => sum + score, 0) / scoreValues.length
       : 0;
 
-  const passedEvaluations = evaluations.filter(
-    (evaluation) => evaluation.result === "pass",
+  const passedEvaluations = normalizedResults.filter(
+    (result) => result === "pass",
   ).length;
 
-  const failedEvaluations = evaluations.filter(
-    (evaluation) => evaluation.result === "fail",
+  const failedEvaluations = normalizedResults.filter(
+    (result) => result === "fail",
   ).length;
 
   const passRate =
@@ -216,6 +221,174 @@ export function EvaluationsPage() {
       trend: "neutral" as const,
     };
   });
+
+  const scoreOverTimeMap = new Map<
+    string,
+    { totalScore: number; count: number; createdAt: number }
+  >();
+
+  for (const evaluation of evaluations) {
+    const score = Number(evaluation.score);
+
+    if (!Number.isFinite(score) || evaluation.created_at === null) {
+      continue;
+    }
+
+    const created_at = new Date(evaluation.created_at);
+    const dateKey = created_at.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    const existingPoint = scoreOverTimeMap.get(dateKey);
+
+    if (existingPoint) {
+      existingPoint.totalScore += score;
+      existingPoint.count += 1;
+      continue;
+    }
+
+    scoreOverTimeMap.set(dateKey, {
+      totalScore: score,
+      count: 1,
+      createdAt: created_at.getTime(),
+    });
+  }
+
+  const scoreOverTimePoints = Array.from(scoreOverTimeMap.entries())
+    .map(([label, point]) => ({
+      label,
+      value: point.totalScore / point.count,
+      createdAt: point.createdAt,
+    }))
+    .sort(
+      (firstPoint, secondPoint) => firstPoint.createdAt - secondPoint.createdAt,
+    )
+    .map(({ label, value }) => ({
+      label,
+      value,
+    }));
+
+  const scoreDistributionBuckets = [
+    { label: "0-59", min: 0, max: 59, count: 0 },
+    { label: "60-69", min: 60, max: 69, count: 0 },
+    { label: "70-79", min: 70, max: 79, count: 0 },
+    { label: "80-89", min: 80, max: 89, count: 0 },
+    { label: "90-100", min: 90, max: 100, count: 0 },
+  ];
+
+  for (const score of scoreValues) {
+    const matchingBucket = scoreDistributionBuckets.find(
+      (bucket) => score >= bucket.min && score <= bucket.max,
+    );
+
+    if (matchingBucket) {
+      matchingBucket.count += 1;
+    }
+  }
+
+  const scoreDistributionItems = scoreDistributionBuckets.map((bucket) => {
+    const percent =
+      totalEvaluations > 0 ? (bucket.count / totalEvaluations) * 100 : 0;
+
+    return {
+      label: bucket.label,
+      value: formatNumber(bucket.count),
+      meta: formatPercent(percent),
+      trend: "neutral" as const,
+    };
+  });
+
+  const evaluationResultCounts = {
+    pass: normalizedResults.filter((result) => result === "pass").length,
+    partial: normalizedResults.filter((result) => result === "partial").length,
+    fail: normalizedResults.filter((result) => result === "fail").length,
+  };
+
+  const evaluationResultItems = [
+    {
+      label: "Pass",
+      value: formatNumber(evaluationResultCounts.pass),
+      meta:
+        totalEvaluations > 0
+          ? formatPercent(
+              (evaluationResultCounts.pass / totalEvaluations) * 100,
+            )
+          : formatPercent(0),
+      trend: "up" as const,
+    },
+    {
+      label: "Partial",
+      value: formatNumber(evaluationResultCounts.partial),
+      meta:
+        totalEvaluations > 0
+          ? formatPercent(
+              (evaluationResultCounts.partial / totalEvaluations) * 100,
+            )
+          : formatPercent(0),
+      trend: "neutral" as const,
+    },
+    {
+      label: "Fail",
+      value: formatNumber(evaluationResultCounts.fail),
+      meta:
+        totalEvaluations > 0
+          ? formatPercent(
+              (evaluationResultCounts.fail / totalEvaluations) * 100,
+            )
+          : formatPercent(0),
+      trend: "down" as const,
+    },
+  ];
+
+  const evaluatorCountsMap = new Map<string, number>();
+
+  for (const evaluation of evaluations) {
+    const evaluatorName = evaluation.evaluator_name.trim();
+
+    evaluatorCountsMap.set(
+      evaluatorName,
+      (evaluatorCountsMap.get(evaluatorName) ?? 0) + 1,
+    );
+  }
+
+  const evaluationsByTaskItems = Array.from(evaluatorCountsMap.entries())
+    .sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1])
+    .map(([label, count]) => {
+      const percent =
+        totalEvaluations > 0 ? (count / totalEvaluations) * 100 : 0;
+
+      return {
+        label,
+        value: formatNumber(count),
+        meta: formatPercent(percent),
+        trend: "neutral" as const,
+      };
+    });
+
+  const highHallucinationCount = hallucinationScores.filter(
+    (score) => score > 10,
+  ).length;
+
+  const hallucinationSummaryItems = [
+    {
+      label: "Average Score",
+      value: formatPercent(hallucinationRate),
+      meta: `${formatNumber(hallucinationScores.length)} scored`,
+      trend: "neutral" as const,
+    },
+    {
+      label: "High Hallucination",
+      value: formatNumber(highHallucinationCount),
+      meta:
+        hallucinationScores.length > 0
+          ? formatPercent(
+              (highHallucinationCount / hallucinationScores.length) * 100,
+            )
+          : formatPercent(0),
+      trend:
+        highHallucinationCount > 0 ? ("down" as const) : ("neutral" as const),
+    },
+  ];
 
   const evaluationTableRows = evaluations.map((evaluation) => {
     const hallucinationScore =
@@ -319,7 +492,15 @@ export function EvaluationsPage() {
             </Button>
           }
         >
-          <EmptyAnalyticsState message="Score time-series data is not available yet." />
+          {scoreOverTimePoints.length > 0 ? (
+            <SimpleLineChart
+              ariaLabel="Evaluation score over time"
+              points={scoreOverTimePoints}
+              tone="emerald"
+            />
+          ) : (
+            <EmptyAnalyticsState message="No score time-series data is available yet." />
+          )}
         </ChartCard>
 
         <ChartCard
@@ -330,18 +511,26 @@ export function EvaluationsPage() {
             </Button>
           }
         >
-          <EmptyAnalyticsState message="Score distribution data is not available yet." />
+          {scoreDistributionItems.some((item) => item.value !== "0") ? (
+            <StatList items={scoreDistributionItems} />
+          ) : (
+            <EmptyAnalyticsState message="No score distribution data is available yet." />
+          )}
         </ChartCard>
 
         <ChartCard
-          title="Evaluation Dimensions"
+          title="Hallucination Summary"
           action={
             <Button disabled variant="secondary">
-              All Time
+              Latest 100
             </Button>
           }
         >
-          <EmptyAnalyticsState message="Evaluation dimension data is not available yet." />
+          {hallucinationScores.length > 0 ? (
+            <StatList items={hallucinationSummaryItems} />
+          ) : (
+            <EmptyAnalyticsState message="No hallucination scoring data is available yet." />
+          )}
         </ChartCard>
       </div>
 
@@ -350,7 +539,11 @@ export function EvaluationsPage() {
           <h2 className="mb-5 text-sm font-semibold text-white">
             Evaluation Results
           </h2>
-          <EmptyAnalyticsState message="Evaluation result aggregation is not available yet." />
+          {totalEvaluations > 0 ? (
+            <StatList items={evaluationResultItems} />
+          ) : (
+            <EmptyAnalyticsState message="No evaluation result data is available yet." />
+          )}
         </Card>
 
         <Card className="p-5">
@@ -370,7 +563,11 @@ export function EvaluationsPage() {
             </Button>
           </div>
 
-          <EmptyAnalyticsState message="Dataset and task aggregation is not available yet." />
+          {evaluationsByTaskItems.length > 0 ? (
+            <StatList items={evaluationsByTaskItems} />
+          ) : (
+            <EmptyAnalyticsState message="No dataset or task aggregation is available yet." />
+          )}
         </Card>
       </div>
 

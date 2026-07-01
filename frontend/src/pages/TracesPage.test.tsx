@@ -116,7 +116,7 @@ describe("TracesPage", () => {
     renderWithProviders(<TracesPage />);
 
     expect(screen.getByText("trace-001")).toBeInTheDocument();
-    expect(screen.getAllByText("agent-support")).toHaveLength(2);
-    expect(screen.getAllByText("Success")).toHaveLength(2);
+    expect(screen.getAllByText("agent-support")).toHaveLength(3);
+    expect(screen.getAllByText("Success")).toHaveLength(3);
   });
 });
