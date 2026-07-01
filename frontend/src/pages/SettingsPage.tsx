@@ -235,7 +235,7 @@ export function SettingsPage() {
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.3fr_0.85fr_0.85fr]">
         <div className="space-y-4">
-          <Card className="p-5">
+          <Card aria-label="Workspace settings" className="p-5">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-white">
@@ -302,7 +302,7 @@ export function SettingsPage() {
             )}
           </Card>
 
-          <Card className="p-5">
+          <Card aria-label="Appearance settings" className="p-5">
             <h2 className="text-sm font-semibold text-white">Appearance</h2>
             <p className="mt-1 text-sm text-slate-400">
               Customize the look and feel of AgentOps.
@@ -355,7 +355,7 @@ export function SettingsPage() {
             </div>
           </Card>
 
-          <Card className="p-5">
+          <Card aria-label="Notifications settings" className="p-5">
             <h2 className="text-sm font-semibold text-white">Notifications</h2>
             <p className="mt-1 text-sm text-slate-400">
               Configure how and when you want to be notified.
@@ -410,7 +410,7 @@ export function SettingsPage() {
         </div>
 
         <div className="space-y-4">
-          <Card className="p-5">
+          <Card aria-label="Integrations" className="p-5">
             <h2 className="text-sm font-semibold text-white">Integrations</h2>
             <p className="mt-1 text-sm text-slate-400">
               Manage your connected services.
@@ -436,7 +436,7 @@ export function SettingsPage() {
             </Button>
           </Card>
 
-          <Card className="p-5">
+          <Card aria-label="API keys" className="p-5">
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-white">API Keys</h2>
@@ -467,7 +467,7 @@ export function SettingsPage() {
             </Button>
           </Card>
 
-          <Card className="p-5">
+          <Card aria-label="Danger zone" className="p-5">
             <h2 className="text-sm font-semibold text-white">Danger Zone</h2>
             <p className="mt-1 text-sm text-slate-400">
               Irreversible and destructive actions.

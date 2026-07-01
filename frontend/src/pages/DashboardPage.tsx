@@ -435,7 +435,7 @@ export function DashboardPage() {
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_0.85fr_1.2fr]">
-        <Card className="p-5">
+        <Card aria-label="Traces by status" className="p-5">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-white">
               Traces by Status
@@ -455,7 +455,7 @@ export function DashboardPage() {
           />
         </Card>
 
-        <Card className="p-5">
+        <Card aria-label="Top agents" className="p-5">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-white">Top Agents</h2>
             <Button disabled variant="ghost">
@@ -485,7 +485,7 @@ export function DashboardPage() {
         </ChartCard>
       </div>
 
-      <Card className="mt-4 p-5">
+      <Card aria-label="Recent traces" className="mt-4 p-5">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-sm font-semibold text-white">Recent Traces</h2>

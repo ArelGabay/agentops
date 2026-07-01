@@ -48,12 +48,12 @@ export function Sidebar() {
           <p className="mb-2 px-1 text-xs font-medium uppercase tracking-wide text-slate-500">
             Project
           </p>
-          <button className="w-full rounded-lg border border-app-border bg-white/[0.03] px-3 py-3 text-left">
+          <div className="w-full rounded-lg border border-app-border bg-white/[0.03] px-3 py-3 text-left">
             <span className="block text-sm font-medium text-slate-100">
               Default Project
             </span>
             <span className="block text-xs text-slate-500">Production</span>
-          </button>
+          </div>
         </div>
 
         <div className="rounded-lg border border-app-border bg-white/[0.03] p-3">

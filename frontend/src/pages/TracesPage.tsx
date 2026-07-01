@@ -397,7 +397,11 @@ export function TracesPage() {
       </Card>
 
       <Card className="mt-4 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div
+          aria-label="Traces table"
+          className="overflow-x-auto ..."
+          role="region"
+        >
           <div className="min-w-[1240px]">
             <div
               className="grid items-center gap-4 bg-white/[0.03] px-4 py-4 text-sm text-slate-400"
@@ -526,7 +530,9 @@ export function TracesPage() {
 
           <div className="flex items-center gap-3">
             <span>Rows per page</span>
-            <Button variant="secondary">10</Button>
+            <span className="inline-flex h-10 items-center rounded-lg border border-app-border bg-white/[0.04] px-4 text-sm text-slate-300">
+              10
+            </span>
           </div>
         </div>
       </Card>

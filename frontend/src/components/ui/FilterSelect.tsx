@@ -24,6 +24,7 @@ export function FilterSelect({
         {label}
       </span>
       <select
+        aria-label={label}
         className="h-14 min-w-[116px] appearance-none rounded-lg border border-app-border bg-app-surface px-4 pb-2 pt-6 text-sm font-medium text-slate-100 outline-none transition hover:border-slate-600 hover:bg-white/[0.05]"
         onChange={(event) => onChange?.(event.target.value)}
         value={value}
