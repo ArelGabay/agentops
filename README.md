@@ -487,7 +487,7 @@ V2 is on track when the app feels complete in its current scope, the SDK and bac
 - [x] Backend ingestion validation and status normalization
 - [x] Demo data reset safeguards and seed customization
 - [x] Frontend accessibility and keyboard navigation pass
-- [ ] Test coverage expansion for frontend data states
+- [x] Test coverage expansion for frontend data states
 - [ ] Trace and evaluation analytics improvements
 - [ ] Agents page read-only overview
 - [ ] Read-only tools and integrations overview
@@ -500,11 +500,11 @@ V2 is on track when the app feels complete in its current scope, the SDK and bac
 
 ## Next Milestone
 
-The next engineering milestone is test coverage expansion for frontend data states:
+The next engineering milestone is trace and evaluation analytics improvements:
 
-- add focused frontend tests around loading, error, empty, and success states
-- protect the honest UI behavior we already added across dashboard, traces, evaluations, and settings
-- make refactors safer by locking in the expected product behavior with real test coverage
+- deepen the product value of dashboard, traces, and evaluations with more useful real insights
+- improve analytics without reintroducing fake or unsupported UI behavior
+- make the observability experience feel more complete before the final V2 hardening pass
 
 ## Project Philosophy
 
